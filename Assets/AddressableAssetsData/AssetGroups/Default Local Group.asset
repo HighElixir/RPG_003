@@ -1,0 +1,48 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bbb281ee3bf0b054c82ac2347e9e782c, type: 3}
+  m_Name: Default Local Group
+  m_EditorClassIdentifier: 
+  m_GroupName: Default Local Group
+  m_GUID: 4ecb60d74dcdc3149ac93c5ef4493ff5
+  m_SerializeEntries:
+  - m_GUID: 1b9a015eabedb144381a7ba9f5f588a7
+    m_Address: Assets/Data/Enemy/EnemyDatas/Little Lizard.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 61f872344731bbc4c978b06bd503e916
+    m_Address: Assets/Data/Enemy/Skills/Sp_1/Punch.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6901d00c7a672e24bb9024eed88a0c51
+    m_Address: Assets/Data/Enemy/SpawnTable/Wave1.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ad4c38764b445fd4abca8713d6326bfa
+    m_Address: Assets/Data/Enemy/Skills/Sp_1/FireBress.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dbd2657b625c04c4bbdeecf722153a60
+    m_Address: Assets/Data/Enemy/ActionMaps/Wave1/Little Lizard.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  m_ReadOnly: 0
+  m_Settings: {fileID: 11400000, guid: b91b0758a04e71e43a4917449c0cff90, type: 2}
+  m_SchemaSet:
+    m_Schemas:
+    - {fileID: 11400000, guid: 7857d1f1098cb7c498f720fd2b88800f, type: 2}
+    - {fileID: 11400000, guid: af13c78bcb9d33044abe8320f24690bc, type: 2}
