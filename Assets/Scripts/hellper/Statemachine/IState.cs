@@ -1,24 +1,20 @@
-using System;
-using System.Collections.Generic;
-using UnityEditor;
-
-namespace HighElixir.StateMachine
+ï»¿namespace HighElixir.StateMachine
 {
 
     /// <summary>
-    /// ó‘ÔiƒXƒe[ƒgj‚²‚Æ‚ÌƒCƒ“ƒ^[ƒtƒF[ƒXB
-    /// ŠeƒXƒe[ƒgis“®ƒpƒ^[ƒ“j‚É‚±‚ÌƒCƒ“ƒ^[ƒtƒF[ƒX‚ğÀ‘•‚³‚¹‚éB
-    /// •Ô‚è’l‚Ìbool‚Íˆ—‚Ì¬Œ÷^¸”s‚ğ¦‚·B
+    /// çŠ¶æ…‹ï¼ˆã‚¹ãƒ†ãƒ¼ãƒˆï¼‰ã”ã¨ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã€‚
+    /// å„ã‚¹ãƒ†ãƒ¼ãƒˆï¼ˆè¡Œå‹•ãƒ‘ã‚¿ãƒ¼ãƒ³ï¼‰ã«ã“ã®ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ•ã‚§ãƒ¼ã‚¹ã‚’å®Ÿè£…ã•ã›ã‚‹ã€‚
+    /// è¿”ã‚Šå€¤ã®boolã¯å‡¦ç†ã®æˆåŠŸï¼å¤±æ•—ã‚’ç¤ºã™ã€‚
     /// </summary>
     public interface IState<TParent> where TParent : class
     {
-        // ƒXƒe[ƒg‚É“ü‚Á‚½‚Æ‚«‚Ìˆ—i¸”s‚µ‚½‚çfalse‚ğ•Ô‚µ‚ÄƒGƒ‰[ƒnƒ“ƒhƒŠƒ“ƒO‚Öj
+        // ã‚¹ãƒ†ãƒ¼ãƒˆã«å…¥ã£ãŸã¨ãã®å‡¦ç†ï¼ˆå¤±æ•—ã—ãŸã‚‰falseã‚’è¿”ã—ã¦ã‚¨ãƒ©ãƒ¼ãƒãƒ³ãƒ‰ãƒªãƒ³ã‚°ã¸ï¼‰
         bool Enter(IState<TParent> previousState, TParent parent);
 
-        // ƒXƒe[ƒg’†‚É–ˆƒtƒŒ[ƒ€ŒÄ‚Î‚ê‚éˆ—ifalse‚È‚çƒƒOo‚·‚¯‚Ç‘±sj
+        // ã‚¹ãƒ†ãƒ¼ãƒˆä¸­ã«æ¯ãƒ•ãƒ¬ãƒ¼ãƒ å‘¼ã°ã‚Œã‚‹å‡¦ç†ï¼ˆfalseãªã‚‰ãƒ­ã‚°å‡ºã™ã‘ã©ç¶šè¡Œï¼‰
         bool Stay(TParent parent);
 
-        // ƒXƒe[ƒg‚©‚ç”²‚¯‚é‚Æ‚«‚Ìˆ—ifalse‚Å‚àƒƒOo‚µ‚Ä‘±‚¯‚éj
+        // ã‚¹ãƒ†ãƒ¼ãƒˆã‹ã‚‰æŠœã‘ã‚‹ã¨ãã®å‡¦ç†ï¼ˆfalseã§ã‚‚ãƒ­ã‚°å‡ºã—ã¦ç¶šã‘ã‚‹ï¼‰
         bool Exit(IState<TParent> nextState, TParent parent);
     }
 }

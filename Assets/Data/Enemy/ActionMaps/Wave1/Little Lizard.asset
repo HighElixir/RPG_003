@@ -12,12 +12,96 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 26688acd4213ca344ad953f76b9cc7e0, type: 3}
   m_Name: Little Lizard
   m_EditorClassIdentifier: 
-  enemyActions:
-  - actionMapType: 1
-    weight: 1
-    usableSkills:
-    - {fileID: 11400000, guid: 61f872344731bbc4c978b06bd503e916, type: 2}
-  - actionMapType: 2
-    weight: 0.6
-    usableSkills:
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects:
     - {fileID: 11400000, guid: ad4c38764b445fd4abca8713d6326bfa, type: 2}
+    - {fileID: 11400000, guid: 61f872344731bbc4c978b06bd503e916, type: 2}
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: enemyActions
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[RPG_001.Battle.Characters.Enemy.ActionMapType,
+        Assembly-CSharp],[RPG_001.Battle.Characters.Enemy.EnemyAction, Assembly-CSharp]],
+        mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[RPG_001.Battle.Characters.Enemy.ActionMapType,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 1
+    - Name: 
+      Entry: 7
+      Data: 
+    - Name: $k
+      Entry: 3
+      Data: 1
+    - Name: $v
+      Entry: 7
+      Data: 2|RPG_001.Battle.Characters.Enemy.EnemyAction, Assembly-CSharp
+    - Name: weight
+      Entry: 4
+      Data: 1
+    - Name: usableSkills
+      Entry: 7
+      Data: 3|System.Collections.Generic.List`1[[RPG_001.Battle.Characters.Enemy.SkillWithWeight,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 2
+    - Name: 
+      Entry: 7
+      Data: 4|RPG_001.Battle.Characters.Enemy.SkillWithWeight, Assembly-CSharp
+    - Name: skill
+      Entry: 10
+      Data: 0
+    - Name: weight
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 7
+      Data: 5|RPG_001.Battle.Characters.Enemy.SkillWithWeight, Assembly-CSharp
+    - Name: skill
+      Entry: 10
+      Data: 1
+    - Name: weight
+      Entry: 4
+      Data: 1
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 

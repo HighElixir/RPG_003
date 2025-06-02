@@ -1,5 +1,6 @@
+﻿using RPG_001.Battle.Characters;
 using RPG_001.Battle.Characters.Enemy;
-using RPG_001.Battle.Characters;
+using System;
 using System.Collections.Generic;
 
 namespace RPG_001.Battle
@@ -9,22 +10,28 @@ namespace RPG_001.Battle
     /// </summary>
     public interface IBattleManager
     {
+        Action<CharacterBase> OnCharacterRemoved { get; set; }
         /// <summary>
         /// Starts the battle with the specified characters.
         /// </summary>
         /// <param name="characters">Array of characters participating in the battle.</param>
-        void StartBattle(List<CharacterData> players);
+        void StartBattle(List<CharacterData> players, SpawningTable table);
         /// <summary>
         /// Ends the current battle.
         /// </summary>
         void EndBattle();
-        /// <summary>
-        /// Processes a character's turn in the battle.
-        /// </summary>
-        /// <param name="character">The character whose turn is being processed.</param>
-        void ProcessTurn();
+        void FinishTurn(CharacterBase actor);
 
         void SummonEnemy(EnemyData enemyData, CharacterPosition position);
-        void ExecuteTurn(CharacterBase actor, bool instantStart = false);
+        void RemoveCharacter(CharacterBase character);
+        bool TryGetUsablePosition(out CharacterPosition position, int option = 0);
+        CharacterPosition GetUsablePosition(int option = 0);
+        List<CharacterBase> GetCharacters();
+        Dictionary<CharacterPosition, CharacterBase> GetCharacterMap();
+        /// <summary>
+        /// ウェーブ進行度を取得
+        /// </summary>
+        /// <returns></returns>
+        float GetDepth();
     }
 }

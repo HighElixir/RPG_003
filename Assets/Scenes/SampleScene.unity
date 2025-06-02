@@ -667,7 +667,6 @@ GameObject:
   - component: {fileID: 1161656315}
   - component: {fileID: 1161656318}
   - component: {fileID: 1161656319}
-  - component: {fileID: 1161656320}
   m_Layer: 0
   m_Name: BattleManager
   m_TagString: Untagged
@@ -794,37 +793,41 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c68f775f909ce70498bc1a34edacfcfe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  entries:
-  - position: 0
-    coordinates: {x: 6.9312735, y: -0.8805922}
-  - position: 1
-    coordinates: {x: 5.437892, y: 0.31921583}
-  - position: 2
-    coordinates: {x: 6.636657, y: 1.3640583}
-  - position: 3
-    coordinates: {x: 5.562695, y: 2.189475}
-  - position: 4
-    coordinates: {x: -5.1499915, y: 1.8160491}
-  - position: 5
-    coordinates: {x: -3.4694653, y: 0.8402623}
-  - position: 6
-    coordinates: {x: -5.2313037, y: 0.29815632}
-  - position: 7
-    coordinates: {x: -4.201295, y: -0.6234188}
-  - position: 8
-    coordinates: {x: -5.52594, y: -1.817552}
---- !u!114 &1161656320
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1161656314}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cebf9ef5528a03a488eebef199936811, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes:
+    - Name: _entries
+      Entry: 7
+      Data: 0|System.Collections.Generic.Dictionary`2[[RPG_001.Battle.CharacterPosition,
+        Assembly-CSharp],[UnityEngine.Vector2, UnityEngine.CoreModule]], mscorlib
+    - Name: comparer
+      Entry: 7
+      Data: 1|System.Collections.Generic.EnumEqualityComparer`1[[RPG_001.Battle.CharacterPosition,
+        Assembly-CSharp]], mscorlib
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
+    - Name: 
+      Entry: 12
+      Data: 0
+    - Name: 
+      Entry: 13
+      Data: 
+    - Name: 
+      Entry: 8
+      Data: 
 --- !u!1 &1409592591
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,15 +1,15 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 
 namespace Minigames.UI
 {
     public interface IPopTextData
     {
-        public TMP_FontAsset FontAsset { get; }
+        TMP_FontAsset FontAsset { get; }
 
         /// <summary>
-        /// ”ÍˆÍŠO‚Ìidx‚Ìê‡‚ÍƒfƒtƒHƒ‹ƒg’l‚ğ•Ô‚·.
+        /// ç¯„å›²å¤–ã®idxã®å ´åˆã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã‚’è¿”ã™.
         /// </summary>
-        public (string text, Color color) GetInfo(int id);
+        (string text, Color color) GetInfo(int id);
     }
 }

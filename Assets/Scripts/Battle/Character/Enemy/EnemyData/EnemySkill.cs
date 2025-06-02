@@ -1,13 +1,13 @@
 ﻿using RPG_001.Skills;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RPG_001.Battle.Characters.Enemy
 {
-    [CreateAssetMenu(fileName = "EnemySkills", menuName = "RPG_001/Enemy/EnemySkills", order = 1)]
-    public class EnemySkills : ScriptableObject
+    [CreateAssetMenu(fileName = "EnemySkill", menuName = "RPG_001/Enemy/EnemySkill", order = 1)]
+    public class EnemySkill : SerializedScriptableObject
     {
         public string skillName;
-        public float weight = 1f; // Default weight for the skill
         public Elements elements;
         public AmountAttribute skillType;
         [Min(0)] public float damage_with_str; // 1f = 100%

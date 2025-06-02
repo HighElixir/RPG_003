@@ -1,57 +1,54 @@
 using RPG_001.Battle.Characters;
+using Sirenix.OdinInspector;
+using Sirenix.Utilities.Editor;
+using System.Collections.Generic;
 using UnityEngine;
 
-public class StatusDebugViewer : MonoBehaviour
+public class StatusDebugViewer : SerializedMonoBehaviour
 {
     [SerializeField] private CharacterBase _target;
+    private bool _isTargetSet = false;
+    private bool _showStatus = false;
 
-    private ICharacter targetCharacter;
+    [SerializeField, ShowIf("_showStatus")]
+    private Dictionary<string, float> _statusValues = new Dictionary<string, float>();
 
-    private void OnValidate()
+    [ShowIf("_isTargetSet")]
+    [Button("Toggle Status")]
+    private void ShowStatus()
     {
-        // インスペクターで差し替えたときに再キャスト
-        if (_target is ICharacter character)
+        // トグル機能: 表示状態を切り替え
+        if (_showStatus)
         {
-            targetCharacter = character;
-        }
-        else
-        {
-            targetCharacter = null;
-        }
-    }
-
-    private void OnGUI()
-    {
-        GUILayout.BeginVertical("box");
-        GUILayout.Label("ステータス表示デバッグ");
-
-        if (targetCharacter == null)
-        {
-            GUILayout.Label("キャラクター未指定！");
-        }
-        else if (GUILayout.Button("ステータスを表示"))
-        {
-            ShowCharacterStatus();
-        }
-
-        GUILayout.EndVertical();
-    }
-
-    private void ShowCharacterStatus()
-    {
-        var statusManager = targetCharacter.StatusManager;
-        if (statusManager == null)
-        {
-            Debug.LogWarning("StatusManager が見つからないよ！");
+            _statusValues.Clear();  // 前回の値をクリア
+            _showStatus = false;
+            GUIHelper.RequestRepaint();  // インスペクタを更新
             return;
         }
 
-        Debug.Log($"--- {targetCharacter.Data.Name} のステータス ---");
-        foreach (var status in statusManager.GetStatusList())
+        if (_isTargetSet)
         {
-            var amount = statusManager.GetStatusAmount(status);
-            Debug.Log($"{status} : {amount.currentAmount} / Max: {amount.ChangedMax} (Base: {amount.defaultAmount})");
+            _statusValues.Clear();
+            foreach (var status in _target.StatusManager.GetStatusList())
+            {
+                var amount = _target.StatusManager.GetStatusAmount(status);
+                if (status.Equals(StatusAttribute.HP) || status.Equals(StatusAttribute.MP))
+                {
+                    _statusValues["Max" + status] = amount.ChangedMax;
+                    _statusValues[status.ToString()] = amount.currentAmount;
+                }
+                else
+                {
+                    _statusValues[status.ToString()] = amount.ChangedMax;
+                }
+            }
+            _showStatus = true;
+            GUIHelper.RequestRepaint();
         }
-        Debug.Log($"------------------------------");
+    }
+
+    private void OnValidate()
+    {
+        _isTargetSet = _target != null;
     }
 }

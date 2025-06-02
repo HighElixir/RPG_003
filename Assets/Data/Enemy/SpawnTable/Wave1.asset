@@ -9,8 +9,8 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c13acdd8f87d4f945b8fd3a126521d05, type: 3}
-  m_Name: FireBress
+  m_Script: {fileID: 11500000, guid: 9e3f8ad599bc68c4c9108c14a93a8366, type: 3}
+  m_Name: Wave1
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
@@ -21,11 +21,9 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
-  skillName: FireBress
-  weight: 1
-  elements: 1
-  skillType: 2
-  damage_with_str: 0
-  damage_with_int: 0.8
-  heal_with_int: 0
-  heal_with_str: 0
+  spawnDatas:
+  - underLimit: 0
+    overLimit: 1
+    enemyDataList:
+    - weight: 1
+      enemyData: {fileID: 11400000, guid: 1b9a015eabedb144381a7ba9f5f588a7, type: 2}

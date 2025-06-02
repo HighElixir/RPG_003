@@ -1,9 +1,10 @@
-using RPG_001.Characters;
+﻿using RPG_001.Battle.Characters;
+using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RPG_001.Battle
 {
-    public class AddDamage : MonoBehaviour
+    public class AddDamage : SerializedMonoBehaviour
     {
         [SerializeField] private CharacterBase target;
         [SerializeField] private int damageAmount = 10;
@@ -18,6 +19,7 @@ namespace RPG_001.Battle
             // Initialize damageInfo with default values
             damageInfo = new DamageInfo(
                 null,
+                null,
                 damageAmount,
                 isCritical,
                 isMissed,
@@ -26,9 +28,26 @@ namespace RPG_001.Battle
                 IsResisted
             );
         }
+
+        [Button("Execute Damage"), DisableInEditorMode]
         public void Execute()
         {
             target?.TakeDamage(damageInfo);
+        }
+
+        private void OnValidate()
+        {
+            // Update damageInfo when values change in the inspector
+            damageInfo = new DamageInfo(
+                null,
+                target,
+                damageAmount,
+                isCritical,
+                isMissed,
+                isDodged,
+                isBlocked,
+                IsResisted
+            );
         }
     }
 }

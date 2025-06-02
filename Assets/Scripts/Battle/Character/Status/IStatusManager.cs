@@ -1,5 +1,4 @@
-﻿using RPG_001.Battle;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace RPG_001.Battle.Characters

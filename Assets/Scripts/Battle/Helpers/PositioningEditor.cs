@@ -1,19 +1,20 @@
-// Assets/Editor/PositioningEditor.cs
+ï»¿// Assets/Editor/PositioningEditor.cs
 #if UNITY_EDITOR
-using UnityEngine;
-using UnityEditor;
 using RPG_001.Battle;
+using System.Collections.Generic;
+using UnityEditor;
+using UnityEngine;
 
 [CustomEditor(typeof(Positioning))]
 public class PositioningEditor : Editor
 {
-    // ‰Â‹‰»‚·‚é‚Æ‚«‚ÉŒÄ‚Î‚ê‚é
+    // å¯è¦–åŒ–ã™ã‚‹ã¨ãã«å‘¼ã°ã‚Œã‚‹
     private void OnSceneGUI()
     {
         var positioning = (Positioning)target;
-        // ƒVƒŠƒAƒ‰ƒCƒY‚³‚ê‚½ entries ƒŠƒXƒg‚ğæ“¾
+        // ã‚·ãƒªã‚¢ãƒ©ã‚¤ã‚ºã•ã‚ŒãŸ entries ãƒªã‚¹ãƒˆã‚’å–å¾—
         serializedObject.Update();
-        var entriesProp = serializedObject.FindProperty("entries");
+        var entriesProp = serializedObject.FindProperty("_entries");
 
         for (int i = 0; i < entriesProp.arraySize; i++)
         {
@@ -21,29 +22,24 @@ public class PositioningEditor : Editor
             var coordProp = entry.FindPropertyRelative("coordinates");
             var posEnumProp = entry.FindPropertyRelative("position");
 
-            // Vector2 ¨ Sceneã‚Ì Vector3 ‚É•ÏŠ·
+            // Vector2 â†’ Sceneä¸Šã® Vector3 ã«å¤‰æ›
             Vector2 coord2D = coordProp.vector2Value;
             Vector3 worldPos = new Vector3(coord2D.x, coord2D.y, 0f);
 
-            // ƒnƒ“ƒhƒ‹‚ÌŒ©‚½–Ú‚âƒTƒCƒY
-            const float handleSize = 0.2f;
-
-            // ƒnƒ“ƒhƒ‹‚ğ•`‰æ•‘€ì
+            // ãƒãƒ³ãƒ‰ãƒ«ã‚’æç”»ï¼†æ“ä½œ
             EditorGUI.BeginChangeCheck();
-            Vector3 newWorldPos = Handles.FreeMoveHandle(
+            Vector3 newWorldPos = Handles.PositionHandle(
                 worldPos,
-                handleSize,
-                Vector3.zero,
-                Handles.SphereHandleCap
+                Quaternion.identity
             );
-            // ƒ‰ƒxƒ‹‚ào‚µ‚Æ‚­
+            // ãƒ©ãƒ™ãƒ«ã‚‚å‡ºã—ã¨ã
             string label = posEnumProp.enumDisplayNames[posEnumProp.enumValueIndex];
             Handles.Label(worldPos + Vector3.up * 0.3f, label);
 
             if (EditorGUI.EndChangeCheck())
             {
                 Undo.RecordObject(positioning, "Move PositionEntry Handle");
-                // XV‚µ‚½À•W‚ğ Vector2 ‚É–ß‚µ‚ÄƒvƒƒpƒeƒB‚ÉƒZƒbƒg
+                // æ›´æ–°ã—ãŸåº§æ¨™ã‚’ Vector2 ã«æˆ»ã—ã¦ãƒ—ãƒ­ãƒ‘ãƒ†ã‚£ã«ã‚»ãƒƒãƒˆ
                 coordProp.vector2Value = new Vector2(newWorldPos.x, newWorldPos.y);
             }
         }

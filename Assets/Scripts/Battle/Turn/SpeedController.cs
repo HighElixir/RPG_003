@@ -1,9 +1,9 @@
-using RPG_001.Battle.Characters;
+ï»¿using RPG_001.Battle.Characters;
 using UnityEngine;
 
 namespace RPG_001.Battle
 {
-    // StatusManager‚æ‚èŒã‚É‰Šú‰»
+    // StatusManagerã‚ˆã‚Šå¾Œã«åˆæœŸåŒ–
     public class SpeedController
     {
         private StatusAmount _speedAmount;
@@ -15,9 +15,9 @@ namespace RPG_001.Battle
         {
             get
             {
-                // (500 - x) / 400 ‚ğ‚Ü‚¸ŒvZ
+                // (500 - x) / 400 ã‚’ã¾ãšè¨ˆç®—
                 float t = (500.0f - _speedAmount.ChangedMax) / 400.0f;
-                // ƒxƒLæ‚µ‚ÄƒXƒP[ƒ‹‚ğ‚©‚¯‚é
+                // ãƒ™ã‚­ä¹—ã—ã¦ã‚¹ã‚±ãƒ¼ãƒ«ã‚’ã‹ã‘ã‚‹
                 return (int)(10.0f + 140.0f * Mathf.Pow(t, 2.3f));
             }
         }
@@ -26,11 +26,15 @@ namespace RPG_001.Battle
         {
             _curretAmount = Mathf.Max(0, _curretAmount - amount);
         }
-        
+
+        public void Reset()
+        {
+            _curretAmount = Max;
+        }
         public void Initialize(StatusAmount speedAmount)
         {
             _speedAmount = speedAmount;
-            _curretAmount = 0;
+            _curretAmount = Max;
         }
     }
 }

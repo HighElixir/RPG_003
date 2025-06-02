@@ -1,16 +1,18 @@
-using RPG_001.Battle.Enemy;
+﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
 namespace RPG_001.Battle
 {
     public class SummonEnemy : MonoBehaviour
     {
-        [SerializeField] private EnemyData _enemyPrefab; // Prefab for the enemy characters
+        [SerializeField] private SpawningTable _spawningTable; // Prefab for the enemy characters
         [SerializeField] private BattleManager _battleManager; // Reference to the BattleManager
-        
+
+        [Button("Summon Enemy"), DisableInEditorMode]
         public void Execute()
         {
-            _battleManager.SummonEnemy(_enemyPrefab, CharacterPosition.Enemy_1);
+            if (_battleManager.TryGetUsablePosition(out var position, 2))
+                _battleManager.SummonEnemy(_spawningTable.GetSpawnData(0.5f).GetEnemyData(), position);
         }
     }
 }
