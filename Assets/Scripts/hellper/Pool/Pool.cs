@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Minigames
+namespace HighElixir.Pool
 {
     public class Pool<T> where T : MonoBehaviour
     {

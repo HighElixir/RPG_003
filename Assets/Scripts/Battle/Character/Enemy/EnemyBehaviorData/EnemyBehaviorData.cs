@@ -1,12 +1,12 @@
-﻿using RPG_001.Battle.Behaviour;
+﻿using RPG_003.Battle.Behaviour;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace RPG_001.Battle.Characters.Enemy
+namespace RPG_003.Battle.Characters.Enemy
 {
     public abstract class EnemyBehaviorData : SerializedScriptableObject
     {
-        public abstract EnemyBehaviour GetCharacterBehaviour(ICharacter character);
+        public abstract EnemyBehaviour GetCharacterBehaviour();
         public abstract EnemySkill GetSkill();
     }
 }

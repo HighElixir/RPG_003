@@ -3,23 +3,30 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Sirenix.OdinInspector;
-using RPG_001.Battle.Behaviour;
-using RPG_001.Battle.Characters;
-using RPG_001.Battle.Characters.Enemy;
+using RPG_003.Battle.Behaviour;
+using RPG_003.Battle.Characters;
+using RPG_003.Battle.Characters.Enemy;
 using Sirenix.Utilities.Editor;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     public class BattleManager : SerializedMonoBehaviour, IBattleManager
     {
         //=== Serialized Fields ===
         [BoxGroup("Battle Manager Settings")]
+        [SerializeField] private Camera _camera;
+        [BoxGroup("Battle Manager Settings")]
+        [SerializeField] private IntervalIndicator _IntervalIndicatorPrefab;
+        [BoxGroup("Battle Manager Settings")]
         [SerializeField] private CharacterBase _characterBase;
+        [BoxGroup("Battle Manager Settings")]
         [SerializeField] private Positioning _positioning;
+        [BoxGroup("Battle Manager Settings")]
         [SerializeField, ReadOnly] private Dictionary<CharacterPosition, CharacterBase> _characterPositions = new Dictionary<CharacterPosition, CharacterBase>();
+        [BoxGroup("Battle Manager Settings")]
+        [SerializeField] private Transform _canvas;
 
         //=== Non-Serialized Fields ===
-        private SummonEnemies _summonEnemies;
         private Transform _charactersContainer;
         private List<CharacterBase> _turnActors = new List<CharacterBase>();
         private int _turnCount = 0;
@@ -36,7 +43,6 @@ namespace RPG_001.Battle
         private void Awake()
         {
             _charactersContainer = new GameObject("CharactersContainer").transform;
-            _summonEnemies = new SummonEnemies(_characterBase, this);
         }
 
         //=== Public Methods ===
@@ -84,8 +90,8 @@ namespace RPG_001.Battle
 
         public void SummonEnemy(EnemyData enemyData, CharacterPosition position)
         {
-            var enemy = _summonEnemies.Summon(enemyData);
-            InitCharacter(enemy, Gene, enemyData.characterData, position, new EnemyBehaviour(enemyData.EnemyBehaviorData));
+            var enemy = Instantiate(_characterBase, Vector3.zero, Quaternion.identity).GetComponent<CharacterBase>();
+            InitCharacter(enemy, Gene, enemyData.characterData, position, enemyData.enemyBehaviorData.GetCharacterBehaviour());
         }
 
         public void RemoveCharacter(CharacterBase character)
@@ -144,20 +150,20 @@ namespace RPG_001.Battle
             if (_turnCount >= 100) return;
 
             var all = _characterPositions.Values.ToList();
-            int delta = all.Min(c => c.SpeedController.CurrentAmount);
+            int delta = all.Min(c => c.BehaviorIntervalCount.CurrentAmount);
             Debug.Log($"Processing turn: {_turnCount}, advancing all by {delta}");
 
             if (delta > 0)
             {
                 foreach (var c in all)
                 {
-                    c.SpeedController.Process(delta);
-                    Debug.Log($"Character {c.Data.Name} advanced by {delta}, new speed: {c.SpeedController.CurrentAmount}");
+                    c.BehaviorIntervalCount.Process(delta);
+                    Debug.Log($"Character {c.Data.Name} advanced by {delta}, new speed: {c.BehaviorIntervalCount.CurrentAmount}");
                 }
             }
 
-            var ready = all.Where(c => c.SpeedController.IsReady)
-                           .OrderByDescending(c => c.SpeedController.CurrentAmount);
+            var ready = all.Where(c => c.BehaviorIntervalCount.IsReady)
+                           .OrderByDescending(c => c.BehaviorIntervalCount.CurrentAmount);
             _turnActors.AddRange(ready);
 
             if (_turnActors.Count > 0)
@@ -170,7 +176,7 @@ namespace RPG_001.Battle
 
         private void ExecuteTurn(CharacterBase actor, bool instantStart = false)
         {
-            actor.SpeedController.Reset();
+            actor.BehaviorIntervalCount.Reset();
             StartCoroutine(actor.TurnBehaviour(instantStart));
         }
 
@@ -179,7 +185,8 @@ namespace RPG_001.Battle
             c.gameObject.name = data.Name;
             c.Position = pos;
             statusMgr.Initialize(c, data);
-            c.Initialize(data, statusMgr, behaviour, this);
+            var spd = Instantiate(_IntervalIndicatorPrefab, RectTransformUtility.WorldToScreenPoint(_camera, _positioning.GetPosition(pos) - new Vector2(0, 0.5f)), Quaternion.identity, _canvas);
+            c.Initialize(data, statusMgr, behaviour, this, _IntervalIndicatorPrefab);
 
             if (_characterPositions.ContainsKey(pos))
             {

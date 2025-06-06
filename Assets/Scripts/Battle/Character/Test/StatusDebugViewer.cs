@@ -1,4 +1,4 @@
-using RPG_001.Battle.Characters;
+ï»¿using RPG_003.Battle.Characters;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities.Editor;
 using System.Collections.Generic;
@@ -17,12 +17,12 @@ public class StatusDebugViewer : SerializedMonoBehaviour
     [Button("Toggle Status")]
     private void ShowStatus()
     {
-        // ƒgƒOƒ‹‹@”\: •\¦ó‘Ô‚ğØ‚è‘Ö‚¦
+        // ãƒˆã‚°ãƒ«æ©Ÿèƒ½: è¡¨ç¤ºçŠ¶æ…‹ã‚’åˆ‡ã‚Šæ›¿ãˆ
         if (_showStatus)
         {
-            _statusValues.Clear();  // ‘O‰ñ‚Ì’l‚ğƒNƒŠƒA
+            _statusValues.Clear();  // å‰å›ã®å€¤ã‚’ã‚¯ãƒªã‚¢
             _showStatus = false;
-            GUIHelper.RequestRepaint();  // ƒCƒ“ƒXƒyƒNƒ^‚ğXV
+            GUIHelper.RequestRepaint();  // ã‚¤ãƒ³ã‚¹ãƒšã‚¯ã‚¿ã‚’æ›´æ–°
             return;
         }
 

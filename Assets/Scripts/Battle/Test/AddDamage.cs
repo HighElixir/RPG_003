@@ -1,8 +1,8 @@
-﻿using RPG_001.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     public class AddDamage : SerializedMonoBehaviour
     {

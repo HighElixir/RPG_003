@@ -1,4 +1,4 @@
-namespace RPG_001.Battle.Characters
+﻿namespace RPG_003.Battle.Characters
 {
     public enum StatusAttribute
     {

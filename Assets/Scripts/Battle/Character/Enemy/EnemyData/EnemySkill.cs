@@ -1,10 +1,10 @@
-﻿using RPG_001.Skills;
+﻿using RPG_003.Skills;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace RPG_001.Battle.Characters.Enemy
+namespace RPG_003.Battle.Characters.Enemy
 {
-    [CreateAssetMenu(fileName = "EnemySkill", menuName = "RPG_001/Enemy/EnemySkill", order = 1)]
+    [CreateAssetMenu(fileName = "EnemySkill", menuName = "RPG_003/Enemy/EnemySkill", order = 1)]
     public class EnemySkill : SerializedScriptableObject
     {
         public string skillName;

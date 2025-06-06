@@ -1,10 +1,11 @@
-﻿using System;
+﻿using RPG_003.Battle.Behaviour;
+using System;
 using System.Collections.Generic;
-using RPG_001.Battle.Behaviour;
+using UnityEngine;
 
-namespace RPG_001.Battle.Characters.Enemy
+namespace RPG_003.Battle.Characters.Enemy
 {
-    [Serializable]
+    [CreateAssetMenu(fileName = "SkillWithWeightData", menuName = "RPG_003/Enemy/Behavior/SkillWithWeightData", order = 1)]
     public class SkillWithWeightData : EnemyBehaviorData
     {
         public float weight = 1f; // Default weight for the action
@@ -29,7 +30,7 @@ namespace RPG_001.Battle.Characters.Enemy
             return null; // ここに到達することはないはず
         }
 
-        public override EnemyBehaviour GetCharacterBehaviour(ICharacter character)
+        public override EnemyBehaviour GetCharacterBehaviour()
         {
             return new EnemyBehaviour(this);
         }

@@ -35,11 +35,6 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: dbd2657b625c04c4bbdeecf722153a60
-    m_Address: Assets/Data/Enemy/ActionMaps/Wave1/Little Lizard.asset
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b91b0758a04e71e43a4917449c0cff90, type: 2}
   m_SchemaSet:

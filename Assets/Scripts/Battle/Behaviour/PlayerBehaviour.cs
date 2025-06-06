@@ -1,8 +1,8 @@
-﻿using RPG_001.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 using System.Collections;
 using UnityEngine;
 
-namespace RPG_001.Battle.Behaviour
+namespace RPG_003.Battle.Behaviour
 {
     public class PlayerBehaviour : ICharacterBehaviour
     {

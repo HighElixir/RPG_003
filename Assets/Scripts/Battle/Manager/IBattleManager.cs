@@ -1,9 +1,9 @@
-﻿using RPG_001.Battle.Characters;
-using RPG_001.Battle.Characters.Enemy;
+﻿using RPG_003.Battle.Characters;
+using RPG_003.Battle.Characters.Enemy;
 using System;
 using System.Collections.Generic;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     /// <summary>
     /// Interface for managing battles in the RPG game.

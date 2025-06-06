@@ -12,17 +12,26 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7696493b0147203498e041af5612181f, type: 3}
   m_Name: Little Lizard
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   enemyName: Little Lizard
   description: Cute
   icon: {fileID: 0}
   characterData:
     _name: Little Lizard
-    _hp: 50
-    _mp: 20
+    _hp: 1000
+    _mp: 500
     _str: 15
     _int: 10
     _spd: 100
     _def: 20
     _mdef: 20
     _luk: 10
-  actionMaps: {fileID: 11400000, guid: dbd2657b625c04c4bbdeecf722153a60, type: 2}
+  enemyBehaviorData: {fileID: 11400000, guid: 213671e97d2a60844be0364510bb0229, type: 2}

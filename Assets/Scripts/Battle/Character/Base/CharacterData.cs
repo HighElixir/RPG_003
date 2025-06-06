@@ -1,7 +1,7 @@
-using System;
+﻿using System;
 using UnityEngine;
 
-namespace RPG_001.Battle.Characters
+namespace RPG_003.Battle.Characters
 {
     [Serializable]
     public struct CharacterData

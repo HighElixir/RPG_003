@@ -1,9 +1,9 @@
-﻿using RPG_001.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 using UnityEngine;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     public class TargetSelecter
     {

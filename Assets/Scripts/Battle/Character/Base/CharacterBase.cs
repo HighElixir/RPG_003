@@ -1,44 +1,45 @@
-﻿using RPG_001.Battle.Behaviour;
+﻿using RPG_003.Battle.Behaviour;
 using Sirenix.OdinInspector;
 using System.Collections;
 using UnityEngine;
 using System;
 
-namespace RPG_001.Battle.Characters
+namespace RPG_003.Battle.Characters
 {
     public class CharacterBase : SerializedMonoBehaviour, ICharacter
     {
-        private CharacterData _characterData; // Reference to the character's data
-        private IStatusManager _statusManager; // Reference to the character's status manager
-        private ICharacterBehaviour _characterBehaviour; // Reference to the character's behaviour
-        private SpeedController _speedController; // Reference to the speed controller
+        private CharacterData _characterData;
+        private IStatusManager _statusManager;
+        private ICharacterBehaviour _characterBehaviour;
+        private BehaviorIntervalCount _BehaviorIntervalCount;
         private IBattleManager _battleManager;
 
-        public Action<ICharacter> OnDeath { get; set; } // Action to be called when the character dies
-        public IStatusManager StatusManager => _statusManager; // Property to access the status manager
-        public CharacterData Data => _characterData; // Property to access character data
-        public SpeedController SpeedController => _speedController; // Property to access the speed controller
-        public IBattleManager BattleManager => _battleManager; // Property to access the battle manager, assuming status manager implements IBattleManager
-        public bool IsAlive { get; private set; } = true; // Property to check if the character is alive
-        public CharacterPosition Position { get; set; } // Property to get the character's position
+        public Action<ICharacter> OnDeath { get; set; }
+
+        public IStatusManager StatusManager => _statusManager;
+        public CharacterData Data => _characterData;
+        public BehaviorIntervalCount BehaviorIntervalCount => _BehaviorIntervalCount;
+        public IBattleManager BattleManager => _battleManager;
+        public bool IsAlive { get; private set; } = true;
+        public CharacterPosition Position { get; set; }
         // Method to initialize the character
-        public void Initialize(CharacterData data, IStatusManager statusManager, ICharacterBehaviour characterBehaviour, IBattleManager battleManager)
+        public void Initialize(CharacterData data, IStatusManager statusManager, ICharacterBehaviour characterBehaviour, IBattleManager battleManager, IntervalIndicator IntervalIndicator)
         {
-            _statusManager = statusManager; // Set the status manager
-            _characterData = data; // Store the character data
-            _characterBehaviour = characterBehaviour; // Set the character's behaviour
-            _battleManager = battleManager; // Set the battle manager
-            _speedController = new SpeedController(); // Initialize the speed controller
-            InitializeClass(); // Call the method to initialize the class
+            _statusManager = statusManager;
+            _characterData = data;
+            _characterBehaviour = characterBehaviour;
+            _battleManager = battleManager;
+            _BehaviorIntervalCount = new BehaviorIntervalCount();
+            InitializeClass(IntervalIndicator);
             // Initialization logic here
             IsAlive = true;
         }
 
-        protected virtual void InitializeClass()
+        protected virtual void InitializeClass(IntervalIndicator indicator)
         {
-            _characterBehaviour.Initialize(this); // Initialize the character's behaviour with this character instance
+            _characterBehaviour.Initialize(this); 
             _statusManager.Initialize(this, _characterData);
-            _speedController.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD)); // Initialize the speed controller with the speed status
+            _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD), indicator); 
         }
         // Method to apply damage to the character
         public void TakeDamage(DamageInfo damage)

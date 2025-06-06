@@ -1,7 +1,7 @@
-﻿using RPG_001.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 using System;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     [Serializable]
     public class DamageInfo

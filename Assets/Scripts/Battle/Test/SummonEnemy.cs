@@ -1,7 +1,7 @@
 ﻿using Sirenix.OdinInspector;
 using UnityEngine;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
     public class SummonEnemy : MonoBehaviour
     {

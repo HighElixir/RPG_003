@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace RPG_001.Skills
+namespace RPG_003.Skills
 {
     [Flags]
     public enum Elements

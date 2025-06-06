@@ -1,10 +1,10 @@
 ﻿using System.Collections;
 using System.Linq;
 using UnityEngine;
-using RPG_001.Battle.Characters;
-using RPG_001.Battle.Characters.Enemy;
+using RPG_003.Battle.Characters;
+using RPG_003.Battle.Characters.Enemy;
 
-namespace RPG_001.Battle.Behaviour
+namespace RPG_003.Battle.Behaviour
 {
     public class EnemyBehaviour : ICharacterBehaviour
     {
@@ -14,7 +14,7 @@ namespace RPG_001.Battle.Behaviour
 
         public EnemyBehaviour(EnemyBehaviorData EnemyBehaviorData)
         {
-            _EnemyBehaviorData = EnemyBehaviorData; // EnemyBehaviorData: 重み付きマップ定義 :contentReference[oaicite:2]{index=2}
+            _EnemyBehaviorData = EnemyBehaviorData;
         }
 
         public void Initialize(ICharacter parent)

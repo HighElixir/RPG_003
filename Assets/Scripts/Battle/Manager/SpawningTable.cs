@@ -1,12 +1,12 @@
-﻿using RPG_001.Battle.Characters.Enemy;
+﻿using RPG_003.Battle.Characters.Enemy;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG_001.Battle
+namespace RPG_003.Battle
 {
-    [CreateAssetMenu(fileName = "SpawningTable", menuName = "RPG_001/Enemy/SpawningTable", order = 2)]
+    [CreateAssetMenu(fileName = "SpawningTable", menuName = "RPG_003/Enemy/SpawningTable", order = 2)]
     public class SpawningTable : SerializedScriptableObject
     {
         [PropertyTooltip("1ウェーブあたりの敵数")]

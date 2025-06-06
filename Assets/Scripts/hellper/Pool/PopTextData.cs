@@ -1,14 +1,14 @@
-using TMPro;
+ï»¿using TMPro;
 using UnityEngine;
 
-namespace Minigames.UI
+namespace HighElixir.Pool
 {
     public abstract class PopTextData : ScriptableObject, IPopTextData
     {
         public virtual TMP_FontAsset FontAsset { get; }
 
         /// <summary>
-        /// ”ÍˆÍŠO‚Ìidx‚Ìê‡‚ÍƒfƒtƒHƒ‹ƒg’l‚ğ•Ô‚·.
+        /// ç¯„å›²å¤–ã®idxã®å ´åˆã¯ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤ã‚’è¿”ã™.
         /// </summary>
         public abstract (string text, Color color) GetInfo(int id);
     }

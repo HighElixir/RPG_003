@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace RPG_001.Battle.Characters
+namespace RPG_003.Battle.Characters
 {
     public interface IStatusManager
     {

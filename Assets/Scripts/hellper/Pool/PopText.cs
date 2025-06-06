@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 
-namespace Minigames.UI
+namespace HighElixir.Pool
 {
     public class PopText : MonoBehaviour
     {

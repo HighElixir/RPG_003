@@ -1,7 +1,7 @@
-using System.Collections.Generic;
+ï»¿using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG_001.Battle.Characters
+namespace RPG_003.Battle.Characters
 {
     public class StatusManager : IStatusManager
     {
@@ -22,7 +22,7 @@ namespace RPG_001.Battle.Characters
             Parent = parent;
             _statusAmounts.Clear();
 
-            // Šî‘bƒXƒe[ƒ^ƒX‚ğˆêŠ‡“o˜^
+            // åŸºç¤ã‚¹ãƒ†ãƒ¼ã‚¿ã‚¹ã‚’ä¸€æ‹¬ç™»éŒ²
             AddStatus(StatusAttribute.HP, data.HP);
             AddStatus(StatusAttribute.MP, data.MP);
             AddStatus(StatusAttribute.STR, data.STR);
@@ -32,7 +32,7 @@ namespace RPG_001.Battle.Characters
             AddStatus(StatusAttribute.MDEF, data.MDEF);
             AddStatus(StatusAttribute.LUK, data.LUK);
 
-            // Œ»İHP‚ğÅ‘å’l‚Éİ’è
+            // ç¾åœ¨HPã‚’æœ€å¤§å€¤ã«è¨­å®š
             _HPAmount = _statusAmounts[StatusAttribute.HP];
             _HPAmount.currentAmount = _HPAmount.ChangedMax;
         }
@@ -82,7 +82,7 @@ namespace RPG_001.Battle.Characters
                 return;
             }
             var stat = _statusAmounts[status];
-            // Šî‘b’l‚ğ•ÏX‚·‚é‘ã‚í‚è‚ÉAtemporaryChanged ‚ğ’²®‚µ‚ÄV‚µ‚¢’l‚ğÀŒ»
+            // åŸºç¤å€¤ã‚’å¤‰æ›´ã™ã‚‹ä»£ã‚ã‚Šã«ã€temporaryChanged ã‚’èª¿æ•´ã—ã¦æ–°ã—ã„å€¤ã‚’å®Ÿç¾
             stat.SetChanged(amount - stat.defaultAmount);
         }
 
