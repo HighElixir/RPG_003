@@ -26,14 +26,14 @@ MonoBehaviour:
     - Name: skills
       Entry: 7
       Data: 0|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.Single,
-        mscorlib],[RPG_001.Battle.Characters.Enemy.EnemySkill, Assembly-CSharp]],
+        mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill, Assembly-CSharp]],
         mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 2
     - Name: 
       Entry: 7
-      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_001.Battle.Characters.Enemy.EnemySkill,
+      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill,
         Assembly-CSharp]], mscorlib
     - Name: Item1
       Entry: 4
@@ -46,7 +46,7 @@ MonoBehaviour:
       Data: 
     - Name: 
       Entry: 7
-      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_001.Battle.Characters.Enemy.EnemySkill,
+      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill,
         Assembly-CSharp]], mscorlib
     - Name: Item1
       Entry: 4

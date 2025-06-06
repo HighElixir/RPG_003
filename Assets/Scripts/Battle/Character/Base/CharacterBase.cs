@@ -17,7 +17,7 @@ namespace RPG_003.Battle.Characters
         public Action<ICharacter> OnDeath { get; set; }
 
         public IStatusManager StatusManager => _statusManager;
-        public CharacterData Data => _characterData;
+        public virtual CharacterData Data => _characterData;
         public BehaviorIntervalCount BehaviorIntervalCount => _BehaviorIntervalCount;
         public IBattleManager BattleManager => _battleManager;
         public bool IsAlive { get; private set; } = true;
@@ -37,9 +37,9 @@ namespace RPG_003.Battle.Characters
 
         protected virtual void InitializeClass(IntervalIndicator indicator)
         {
-            _characterBehaviour.Initialize(this); 
+            _characterBehaviour.Initialize(this, _battleManager);
             _statusManager.Initialize(this, _characterData);
-            _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD), indicator); 
+            _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD), indicator);
         }
         // Method to apply damage to the character
         public void TakeDamage(DamageInfo damage)

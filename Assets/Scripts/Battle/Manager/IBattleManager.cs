@@ -1,5 +1,6 @@
 ﻿using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
+using RPG_003.Battle.Characters.Player;
 using System;
 using System.Collections.Generic;
 
@@ -15,7 +16,7 @@ namespace RPG_003.Battle
         /// Starts the battle with the specified characters.
         /// </summary>
         /// <param name="characters">Array of characters participating in the battle.</param>
-        void StartBattle(List<CharacterData> players, SpawningTable table);
+        void StartBattle(List<PlayerData> players, SpawningTable table);
         /// <summary>
         /// Ends the current battle.
         /// </summary>

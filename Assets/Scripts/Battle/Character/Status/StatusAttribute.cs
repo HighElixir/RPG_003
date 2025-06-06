@@ -12,5 +12,7 @@
         MDEF,
         LUK,
         HATE,
+        MaxHP,
+        MaxMP,
     }
 }

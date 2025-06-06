@@ -5,7 +5,7 @@ namespace RPG_003.Battle.Behaviour
 {
     public interface ICharacterBehaviour
     {
-        void Initialize(ICharacter parent);
+        void Initialize(ICharacter parent, IBattleManager battleManager);
         IEnumerator TurnBehaviour(bool instant = false);
 
         void OnDeath(ICharacter character)

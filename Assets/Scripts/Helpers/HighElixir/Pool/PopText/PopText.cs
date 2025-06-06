@@ -41,7 +41,7 @@ namespace HighElixir.Pool
                 enabled = false;
                 return;
             }
-            _pool = new Pool<TextMeshProUGUI>(_uGUI, 5, _canvasRect, true);
+            _pool = new Pool<TextMeshProUGUI>(_uGUI, 5, null, _canvasRect, true);
             _easeMethod += Easing.GetEasingMethod(_ease);
         }
 

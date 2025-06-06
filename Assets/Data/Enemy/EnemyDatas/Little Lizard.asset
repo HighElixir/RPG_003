@@ -30,7 +30,7 @@ MonoBehaviour:
     _mp: 500
     _str: 15
     _int: 10
-    _spd: 100
+    _spd: 75
     _def: 20
     _mdef: 20
     _luk: 10

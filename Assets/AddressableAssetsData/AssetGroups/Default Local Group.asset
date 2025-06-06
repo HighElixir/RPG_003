@@ -15,6 +15,11 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 4ecb60d74dcdc3149ac93c5ef4493ff5
   m_SerializeEntries:
+  - m_GUID: 13a74c7cd92d07b438d8683f74e5c3d3
+    m_Address: Assets/Prefab/SkillButton.prefab
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1b9a015eabedb144381a7ba9f5f588a7
     m_Address: Assets/Data/Enemy/EnemyDatas/Little Lizard.asset
     m_ReadOnly: 0

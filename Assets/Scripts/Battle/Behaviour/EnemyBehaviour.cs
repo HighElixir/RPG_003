@@ -17,10 +17,10 @@ namespace RPG_003.Battle.Behaviour
             _EnemyBehaviorData = EnemyBehaviorData;
         }
 
-        public void Initialize(ICharacter parent)
+        public void Initialize(ICharacter parent, IBattleManager battleManager)
         {
             _parent = parent;
-            _targetSelecter = new TargetSelecter(_parent.BattleManager);
+            _targetSelecter = new TargetSelecter(battleManager);
             parent.OnDeath += OnDeath;
         }
 
