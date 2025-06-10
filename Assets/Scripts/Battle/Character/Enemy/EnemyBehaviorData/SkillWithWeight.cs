@@ -1,5 +1,4 @@
 ﻿using RPG_003.Battle.Behaviour;
-using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -30,9 +29,9 @@ namespace RPG_003.Battle.Characters.Enemy
             return null; // ここに到達することはないはず
         }
 
-        public override EnemyBehaviour GetCharacterBehaviour()
+        public override AIBehavior GetCharacterBehaviour()
         {
-            return new EnemyBehaviour(this);
+            return new AIBehavior(this);
         }
 
         private void Awake()

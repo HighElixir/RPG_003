@@ -8,7 +8,7 @@ namespace RPG_003.Battle
     {
         [SerializeField] private Image image;
 
-        public void SetIndicator(float current, float max, float duration = 0.2f)
+        public void SetAmount(float current, float max, float duration = 0.2f)
         {
             if (max <= 0f || image == null) return;
 

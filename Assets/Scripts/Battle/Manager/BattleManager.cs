@@ -1,82 +1,53 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEngine;
-using Sirenix.OdinInspector;
-using RPG_003.Battle.Behaviour;
+﻿using RPG_003.Battle.Behaviour;
 using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
 using RPG_003.Battle.Characters.Player;
+using Sirenix.OdinInspector;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace RPG_003.Battle
 {
-    public class BattleManager : SerializedMonoBehaviour, IBattleManager
+    public class BattleManager : SerializedMonoBehaviour
     {
-        //=== Serialized Fields ===
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private Camera _camera;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private IntervalIndicator _IntervalIndicatorPrefab;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private CharacterBase _characterBase;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private SelectTarget _selectTarget;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private Player _player;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private Positioning _positioning;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField] private Transform _canvas;
-        [BoxGroup("Battle Manager Settings")]
-        [SerializeField, ReadOnly] private Dictionary<CharacterPosition, CharacterBase> _characterPositions = new Dictionary<CharacterPosition, CharacterBase>();
+        //=== Reference ===
+        [BoxGroup("Reference"), SerializeField] private Camera _camera;
+        [BoxGroup("Reference"), SerializeField] private SkillButtonManager _skillButtonManager;
+        [BoxGroup("Reference"), SerializeField] private CharacterBase _characterBase;
+        [BoxGroup("Reference"), SerializeField] private SelectTarget _selectTarget;
+        [BoxGroup("Reference"), SerializeField] private Player _player;
+        [BoxGroup("Reference"), SerializeField] private CharacterTransformHalper _characterTransformHalper;
+        [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
 
-        //=== Non-Serialized Fields ===
-        private Transform _charactersContainer;
-
-        //=== 分割したクラスの参照 ===
         private PositionManager _posManager;
         private CharacterInitializer _charInitializer;
         private TurnManager _turnManager;
 
+        // === Debug ===
+        [SerializeField, ReadOnly] private IReadOnlyDictionary<CharacterPosition, CharacterBase> _characterPositions;
+
+        //=== Non-Serialized Fields ===
+        private Transform _charactersContainer;
+
 #if UNITY_EDITOR
         private bool _allowNextTurn = false;
-        [SerializeField, PropertyTooltip("True => バトルマネージャにボタンが表示され、それを押すことでターンを進行するようになる")] private bool _enebleUseTurnManage = true;
+        [SerializeField, Tooltip("True => バトルマネージャにボタンが表示され、それを押すことでターンを進行するようになる")]
+        private bool _enebleUseTurnManage = true;
 #endif
 
         //=== Properties ===
-        private IStatusManager Gene => new StatusManager();
         public Action<CharacterBase> OnCharacterRemoved { get; set; }
         public SelectTarget SelectTarget => _selectTarget;
-
-        //=== Unity Lifecycle ===
-        private void Awake()
-        {
-            _charactersContainer = new GameObject("CharactersContainer").transform;
-
-            // 分割クラスの初期化
-            _posManager = new PositionManager(_characterPositions);
-            _charInitializer = new CharacterInitializer(
-                _camera,
-                _IntervalIndicatorPrefab,
-                _posManager,
-                _positioning,
-                _canvas,
-                _charactersContainer,
-                this
-            );
-            _turnManager = new TurnManager(_characterPositions, this);
-            _turnManager.OnExecuteTurn += (character) =>
-            {
-                // コルーチン実行を登録
-                StartCoroutine(character.TurnBehaviour());
-            };
-        }
+        public SkillButtonManager SkillButtonManager => _skillButtonManager;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
         {
-            _characterPositions.Clear();
+            _posManager.Clear();
             // ターンキューもクリア（内部的に新規 TurnManager を替えるか、リセット処理を追加しても OK）
-            _turnManager = new TurnManager(_characterPositions, this);
+            _turnManager.Reset();
             _turnManager.OnExecuteTurn += (character) =>
             {
                 StartCoroutine(character.TurnBehaviour());
@@ -85,30 +56,12 @@ namespace RPG_003.Battle
             for (int i = 0; i < players.Count && i < 4; i++)
             {
                 var c = Instantiate(_player, Vector3.zero, Quaternion.identity);
-                c.SetPlayerData(players[i]);
-
-                var pos = _posManager.ConvertIndexToPosition(i);
-                _charInitializer.InitCharacter(c, Gene, players[i].CharacterData, pos, new PlayerBehaviour());
-                // BattleManager をセットし直し
-                c.Initialize(
-                    players[i].CharacterData,
-                    Gene,
-                    new PlayerBehaviour(),
-                    this,
-                    _IntervalIndicatorPrefab
-                );
-
-                Debug.Log($"Starting battle with player: {players[i].CharacterData.Name} at position: {pos}");
-                _characterPositions[pos] = c;
-                _positioning.SetPosition(c, pos);
+                _charInitializer.InitPlayer(c, players[i], players[i].CharacterData, new PlayerBehaviour());
+                RegisterCharacter((CharacterPosition)i, c);
             }
 
             for (int i = 0; i < 5; i++)
-            {
-                var enemyData = table.GetSpawnData(0f).GetEnemyData();
-                var pos = _posManager.ConvertIndexToPosition(i + 4);
-                SummonEnemy(enemyData, pos);
-            }
+                SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
 
             ProcessTurn(); // BattleManager のラッパー
         }
@@ -121,42 +74,43 @@ namespace RPG_003.Battle
         public void FinishTurn(CharacterBase actor)
         {
             // BattleManager が呼ばれたら、TurnManager に任せる
+#if UNITY_EDITOR
+            _allowNextTurn = true;
+#else
             _turnManager.FinishTurn();
+#endif
         }
 
-        public void SummonEnemy(EnemyData enemyData, CharacterPosition position)
+        // デフォルトの場合、空いてる場所にスポーンさせる
+        public void SummonEnemy(EnemyData enemyData, CharacterPosition characterPosition = CharacterPosition.None)
         {
-            var enemyGO = Instantiate(_characterBase, Vector3.zero, Quaternion.identity);
-            var enemy = enemyGO.GetComponent<CharacterBase>();
-
-            _charInitializer.InitCharacter(enemy, Gene, enemyData.characterData, position, enemyData.enemyBehaviorData.GetCharacterBehaviour());
-            // BattleManager を渡す
-            enemy.Initialize(
-                enemyData.characterData,
-                Gene,
-                enemyData.enemyBehaviorData.GetCharacterBehaviour(),
-                this,
-                _IntervalIndicatorPrefab
-            );
-
-            _characterPositions[position] = enemy;
-            enemy.transform.SetParent(_charactersContainer);
-            _positioning.SetPosition(enemy, position);
+            var c = Instantiate(_characterBase, Vector3.zero, Quaternion.identity);
+            _charInitializer.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
+            if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition))
+            {
+                Debug.Log("モンスターをスポーンさせるために必要なスペースがありません");
+                return;
+            }
+            if (enemyData.icon != null)
+                c.SetIcon(enemyData.icon);
+            RegisterCharacter(characterPosition, c);
+        }
+        public void RegisterCharacter(CharacterPosition position, CharacterBase character)
+        {
+            var indicator = _indicatorFactory.Create(_characterTransformHalper.GetPosition(position));
+            character.BehaviorIntervalCount.SetIndicator(indicator);
+            _posManager.RegisterCharacter(position, character);
+            character.transform.SetParent(_charactersContainer);
+            _characterTransformHalper.SetPosition(character, position);
+            Debug.Log($"Starting battle with player: {character.Data.Name} at position: {position}");
         }
 
         public void RemoveCharacter(CharacterBase character)
         {
-            if (character == null || !_characterPositions.ContainsValue(character)) return;
-
             // PositionManager で位置削除
-            _posManager.RemovePosition(character);
-
+            _posManager.RemoveCharacter(character);
+            _turnManager.RemoveCharacter(character);
             OnCharacterRemoved?.Invoke(character);
-            // ターンキューにも残っていたら削除
-            // TurnManager 内部の _turnActors に直接アクセスできないから、FinishTurn の後処理を入れるか、
-            // もしくは TurnManager に専用メソッドを作っても OK。ここでは簡易的に FinishTurn 呼んでおく。
-            // → ちゃんと消したいなら TurnManager.RemoveFromQueue(character) を実装してもいい。
-            _positioning.SetPosition(character, CharacterPosition.None);
             StopCoroutine(character.TurnBehaviour());
             Destroy(character.gameObject);
         }
@@ -176,7 +130,7 @@ namespace RPG_003.Battle
             return _posManager.GetCharacters();
         }
 
-        public Dictionary<CharacterPosition, CharacterBase> GetCharacterMap()
+        public IReadOnlyDictionary<CharacterPosition, CharacterBase> GetCharacterMap()
         {
             return _posManager.GetCharacterMap();
         }
@@ -187,24 +141,41 @@ namespace RPG_003.Battle
         }
 
 #if UNITY_EDITOR
-        [SerializeField, HideIf("_allowNextTurn"), ShowIf("_enebleUseTurnManage"), Button("TurnBehavior")]
+        [ShowIf("_allowNextTurn","_enebleUseTurnManage"), Button("TurnBehavior")]
         public void Next()
         {
-            _allowNextTurn = true;
+            _allowNextTurn = false;
             Debug.Log("Next turn triggered in editor.");
-            ProcessTurn();
+            _turnManager.ProcessTurn();
         }
 #endif
 
         //=== Private Methods ===
-        private void ProcessTurn()
+        public void ProcessTurn()
         {
 #if UNITY_EDITOR
-            if (_enebleUseTurnManage && !_allowNextTurn)
-                return;
-            _allowNextTurn = false;
-#endif
+            _allowNextTurn = true;
+            if (!_enebleUseTurnManage)
+                _turnManager.ProcessTurn();
+#else
             _turnManager.ProcessTurn();
+#endif
+        }
+
+        //=== Unity Lifecycle ===
+        private void Awake()
+        {
+            _charactersContainer = new GameObject("CharactersContainer").transform;
+
+            // 分割クラスの初期化
+            _posManager = new PositionManager(out _characterPositions);
+            _charInitializer = new CharacterInitializer(this);
+            _turnManager = new TurnManager(this);
+            _turnManager.OnExecuteTurn += (character) =>
+            {
+                // コルーチン実行を登録
+                StartCoroutine(character.TurnBehaviour());
+            };
         }
     }
 }

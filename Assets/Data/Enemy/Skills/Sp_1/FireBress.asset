@@ -22,9 +22,9 @@ MonoBehaviour:
     PrefabModifications: []
     SerializationNodes: []
   skillName: FireBress
-  weight: 1
   elements: 1
   skillType: 2
+  target: 1
   damage_with_str: 0
   damage_with_int: 0.8
   heal_with_int: 0

@@ -6,7 +6,7 @@ namespace RPG_003.Battle.Characters
     public class StatusManager : IStatusManager
     {
         private readonly Dictionary<StatusAttribute, StatusAmount> _statusAmounts = new();
-        public Dictionary<StatusAttribute, StatusAmount> StatusPair => _statusAmounts;
+        public IReadOnlyDictionary<StatusAttribute, StatusAmount> StatusPair => _statusAmounts;
         public ICharacter Parent { get; set; }
 
         private StatusAmount _HPAmount;
@@ -142,6 +142,11 @@ namespace RPG_003.Battle.Characters
             Debug.Log($"Current HP: {HP}, Max HP: {MaxHP}");
             if (HP <= 0)
                 Parent.NotifyDeath();
+        }
+
+        public StatusManager(ICharacter parent, CharacterData data)
+        {
+            Initialize(parent, data);
         }
     }
 }

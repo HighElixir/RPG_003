@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Characters;
-using RPG_003.Battle.Characters.Player;
+﻿using RPG_003.Battle.Characters.Player;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;

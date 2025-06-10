@@ -1,4 +1,5 @@
-﻿using RPG_003.Skills;
+﻿using RPG_003.Battle.Factions;
+using RPG_003.Skills;
 using Sirenix.OdinInspector;
 using UnityEngine;
 
@@ -10,6 +11,7 @@ namespace RPG_003.Battle.Characters.Enemy
         public string skillName;
         public Elements elements;
         public AmountAttribute skillType;
+        public Faction target;
         [Min(0)] public float damage_with_str; // 1f = 100%
         [Min(0)] public float damage_with_int; // 1f = 100%
         [Min(0)] public float heal_with_int; // 1f = 100%

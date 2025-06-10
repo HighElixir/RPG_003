@@ -1,7 +1,7 @@
-﻿using System;
+﻿using RPG_003.Battle.Characters;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using RPG_003.Battle.Characters;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -11,20 +11,23 @@ namespace RPG_003.Battle
     /// </summary>
     public class TurnManager
     {
-        private Dictionary<CharacterPosition, CharacterBase> _characterPositions;
+        // === Reference ===
+        private BattleManager _parent;
+
+        // === Data ===
         private List<CharacterBase> _turnActors = new List<CharacterBase>();
         private int _turnCount = 0;
-        private MonoBehaviour _coroutineHost; // StartCoroutine を持ってる BattleManager を渡す想定
 
+        // === Action & Callback ===
         public Action<CharacterBase> OnExecuteTurn;
 
-        public TurnManager(
-            Dictionary<CharacterPosition, CharacterBase> characterPositions,
-            MonoBehaviour coroutineHost)
+        // === Constructor ===
+        public TurnManager(BattleManager parent)
         {
-            _characterPositions = characterPositions;
-            _coroutineHost = coroutineHost;
+            _parent = parent;
         }
+
+        // === Public Methode ===
 
         /// <summary>
         /// BattleManager.ProcessTurn で呼ばれる。
@@ -33,7 +36,7 @@ namespace RPG_003.Battle
         {
             if (_turnCount >= 100) return;
 
-            var all = _characterPositions.Values.ToList();
+            var all = _parent.GetCharacters();
             if (all.Count == 0) return;
 
             int delta = all.Min(c => c.BehaviorIntervalCount.CurrentAmount);
@@ -44,12 +47,12 @@ namespace RPG_003.Battle
                 foreach (var c in all)
                 {
                     c.BehaviorIntervalCount.Process(delta);
-                    Debug.Log($"[TurnManager] Character {c.Data.Name} advanced by {delta}, new speed: {c.BehaviorIntervalCount.CurrentAmount}");
+                    Debug.Log($"[TurnManager] Character {c.Data.Name}'s new intervalCount is: {c.BehaviorIntervalCount.CurrentAmount}.");
                 }
             }
 
             var ready = all.Where(c => c.BehaviorIntervalCount.IsReady)
-                           .OrderByDescending(c => c.BehaviorIntervalCount.CurrentAmount);
+                           .OrderByDescending(c => c.BehaviorIntervalCount.Speed);
             _turnActors.AddRange(ready);
 
             if (_turnActors.Count > 0)
@@ -74,10 +77,23 @@ namespace RPG_003.Battle
             else
             {
                 _turnCount++;
+#if !UNITY_EDITOR
                 ProcessTurn();
+#endif
             }
         }
+        public void RemoveCharacter(CharacterBase character)
+        {
+            _parent.StopCoroutine(character.TurnBehaviour());
+            _turnActors.Remove(character);
+        }
 
+        public void Reset()
+        {
+            _turnActors.Clear();
+            _turnCount = 0;
+        }
+        // === PrivateMethode ===
         private void ExecuteTurn(CharacterBase actor, bool instantStart = false)
         {
             actor.BehaviorIntervalCount.Reset();

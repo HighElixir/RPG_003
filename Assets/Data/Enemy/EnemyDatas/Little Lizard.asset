@@ -23,7 +23,7 @@ MonoBehaviour:
     SerializationNodes: []
   enemyName: Little Lizard
   description: Cute
-  icon: {fileID: 0}
+  icon: {fileID: 21300000, guid: 109bacc3a598fc949b5f41dd31e7eba2, type: 3}
   characterData:
     _name: Little Lizard
     _hp: 1000

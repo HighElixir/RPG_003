@@ -1,7 +1,6 @@
 ﻿
 using RPG_003.Battle.Skills;
 using System.Collections.Generic;
-using UnityEditor.U2D.Animation;
 
 namespace RPG_003.Battle.Characters.Player
 {
@@ -11,7 +10,7 @@ namespace RPG_003.Battle.Characters.Player
         public List<Skill> Skills { get; private set; } = new List<Skill>();
         public override CharacterData Data => PlayerData.CharacterData;
 
-        public void SetPlayerData(PlayerData playerData) 
+        public void SetPlayerData(PlayerData playerData)
         {
             PlayerData = playerData;
             Skills.Clear();

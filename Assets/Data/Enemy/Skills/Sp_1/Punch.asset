@@ -12,10 +12,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c13acdd8f87d4f945b8fd3a126521d05, type: 3}
   m_Name: Punch
   m_EditorClassIdentifier: 
+  serializationData:
+    SerializedFormat: 2
+    SerializedBytes: 
+    ReferencedUnityObjects: []
+    SerializedBytesString: 
+    Prefab: {fileID: 0}
+    PrefabModificationsReferencedUnityObjects: []
+    PrefabModifications: []
+    SerializationNodes: []
   skillName: Punch
-  weight: 1
   elements: 0
   skillType: 1
+  target: 1
   damage_with_str: 1
   damage_with_int: 0
   heal_with_int: 0

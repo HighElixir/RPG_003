@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace RPG_003.Battle
 {
-    // StatusManagerより後に初期化
+    // StatusManagerより後に初期化(StatusAmountが必要なため)
     public class BehaviorIntervalCount
     {
         private readonly float maxSpeed = 500f;
@@ -22,7 +22,7 @@ namespace RPG_003.Battle
             get
             {
                 var speed = _speedAmount.ChangedMax;
-                if (speed >= maxSpeed)speed = maxSpeed;
+                if (speed >= maxSpeed) speed = maxSpeed;
 
                 float t = (maxSpeed - speed) / scale;
                 // ベキ乗してスケールをかける
@@ -30,11 +30,13 @@ namespace RPG_003.Battle
             }
         }
 
+        public float Speed => _speedAmount.ChangedMax;
+
         public void Process(int amount)
         {
             _currentAmount = Mathf.Max(0, _currentAmount - amount);
-            _indicator?.SetIndicator(Max - _currentAmount, Max);
-            if (_currentAmount <= 0)IsReady = true;
+            _indicator?.SetAmount(Max - _currentAmount, Max);
+            if (_currentAmount <= 0) IsReady = true;
             else IsReady = false;
         }
 
@@ -42,14 +44,18 @@ namespace RPG_003.Battle
         {
             _currentAmount = Max;
             IsReady = false;
-            _indicator?.SetIndicator(0, Max);
+            _indicator?.SetAmount(0, Max);
         }
-        public void Initialize(StatusAmount speedAmount, IntervalIndicator indicator)
+        public void Initialize(StatusAmount speedAmount)
         {
             _speedAmount = speedAmount;
-            _indicator = indicator;
             _currentAmount = Max;
-            _indicator.SetIndicator(0, Max);
+        }
+
+        public void SetIndicator(IntervalIndicator intervalIndicator)
+        {
+            _indicator = intervalIndicator;
+            _indicator.SetAmount(0, Max);
         }
     }
 }

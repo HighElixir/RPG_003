@@ -5,7 +5,6 @@
     using RPG_003.Skills;
     using System;
     using System.Collections.Generic;
-    using Unity.VisualScripting;
     using UnityEngine;
 
     /// <summary>
@@ -19,7 +18,7 @@
         public string skillName;
         public SkillData skillData;
 
-        public void Execute(List<ICharacter> targets)
+        public void Execute(List<CharacterBase> targets)
         {
             foreach (var target in targets)
             {
@@ -32,7 +31,7 @@
             }
         }
 
-        public DamageInfo MakeDamageInfo(DamageData data, ICharacter target, bool isMagic, Elements element)
+        public DamageInfo MakeDamageInfo(DamageData data, CharacterBase target, bool isMagic, Elements element)
         {
             var d = new DamageInfo(parent, target, 0);
             float damage = data.fixedAmount;

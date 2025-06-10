@@ -6,7 +6,7 @@ namespace HighElixir.FollowObject
     {
         protected Transform targetTransform;
         protected Vector3 targetPosition;
-        [SerializeField]protected Vector3 offset;
+        [SerializeField] protected Vector3 offset;
         protected bool UseTargetPosition => targetTransform != null;
         public bool Enable { get; set; } = true;
         public void SetTarget(Transform target, Vector3 offset = default)

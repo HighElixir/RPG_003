@@ -1,36 +1,39 @@
-﻿using UnityEngine;
+﻿using HighElixir.Pool;
 using RPG_003.Battle.Skills;
-using UnityEngine.UI;
 using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using System;
-using HighElixir.Pool;
+using System.Collections.Generic;
+using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.UI;
 
 namespace RPG_003.Battle
 {
-    public class MakeSkillButton : MonoBehaviour
+    public class SkillButtonManager : MonoBehaviour, IActionUI
     {
-        // Settings And References
-        [BoxGroup("Settings"), SerializeField] private SkillButton skillButtonPrefab;
+        // === Settings And References ===
+        [BoxGroup("Reference"), SerializeField] private SkillButton skillButtonPrefab;
         [PropertyTooltip("シーンビュー上にて配置されている想定")]
-        [BoxGroup("Settings"), SerializeField] private Button _confirm;
+        [BoxGroup("Reference"), SerializeField] private Button _confirm;
         [PropertyTooltip("シーンビュー上にて配置されている想定")]
-        [BoxGroup("Settings"), SerializeField] private Button _cancel;
-        [BoxGroup("Settings"), SerializeField] private Transform _canvas;
-        [BoxGroup("Settings"), SerializeField] private Transform _container;
+        [BoxGroup("Reference"), SerializeField] private Button _cancel;
+        [BoxGroup("Reference"), SerializeField] private Transform _container;
 
-        // InputAction
+        // === InputAction ===
         [BoxGroup("InputActionAsset"), SerializeField] private InputActionAsset _asset;
-        [BoxGroup("InputActionAsset"), SerializeField] private string _mapName;
+        [BoxGroup("InputActionAsset"), SerializeField] private string _mapName = "UI";
+        [BoxGroup("InputActionAsset"), SerializeField] private string _actionName = "Navigate";
         private InputActionMap _onUI;
         private InputAction _navigate;
-        //
+
+        // === Date ===
         private SkillButton _chosen;
         private Action<Skill> _onConfirmCallback;
         private Pool<SkillButton> _skillButtonPool;
         private List<SkillButton> _skillButtons = new List<SkillButton>();
         private int _idx = 0;
+
+        // === Public Methodes ===
         public void CreateButtons(List<Skill> skills, Action<Skill> onConfirmCallback)
         {
             _onConfirmCallback = onConfirmCallback;
@@ -43,11 +46,16 @@ namespace RPG_003.Battle
             SetSkill(_skillButtons[0]);
             _idx = 0;
             ShowButtons();
+            EnableAction();
         }
         public void CreateSkillButton(Skill skillData)
         {
             var skillButton = _skillButtonPool?.Get();
-            _skillButtons.Add(skillButton.Setup(skillData, SetSkill));
+            if (skillButton == null) 
+            {
+                Debug.LogError("skillData is null");
+            }
+            _skillButtons.Add(skillButton.Setup(skillData, SetSkill) as SkillButton);
         }
 
         public void ReleaseButtons()
@@ -58,8 +66,21 @@ namespace RPG_003.Battle
                 _skillButtonPool?.Release(child.GetComponent<SkillButton>());
             }
             HideButtons();
+            DisableAction();
             _skillButtons.Clear();
         }
+
+        public void EnableAction()
+        {
+            if (!_onUI.enabled) _onUI.Enable();
+            _navigate.performed += OnNavigate;
+        }
+        public void DisableAction()
+        {
+            _navigate.performed -= OnNavigate;
+        }
+
+        // === Private Methodes ===
         private void ShowButtons()
         {
             _confirm.onClick.AddListener(OnConfirm);
@@ -77,48 +98,51 @@ namespace RPG_003.Battle
             _confirm?.gameObject.SetActive(isShow);
             _cancel?.gameObject.SetActive(isShow);
         }
-        private void SetSkill(SkillButton skill)
+        private void SetSkill(ISkillSelecter skill)
         {
-            _chosen?.SetDefaultColor();
-            _chosen = skill;
-            _chosen.SetSelectedColor();
+            var before = _chosen;
+            _chosen = skill as SkillButton;
+            _chosen.SetSelectingState(true);
+            before?.SetSelectingState(false);
         }
         private void ResetSkill()
         {
-            _chosen?.SetDefaultColor();
+            _chosen?.SetSelectingState(false);
             _chosen = null;
         }
         private void OnConfirm()
         {
             if (_chosen == null) return;
             ReleaseButtons();
-            _onConfirmCallback?.Invoke(_chosen.GetSkill());
+            _onConfirmCallback?.Invoke(_chosen.Skill);
             ResetSkill();
+            DisableAction();
         }
         private void OnCancel()
         {
-            ResetSkill();
+                ResetSkill();
         }
         // InputAction
         private void OnNavigate(InputAction.CallbackContext callbackContext)
         {
             var v = callbackContext.ReadValue<Vector2>();
+            if (v.x == 0) return;
             if (v == Vector2.right)
             {
                 _idx--;
                 if (_idx < 0)
                     _idx = _skillButtons.Count - 1;
-                SetSkill(_skillButtons[_idx]);
+
             }
             else if (v == Vector2.left)
             {
                 _idx++;
                 if (_idx >= _skillButtons.Count)
                     _idx = 0;
-                SetSkill(_skillButtons[_idx]);
             }
+            SetSkill(_skillButtons[_idx]);
         }
-        // lifecycle
+        // === Unity Lifecycle ===
         private void Awake()
         {
             if (_asset)
@@ -139,16 +163,12 @@ namespace RPG_003.Battle
             }
             _chosen = null;
 
-            _skillButtonPool = new Pool<SkillButton>(skillButtonPrefab, 3, _container, _canvas, true);
+            _skillButtonPool = new Pool<SkillButton>(skillButtonPrefab, 3, _container, true);
         }
-        private void OnEnable()
-        {
-            if (!_onUI.enabled) _onUI.Enable();
-            _navigate.performed += OnNavigate;
-        }
+
         private void OnDisable()
         {
-            _navigate.performed -= OnNavigate;
+            DisableAction();
         }
     }
 }

@@ -18,7 +18,7 @@ namespace HighElixir.Pool
         [Header("Reference")]
         [SerializeField] private TextMeshProUGUI _uGUI;
         [SerializeField] private PopTextData _popTextData;
-        [SerializeField] private RectTransform _canvasRect;
+        [SerializeField] private RectTransform _container;
         [SerializeField] private Camera _camera;
 
         [Header("Data")]
@@ -35,13 +35,13 @@ namespace HighElixir.Pool
         private void Awake()
         {
             // Nullチェック
-            if (!_uGUI || _popTextData == null || !_canvasRect || !_camera)
+            if (!_uGUI || _popTextData == null || !_container || !_camera)
             {
                 Debug.LogError("Inspector設定不足！", this);
                 enabled = false;
                 return;
             }
-            _pool = new Pool<TextMeshProUGUI>(_uGUI, 5, null, _canvasRect, true);
+            _pool = new Pool<TextMeshProUGUI>(_uGUI, 5, _container, true);
             _easeMethod += Easing.GetEasingMethod(_ease);
         }
 

@@ -12,7 +12,7 @@ namespace RPG_003.Battle
 {
     // シーンビューでハンドルを表示するために ExecuteInEditMode を追加
     [ExecuteInEditMode]
-    public class Positioning : SerializedMonoBehaviour
+    public class CharacterTransformHalper : SerializedMonoBehaviour
     {
         // インスペクタに表示できる辞書（Odin がシリアライズをサポートしてる）
         [SerializeField]

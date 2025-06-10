@@ -14,7 +14,7 @@ namespace RPG_003.Battle
         public bool IsDodged { get; set; }
         public bool IsBlocked { get; set; }
         public bool IsResisted { get; set; }
-        public DamageInfo(ICharacter source, ICharacter target,float damage, bool isCritical = false, bool isMissed = false,
+        public DamageInfo(ICharacter source, ICharacter target, float damage, bool isCritical = false, bool isMissed = false,
                           bool isDodged = false, bool isBlocked = false,
                           bool isResisted = false)
         {

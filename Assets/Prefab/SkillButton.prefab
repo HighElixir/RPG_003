@@ -136,7 +136,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _button: {fileID: 1715777831470918907}
   _buttonText: {fileID: 3788459772642212053}
-  _selectedColor: {r: 0, g: 0, b: 0, a: 1}
+  _data:
+    selectedColor: {r: 0.5245282, g: 0.5245282, b: 0.5245282, a: 1}
+    defaultColor: {r: 1, g: 1, b: 1, a: 1}
   _image: {fileID: 8123380955160607702}
   _skill:
     parent: {fileID: 0}

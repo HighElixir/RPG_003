@@ -1,26 +1,25 @@
-﻿using System.Collections;
-using System.Linq;
-using UnityEngine;
-using RPG_003.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
+using System.Collections;
+using UnityEngine;
 
 namespace RPG_003.Battle.Behaviour
 {
-    public class EnemyBehaviour : ICharacterBehaviour
+    public class AIBehavior : ICharacterBehaviour
     {
         private readonly EnemyBehaviorData _EnemyBehaviorData;
         private ICharacter _parent;
-        private TargetSelecter _targetSelecter;
+        private TargetSelectHelper _TargetSelectHelper;
 
-        public EnemyBehaviour(EnemyBehaviorData EnemyBehaviorData)
+        public AIBehavior(EnemyBehaviorData EnemyBehaviorData)
         {
             _EnemyBehaviorData = EnemyBehaviorData;
         }
 
-        public void Initialize(ICharacter parent, IBattleManager battleManager)
+        public void Initialize(ICharacter parent, BattleManager battleManager)
         {
             _parent = parent;
-            _targetSelecter = new TargetSelecter(battleManager);
+            _TargetSelectHelper = new TargetSelectHelper(battleManager);
             parent.OnDeath += OnDeath;
         }
 
@@ -33,7 +32,7 @@ namespace RPG_003.Battle.Behaviour
             var chosenSkill = _EnemyBehaviorData.GetSkill();
 
             // --- 3. ターゲット選択 ---
-            var target = _targetSelecter.SelectRandomTarget(1);
+            var target = _TargetSelectHelper.SelectRandomTarget(chosenSkill.target);
             Debug.Log($"{_parent.Data.Name} のターン: {chosenSkill.skillName} を使用。ターゲット: {target.Data.Name}");
             yield return new WaitForSeconds(2.5f);
 
@@ -41,7 +40,7 @@ namespace RPG_003.Battle.Behaviour
             var str = _parent.StatusManager.GetStatusAmount(StatusAttribute.STR).ChangedMax;
             var intel = _parent.StatusManager.GetStatusAmount(StatusAttribute.INT).ChangedMax;
             float dmg = str * chosenSkill.damage_with_str + intel * chosenSkill.damage_with_int;
-            target.TakeDamage(new DamageInfo(_parent, target,dmg));
+            target.TakeDamage(new DamageInfo(_parent, target, dmg));
         }
 
         public void OnDeath(ICharacter dead)
