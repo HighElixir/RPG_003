@@ -4,16 +4,16 @@ using UnityEngine;
 
 namespace RPG_003.Battle
 {
-    public interface ISkillSelecter
+    public interface ISkillSelectorComponent
     {
         Skill Skill { get; }
-        ISkillSelecter Setup(Skill item, Action<ISkillSelecter> onClick);
-        void SetDecorationData(SkillSelecterData data);
+        ISkillSelectorComponent Setup(Skill item, Action<ISkillSelectorComponent> onClick);
+        void SetDecorationData(SkillSelectorData data);
         void SetSelectingState(bool selected);
     }
 
     [Serializable]
-    public struct SkillSelecterData
+    public struct SkillSelectorData
     {
         public Color selectedColor;
         public Color defaultColor;

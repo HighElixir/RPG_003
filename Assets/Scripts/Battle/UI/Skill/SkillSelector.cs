@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace RPG_003.Battle
 {
-    public class SkillButtonManager : MonoBehaviour, IActionUI
+    public class SkillSelector : MonoBehaviour, IActionUI
     {
         // === Settings And References ===
         [BoxGroup("Reference"), SerializeField] private SkillButton skillButtonPrefab;
@@ -63,7 +63,8 @@ namespace RPG_003.Battle
             if (_container.childCount == 0) return;
             foreach (Transform child in _container)
             {
-                _skillButtonPool?.Release(child.GetComponent<SkillButton>());
+                if (child.TryGetComponent<SkillButton>(out var b))
+                    _skillButtonPool?.Release(b);
             }
             HideButtons();
             DisableAction();
@@ -98,7 +99,7 @@ namespace RPG_003.Battle
             _confirm?.gameObject.SetActive(isShow);
             _cancel?.gameObject.SetActive(isShow);
         }
-        private void SetSkill(ISkillSelecter skill)
+        private void SetSkill(ISkillSelectorComponent skill)
         {
             var before = _chosen;
             _chosen = skill as SkillButton;
@@ -148,7 +149,7 @@ namespace RPG_003.Battle
             if (_asset)
             {
                 _onUI = _asset.FindActionMap(_mapName);
-                _navigate = _onUI.FindAction("Navigate");
+                _navigate = _onUI.FindAction(_actionName);
             }
         }
         private void Start()
@@ -163,7 +164,7 @@ namespace RPG_003.Battle
             }
             _chosen = null;
 
-            _skillButtonPool = new Pool<SkillButton>(skillButtonPrefab, 3, _container, true);
+            _skillButtonPool = new Pool<SkillButton>(skillButtonPrefab, 5, _container, true);
         }
 
         private void OnDisable()

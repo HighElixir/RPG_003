@@ -13,6 +13,7 @@ namespace RPG_003.Battle.Characters
         private ICharacterBehaviour _characterBehaviour;
         private BehaviorIntervalCount _BehaviorIntervalCount;
         private BattleManager _battleManager;
+        private Coroutine _coroutine;
 
         // === Data ===
         private CharacterData _characterData;
@@ -54,7 +55,8 @@ namespace RPG_003.Battle.Characters
         // コルーチンで管理
         public IEnumerator TurnBehaviour(bool instant = false)
         {
-            yield return _characterBehaviour.TurnBehaviour(instant); // Call the character's behaviour for its turn
+            _coroutine = StartCoroutine(_characterBehaviour.TurnBehaviour(instant));
+            yield return _coroutine; // Call the character's behaviour for its turn
             NotifyTurnEnd();
         }
 
@@ -62,6 +64,7 @@ namespace RPG_003.Battle.Characters
         public virtual void NotifyDeath()
         {
             Debug.Log($"{gameObject.name} has been notified of death.");
+            _BehaviorIntervalCount.HideIndicator();
             IsAlive = false;
             OnDeath?.Invoke(this);
         }
@@ -72,6 +75,7 @@ namespace RPG_003.Battle.Characters
             BattleManager.FinishTurn(this);
         }
 
+
         // === Protected Methode ===
         protected virtual void InitializeClass()
         {
@@ -81,6 +85,13 @@ namespace RPG_003.Battle.Characters
             _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD));
         }
 
+        // === Unity Lifecycle ===
         protected virtual void Update() { }
+        private void OnDestroy()
+        {
+            _BehaviorIntervalCount.ReleaceIndicator();
+            if (_coroutine != null)
+                StopCoroutine(_coroutine);
+        }
     }
 }

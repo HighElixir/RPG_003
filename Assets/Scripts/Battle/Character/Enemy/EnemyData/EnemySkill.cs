@@ -17,6 +17,16 @@ namespace RPG_003.Battle.Characters.Enemy
         [Min(0)] public float heal_with_int; // 1f = 100%
         [Min(0)] public float heal_with_str; // 1f = 100%
         // Note : 今後追加デバフなどを追加する
+
+        public Faction GetTargetFaction()
+        {
+            return target switch 
+            {
+                Faction.Enemy => Faction.Ally,
+                Faction.Ally => Faction.Enemy,
+                _ => target,
+            };
+        }
     }
 }
 // unicode

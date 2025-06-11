@@ -18,6 +18,8 @@ namespace RPG_003.Battle
             // インターバルインジケータを生成して Canvas に配置
             var screenPoint = RectTransformUtility.WorldToScreenPoint(_camera, position);
             var ind = _pool.Get();
+            ind.release = (item) => { _pool.Release(item); };
+            ind.transform.position = screenPoint;
             return ind;
         }
 

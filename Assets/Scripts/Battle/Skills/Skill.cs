@@ -26,7 +26,7 @@
                 foreach (var d in skillData.DamageData)
                 {
                     var dI = MakeDamageInfo(d, target, d.amountAttribute.HasFlag(AmountAttribute.Magic), d.element);
-                    target.TakeDamage(dI);
+                    parent.BattleManager.ApplyDamage(dI);
                 }
             }
         }

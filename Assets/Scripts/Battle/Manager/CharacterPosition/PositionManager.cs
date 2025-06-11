@@ -73,7 +73,7 @@ namespace RPG_003.Battle
             var pos = CharacterPosition.None;
             foreach (var kv in _characterPositions)
             {
-                if (kv.Value == character)
+                if (kv.Value.Equals(character))
                 {
                     pos = kv.Key;
                     break;

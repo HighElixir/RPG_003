@@ -11,22 +11,22 @@ namespace RPG_003.Battle.Behaviour
     {
         private Player _parent;
         private SelectTarget _target;
-        private SkillButtonManager _SkillButtonManager;
+        private SkillSelector _SkillSelector;
         private bool _finishedTurn = false;
         public void Initialize(ICharacter parent, BattleManager battleManager)
         {
             _parent = parent as Player;
             var bm = battleManager as BattleManager;
             _target = bm.SelectTarget;
-            _SkillButtonManager = bm.SkillButtonManager;
+            _SkillSelector = bm.SkillSelector;
             parent.OnDeath += OnDeath;
         }
 
         public IEnumerator TurnBehaviour(bool instant = false)
         {
             _finishedTurn = false;
-
-            _SkillButtonManager.CreateButtons(_parent.Skills, OnSkillSelected);
+            Debug.Log($"Turn Start : actor is {_parent.Data.Name}");
+            _SkillSelector.CreateButtons(_parent.Skills, OnSkillSelected);
             yield return new WaitUntil(() => _finishedTurn == true); // Simulate a delay for the turn behaviour
         }
 
@@ -39,13 +39,13 @@ namespace RPG_003.Battle.Behaviour
 
         private void OnSkillSelected(Skill skill)
         {
-            _SkillButtonManager.ReleaseButtons();
+            _SkillSelector.ReleaseButtons();
             _target.ShowTargets(skill, OnTargetSelected, OnCanceledSelectingTarget);
         }
 
         private void OnCanceledSelectingTarget()
         {
-            _SkillButtonManager.CreateButtons(_parent.Skills, OnSkillSelected);
+            _SkillSelector.CreateButtons(_parent.Skills, OnSkillSelected);
         }
         private void OnTargetSelected(List<CharacterBase> targets, Skill skill)
         {

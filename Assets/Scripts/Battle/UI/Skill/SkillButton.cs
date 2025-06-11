@@ -6,17 +6,17 @@ using UnityEngine.UI;
 
 namespace RPG_003.Battle
 {
-    public class SkillButton : MonoBehaviour, ISkillSelecter
+    public class SkillButton : MonoBehaviour, ISkillSelectorComponent
     {
         [BoxGroup("Button"), SerializeField] private UnityEngine.UI.Button _button;
         [BoxGroup("Button"), SerializeField] private TMPro.TextMeshProUGUI _buttonText;
-        [BoxGroup("Image"), SerializeField] protected SkillSelecterData _data;
+        [BoxGroup("Image"), SerializeField] protected SkillSelectorData _data;
         [BoxGroup("Image"), SerializeField] protected Image _image;
         private Action<SkillButton> _onClickAction;
         [SerializeField, ReadOnly] private Skill _skill;
 
         public Skill Skill => _skill;
-        public virtual ISkillSelecter Setup(Skill hold, Action<ISkillSelecter> onClick)
+        public virtual ISkillSelectorComponent Setup(Skill hold, Action<ISkillSelectorComponent> onClick)
         {
             _skill = hold;
             _buttonText.text = _skill.skillName;
@@ -31,7 +31,7 @@ namespace RPG_003.Battle
             _onClickAction?.Invoke(this);
         }
 
-        public virtual void SetDecorationData(SkillSelecterData data)
+        public virtual void SetDecorationData(SkillSelectorData data)
         {
             _data = data;
             if (_data.defaultColor == default)

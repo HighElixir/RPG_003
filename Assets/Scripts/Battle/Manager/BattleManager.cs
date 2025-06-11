@@ -5,21 +5,24 @@ using RPG_003.Battle.Characters.Player;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RPG_003.Battle
 {
-    public class BattleManager : SerializedMonoBehaviour
+    [DefaultExecutionOrder(-1)]
+    public class BattleManager : MonoBehaviour
     {
         //=== Reference ===
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
-        [BoxGroup("Reference"), SerializeField] private SkillButtonManager _skillButtonManager;
+        [BoxGroup("Reference"), SerializeField] private SkillSelector _skillButtonManager;
         [BoxGroup("Reference"), SerializeField] private CharacterBase _characterBase;
         [BoxGroup("Reference"), SerializeField] private SelectTarget _selectTarget;
         [BoxGroup("Reference"), SerializeField] private Player _player;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHalper _characterTransformHalper;
         [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
+        [BoxGroup("Reference"), SerializeField] private BattleDataToUI _toUI;
 
         private PositionManager _posManager;
         private CharacterInitializer _charInitializer;
@@ -32,15 +35,17 @@ namespace RPG_003.Battle
         private Transform _charactersContainer;
 
 #if UNITY_EDITOR
+#pragma warning disable 0219
         private bool _allowNextTurn = false;
         [SerializeField, Tooltip("True => バトルマネージャにボタンが表示され、それを押すことでターンを進行するようになる")]
         private bool _enebleUseTurnManage = true;
+#pragma warning restore 0219
 #endif
 
         //=== Properties ===
         public Action<CharacterBase> OnCharacterRemoved { get; set; }
         public SelectTarget SelectTarget => _selectTarget;
-        public SkillButtonManager SkillButtonManager => _skillButtonManager;
+        public SkillSelector SkillSelector => _skillButtonManager;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
@@ -48,7 +53,7 @@ namespace RPG_003.Battle
             _posManager.Clear();
             // ターンキューもクリア（内部的に新規 TurnManager を替えるか、リセット処理を追加しても OK）
             _turnManager.Reset();
-            _turnManager.OnExecuteTurn += (character) =>
+            _turnManager.OnExecuteTurn = (character) =>
             {
                 StartCoroutine(character.TurnBehaviour());
             };
@@ -137,11 +142,17 @@ namespace RPG_003.Battle
 
         public float GetDepth()
         {
-            return _posManager.GetDepth();
+            return 0.5f;
         }
 
+        public void ApplyDamage(DamageInfo info)
+        {
+            Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
+            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage);
+            info.Target.TakeDamage(info);
+        }
 #if UNITY_EDITOR
-        [ShowIf("_allowNextTurn","_enebleUseTurnManage"), Button("TurnBehavior")]
+        [ShowIf("_allowNextTurn", "_enebleUseTurnManage"), Button("TurnBehavior")]
         public void Next()
         {
             _allowNextTurn = false;
@@ -171,7 +182,7 @@ namespace RPG_003.Battle
             _posManager = new PositionManager(out _characterPositions);
             _charInitializer = new CharacterInitializer(this);
             _turnManager = new TurnManager(this);
-            _turnManager.OnExecuteTurn += (character) =>
+            _turnManager.OnExecuteTurn = (character) =>
             {
                 // コルーチン実行を登録
                 StartCoroutine(character.TurnBehaviour());

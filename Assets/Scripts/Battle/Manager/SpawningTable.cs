@@ -24,6 +24,13 @@ namespace RPG_003.Battle
             }
             return null; // or handle the case where no matching SpawnData is found
         }
+        private void Awake()
+        {
+            foreach(var spawnData in spawnDatas)
+            {
+                spawnData.Awake();
+            }
+        }
     }
 
     [Serializable]
@@ -58,7 +65,7 @@ namespace RPG_003.Battle
             return null; // ここに到達することはないはず
         }
 
-        private void Awake()
+        public void Awake()
         {
             // 重みの合計を計算
             _totalWeight = 0f;

@@ -52,10 +52,19 @@ namespace RPG_003.Battle
             _currentAmount = Max;
         }
 
+        // インジケーター（UI）関連
         public void SetIndicator(IntervalIndicator intervalIndicator)
         {
             _indicator = intervalIndicator;
             _indicator.SetAmount(0, Max);
+        }
+        public void HideIndicator()
+        {
+            _indicator.gameObject.SetActive(false);
+        }
+        public void ReleaceIndicator()
+        {
+            _indicator.Release();
         }
     }
 }

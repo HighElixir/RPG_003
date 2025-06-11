@@ -57,8 +57,7 @@ namespace RPG_003.Battle
 
             if (_turnActors.Count > 0)
             {
-                var next = _turnActors.First();
-                _turnActors.RemoveAt(0);
+                var next = _turnActors[0];
                 ExecuteTurn(next);
             }
         }
@@ -70,8 +69,7 @@ namespace RPG_003.Battle
         {
             if (_turnActors.Count > 0)
             {
-                var nextActor = _turnActors.First();
-                _turnActors.RemoveAt(0);
+                var nextActor = _turnActors[0];
                 ExecuteTurn(nextActor);
             }
             else
@@ -84,8 +82,9 @@ namespace RPG_003.Battle
         }
         public void RemoveCharacter(CharacterBase character)
         {
-            _parent.StopCoroutine(character.TurnBehaviour());
             _turnActors.Remove(character);
+            _parent.StopCoroutine(character.TurnBehaviour());
+            
         }
 
         public void Reset()
@@ -97,6 +96,7 @@ namespace RPG_003.Battle
         private void ExecuteTurn(CharacterBase actor, bool instantStart = false)
         {
             actor.BehaviorIntervalCount.Reset();
+            _turnActors.Remove(actor);
             // BattleManager の StartCoroutine を呼びたいので、OnExecuteTurn を通して BattleManager 側に委譲
             OnExecuteTurn?.Invoke(actor);
         }

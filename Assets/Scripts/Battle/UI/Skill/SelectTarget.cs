@@ -69,6 +69,7 @@ namespace RPG_003.Battle
             CreatePoint(_beforeTarget.transform, _followObjectOffset);
 
             SetVisibleButtons(true);
+            UpdateUI();
             EnableAction();
         }
 
@@ -140,6 +141,7 @@ namespace RPG_003.Battle
                 for (var i = 0; i < t; i++)
                 {
                     Release(_targetPoints[i]);
+                    _targetPoints.Remove(_targetPoints[i]);
                 }
             }
             else if (t < 0)
@@ -158,7 +160,8 @@ namespace RPG_003.Battle
                     target = _targetInfo.MainTarget;
                 else
                     target = _targetInfo.AdditionalTargets[i - 1];
-                _targetPoints[0].SetTarget((_targetInfo.MainTarget).transform, _followObjectOffset);
+                _targetPoints[i].Enable = true;
+                _targetPoints[i].SetTarget(target.transform, _followObjectOffset);
             }
         }
 

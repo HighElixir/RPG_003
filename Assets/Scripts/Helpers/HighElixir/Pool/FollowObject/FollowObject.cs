@@ -4,8 +4,8 @@ namespace HighElixir.FollowObject
 {
     public abstract class FollowObject : MonoBehaviour
     {
-        protected Transform targetTransform;
-        protected Vector3 targetPosition;
+        [SerializeField] protected Transform targetTransform;
+        [SerializeField] protected Vector3 targetPosition;
         [SerializeField] protected Vector3 offset;
         protected bool UseTargetPosition => targetTransform != null;
         public bool Enable { get; set; } = true;

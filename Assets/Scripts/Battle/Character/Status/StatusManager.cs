@@ -133,11 +133,6 @@ namespace RPG_003.Battle.Characters
 
         public void TakeDamage(DamageInfo info)
         {
-            if (info.Source != null)
-                Debug.Log($"Taking damage: {info.Damage} from {info.Source.Data.Name}");
-            else
-                Debug.Log($"Taking damage: {info.Damage} from Unknown.");
-
             HP = Mathf.Max(0, HP - info.Damage);
             Debug.Log($"Current HP: {HP}, Max HP: {MaxHP}");
             if (HP <= 0)

@@ -1,6 +1,7 @@
 ﻿
 using RPG_003.Battle.Skills;
 using System.Collections.Generic;
+using UnityEngine;
 
 namespace RPG_003.Battle.Characters.Player
 {
@@ -16,6 +17,7 @@ namespace RPG_003.Battle.Characters.Player
             Skills.Clear();
             foreach (var skillData in playerData.Skills)
             {
+                Debug.Log($"Init Skill, Name: {skillData.Name}"); 
                 var skill = new Skill(skillData, this);
                 Skills.Add(skill);
             }

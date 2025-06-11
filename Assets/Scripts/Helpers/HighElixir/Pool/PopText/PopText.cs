@@ -17,7 +17,6 @@ namespace HighElixir.Pool
 
         [Header("Reference")]
         [SerializeField] private TextMeshProUGUI _uGUI;
-        [SerializeField] private PopTextData _popTextData;
         [SerializeField] private RectTransform _container;
         [SerializeField] private Camera _camera;
 
@@ -35,7 +34,7 @@ namespace HighElixir.Pool
         private void Awake()
         {
             // Nullチェック
-            if (!_uGUI || _popTextData == null || !_container || !_camera)
+            if (!_uGUI || !_container || !_camera)
             {
                 Debug.LogError("Inspector設定不足！", this);
                 enabled = false;
@@ -45,7 +44,7 @@ namespace HighElixir.Pool
             _easeMethod += Easing.GetEasingMethod(_ease);
         }
 
-        public void Make(int id, Transform target)
+        public void CreateText(Transform target, string text, TMP_FontAsset font = null, Color textColor = default)
         {
             // 上限越えたら一番古いやつを強制リリース
             if (_entries.Count >= _maxEntries)
@@ -56,6 +55,11 @@ namespace HighElixir.Pool
             }
 
             var txt = _pool.Get();
+            if (textColor != default)
+                txt.color = textColor;
+            if (font != null)
+                txt.font = font;
+            txt.text = text;
             var entry = new PopEntry
             {
                 text = txt,
@@ -65,14 +69,7 @@ namespace HighElixir.Pool
             };
             // スクリーン→ローカル座標でanchoredPositionセット
             Vector2 screen = RectTransformUtility.WorldToScreenPoint(_camera, target.position);
-            //RectTransformUtility.ScreenPointToLocalPointInRectangle(
-            //    _canvasRect, screen, _camera, out var local);
             entry.rect.position = screen;
-
-            var (msg, col) = _popTextData.GetInfo(id);
-            txt.SetText(msg);
-            entry.startColor = col;
-            if (_popTextData.FontAsset != null) txt.font = _popTextData.FontAsset;
             txt.gameObject.SetActive(true);
 
             _entries.Add(entry);

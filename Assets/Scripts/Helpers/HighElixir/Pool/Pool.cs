@@ -50,6 +50,7 @@ namespace HighElixir.Pool
         public void Release(T obj)
         {
             if (obj == null) return;
+            if (_available.Contains(obj)) return;
 
             if (_inUse.Remove(obj))
             {
