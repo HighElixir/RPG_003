@@ -46,6 +46,10 @@ namespace HighElixir.Pool
 
         public void CreateText(Transform target, string text, TMP_FontAsset font = null, Color textColor = default)
         {
+            CreateText(target.position, text, font, textColor);
+        }
+        public void CreateText(Vector3 position, string text, TMP_FontAsset font = null, Color textColor = default)
+        {
             // 上限越えたら一番古いやつを強制リリース
             if (_entries.Count >= _maxEntries)
             {
@@ -68,13 +72,13 @@ namespace HighElixir.Pool
                 elapsed = 0f
             };
             // スクリーン→ローカル座標でanchoredPositionセット
-            Vector2 screen = RectTransformUtility.WorldToScreenPoint(_camera, target.position);
+            Vector2 screen = RectTransformUtility.WorldToScreenPoint(_camera, position);
             entry.rect.position = screen;
             txt.gameObject.SetActive(true);
 
             _entries.Add(entry);
-        }
 
+        }
         private void Update()
         {
             float dt = Time.deltaTime;
