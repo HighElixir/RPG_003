@@ -26,7 +26,7 @@ namespace RPG_003.Battle
         }
         private void Awake()
         {
-            foreach(var spawnData in spawnDatas)
+            foreach (var spawnData in spawnDatas)
             {
                 spawnData.Awake();
             }

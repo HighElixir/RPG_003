@@ -51,7 +51,7 @@ namespace RPG_003.Battle
         public void CreateSkillButton(Skill skillData)
         {
             var skillButton = _skillButtonPool?.Get();
-            if (skillButton == null) 
+            if (skillButton == null)
             {
                 Debug.LogError("skillData is null");
             }
@@ -121,7 +121,7 @@ namespace RPG_003.Battle
         }
         private void OnCancel()
         {
-                ResetSkill();
+            ResetSkill();
         }
         // InputAction
         private void OnNavigate(InputAction.CallbackContext callbackContext)

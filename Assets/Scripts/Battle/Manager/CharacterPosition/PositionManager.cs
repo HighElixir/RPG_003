@@ -1,9 +1,7 @@
 ﻿using HighElixir;
 using RPG_003.Battle.Characters;
 using RPG_003.Battle.Factions;
-using System;
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -94,7 +92,7 @@ namespace RPG_003.Battle
             int res = 0;
             foreach (var p in EnumWrapper.GetEnumList<CharacterPosition>())
             {
-                if(p.IsSameFaction(faction) && _characterPositions.ContainsKey(p))
+                if (p.IsSameFaction(faction) && _characterPositions.ContainsKey(p))
                     res++;
             }
             return res;

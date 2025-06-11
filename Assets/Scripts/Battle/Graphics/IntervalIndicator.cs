@@ -14,7 +14,6 @@ namespace RPG_003.Battle
             if (max <= 0f || image == null) return;
 
             float t = Mathf.Clamp01(current / max);
-            Debug.Log("Current : " + t);
             image.DOFillAmount(t, duration);
         }
 

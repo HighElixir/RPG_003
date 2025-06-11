@@ -1,4 +1,5 @@
 ﻿using RPG_003.Battle.Factions;
+using RPG_003.Effect;
 using RPG_003.Skills;
 using System;
 using System.Collections.Generic;
@@ -20,6 +21,7 @@ namespace RPG_003.Battle.Characters.Player
         [SerializeField] private List<CostData> _costDatas;
         [SerializeField] private Faction _target;
         [SerializeField, Min(1)] private int _targetCount;
+        [SerializeField] private SoundVFXData _vFXData;
         public string Name => _name;
         public string Description => _description;
         public Sprite Sprite => _sprite;
@@ -27,14 +29,16 @@ namespace RPG_003.Battle.Characters.Player
         public List<CostData> CostDatas => _costDatas;
         public Faction Target => _target;
         public int TargetCount => _targetCount;
+        public SoundVFXData VFXData => _vFXData;
 
-        public SkillData(string name, string desc, List<DamageData> damageDatas, List<CostData> costDatas, Faction target, int targetCount)
+        public SkillData(string name, string desc, List<DamageData> damageDatas, List<CostData> costDatas, Faction target, int targetCount, SoundVFXData vFXData)
         {
             _name = name;
             _description = desc;
             _damageData = damageDatas;
             _costDatas = costDatas;
             _target = target;
+            _vFXData = vFXData;
             switch (target)
             {
                 case Faction.All:

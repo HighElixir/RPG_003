@@ -4,6 +4,8 @@ using RPG_003.Battle.Skills;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using System.Linq;
+using NUnit.Framework;
 
 namespace RPG_003.Battle.Behaviour
 {
@@ -12,11 +14,15 @@ namespace RPG_003.Battle.Behaviour
         private Player _parent;
         private SelectTarget _target;
         private SkillSelector _SkillSelector;
-        private bool _finishedTurn = false;
+
+        private Skill _chosen;
+        private List<CharacterBase> _targets = new List<CharacterBase>();
+        private bool _isfinishedChosen = false;
+        private bool _isfinishedTurn = false;
         public void Initialize(ICharacter parent, BattleManager battleManager)
         {
             _parent = parent as Player;
-            var bm = battleManager as BattleManager;
+            var bm = battleManager;
             _target = bm.SelectTarget;
             _SkillSelector = bm.SkillSelector;
             parent.OnDeath += OnDeath;
@@ -24,10 +30,20 @@ namespace RPG_003.Battle.Behaviour
 
         public IEnumerator TurnBehaviour(bool instant = false)
         {
-            _finishedTurn = false;
+            _isfinishedTurn = false;
+            _isfinishedChosen = false;
+            _chosen = null;
+            _targets.Clear();
+
             Debug.Log($"Turn Start : actor is {_parent.Data.Name}");
+            yield return null;
             _SkillSelector.CreateButtons(_parent.Skills, OnSkillSelected);
-            yield return new WaitUntil(() => _finishedTurn == true); // Simulate a delay for the turn behaviour
+            yield return new WaitUntil(() => _isfinishedChosen == true);
+            UseSkill(_chosen, _targets);
+            if (_chosen.skillData.VFXData != null)
+                yield return _parent.BattleManager.GraphicalManager.EffectPlay(_chosen.skillData.VFXData, _targets.ConvertAll<Vector2>((c) => { return c.transform.position; }));
+
+            yield return new WaitUntil(() => _isfinishedTurn == true); // Simulate a delay for the turn behaviour
         }
 
         public void OnDeath(ICharacter character)
@@ -37,7 +53,6 @@ namespace RPG_003.Battle.Behaviour
 
         private void OnSkillSelected(Skill skill)
         {
-            _SkillSelector.ReleaseButtons();
             _target.ShowTargets(skill, OnTargetSelected, OnCanceledSelectingTarget);
         }
 
@@ -47,7 +62,9 @@ namespace RPG_003.Battle.Behaviour
         }
         private void OnTargetSelected(List<CharacterBase> targets, Skill skill)
         {
-            UseSkill(skill, targets);
+            _chosen = skill;
+            _targets = targets;
+            _isfinishedChosen = true;
         }
 
         private void UseSkill(Skill skill, List<CharacterBase> targets)
@@ -60,7 +77,7 @@ namespace RPG_003.Battle.Behaviour
             {
                 Debug.LogWarning("No valid targets selected for the skill.");
             }
-            _finishedTurn = true;
+            _isfinishedTurn = true;
         }
     }
 }

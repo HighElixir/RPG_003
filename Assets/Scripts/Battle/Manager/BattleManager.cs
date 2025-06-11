@@ -6,9 +6,6 @@ using RPG_003.Battle.Factions;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
-using TMPro;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -26,6 +23,7 @@ namespace RPG_003.Battle
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHalper _characterTransformHalper;
         [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
         [BoxGroup("Reference"), SerializeField] private BattleDataToUI _toUI;
+        [BoxGroup("Reference"), SerializeField] private GraphicalManager _graphicalManager;
 
         private PositionManager _posManager;
         private CharacterInitializer _charInitializer;
@@ -51,6 +49,7 @@ namespace RPG_003.Battle
         public SelectTarget SelectTarget => _selectTarget;
         public SkillSelector SkillSelector => _skillButtonManager;
         public bool IsBattleContinue => _isBattleContinue;
+        public GraphicalManager GraphicalManager => _graphicalManager;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
@@ -118,6 +117,7 @@ namespace RPG_003.Battle
                 c.SetIcon(enemyData.icon);
             RegisterCharacter(characterPosition, c);
         }
+        // 各派生クラスにキャラクターを登録する
         public void RegisterCharacter(CharacterPosition position, CharacterBase character)
         {
             var indicator = _indicatorFactory.Create(_characterTransformHalper.GetPosition(position));
@@ -134,7 +134,6 @@ namespace RPG_003.Battle
             _posManager.RemoveCharacter(character);
             _turnManager.RemoveCharacter(character);
             OnCharacterRemoved?.Invoke(character);
-            StopCoroutine(character.TurnBehaviour());
             CheckBattleEnd();
             Destroy(character.gameObject);
         }

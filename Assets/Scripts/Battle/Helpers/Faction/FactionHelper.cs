@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using RPG_003.Battle.Characters;
+﻿using RPG_003.Battle.Characters;
 
 namespace RPG_003.Battle.Factions
 {

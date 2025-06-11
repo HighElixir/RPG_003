@@ -10,8 +10,10 @@ namespace RPG_003.Battle
         [SerializeField] private BattleManager _battleManager;
         [SerializeField] private List<PlayerData> _characterData;
         [SerializeField] private SpawningTable _table;
+        [SerializeField] private Sprite _backGround;
         private void Start()
         {
+            _battleManager.GraphicalManager.SetBackground(_backGround);
             _battleManager.StartBattle(_characterData, _table);
         }
     }

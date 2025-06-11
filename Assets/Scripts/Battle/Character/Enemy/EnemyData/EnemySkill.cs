@@ -20,7 +20,7 @@ namespace RPG_003.Battle.Characters.Enemy
 
         public Faction GetTargetFaction()
         {
-            return target switch 
+            return target switch
             {
                 Faction.Enemy => Faction.Ally,
                 Faction.Ally => Faction.Enemy,

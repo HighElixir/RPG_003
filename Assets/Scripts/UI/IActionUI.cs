@@ -1,6 +1,6 @@
 ﻿namespace RPG_003
 {
-    interface IActionUI
+    internal interface IActionUI
     {
         void EnableAction();
         void DisableAction();

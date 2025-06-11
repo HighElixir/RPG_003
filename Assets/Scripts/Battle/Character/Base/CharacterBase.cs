@@ -1,5 +1,4 @@
 ﻿using RPG_003.Battle.Behaviour;
-using Sirenix.OdinInspector;
 using System;
 using System.Collections;
 using UnityEngine;
@@ -13,7 +12,6 @@ namespace RPG_003.Battle.Characters
         private ICharacterBehaviour _characterBehaviour;
         private BehaviorIntervalCount _BehaviorIntervalCount;
         private BattleManager _battleManager;
-        private Coroutine _coroutine;
 
         // === Data ===
         private CharacterData _characterData;
@@ -59,8 +57,7 @@ namespace RPG_003.Battle.Characters
         // コルーチンで管理
         public IEnumerator TurnBehaviour(bool instant = false)
         {
-            _coroutine = StartCoroutine(_characterBehaviour.TurnBehaviour(instant));
-            yield return _coroutine; // Call the character's behaviour for its turn
+            yield return _characterBehaviour.TurnBehaviour(instant); // Call the character's behaviour for its turn
             NotifyTurnEnd();
         }
 
@@ -92,12 +89,9 @@ namespace RPG_003.Battle.Characters
         }
 
         // === Unity Lifecycle ===
-        protected virtual void Update() { }
         private void OnDestroy()
         {
             _BehaviorIntervalCount.ReleaceIndicator();
-            if (_coroutine != null)
-                StopCoroutine(_coroutine);
         }
     }
 }

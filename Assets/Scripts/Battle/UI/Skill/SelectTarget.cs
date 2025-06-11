@@ -91,7 +91,7 @@ namespace RPG_003.Battle
             _navigate.performed -= OnNavigate;
         }
         // === Private Methode ===
-        bool NeedsNewTarget(ICharacter before, Faction targetFaction) =>
+        private bool NeedsNewTarget(ICharacter before, Faction targetFaction) =>
     before == null || !before.Position.IsSameFaction(targetFaction) || !before.IsAlive;
 
         private void CreatePoint(Transform target, Vector2 offset)
