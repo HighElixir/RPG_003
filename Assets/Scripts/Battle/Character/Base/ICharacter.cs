@@ -8,13 +8,13 @@ namespace RPG_003.Battle.Characters
     public interface ICharacter
     {
         BattleManager BattleManager { get; }
-        IStatusManager StatusManager { get; }
+        StatusManager StatusManager { get; }
         BehaviorIntervalCount BehaviorIntervalCount { get; }
         CharacterData Data { get; }
         CharacterPosition Position { get; }
         bool IsAlive { get; }
         Action<ICharacter> OnDeath { get; set; }
-        void Initialize(CharacterData data, IStatusManager statusManager, ICharacterBehaviour characterBehaviour, BattleManager battleManager);
+        void Initialize(CharacterData data, StatusManager statusManager, ICharacterBehaviour characterBehaviour, BattleManager battleManager);
         void TakeDamage(DamageInfo damage);
         void TakeHeal(DamageInfo damage);
         void SetIcon(Sprite sprite);

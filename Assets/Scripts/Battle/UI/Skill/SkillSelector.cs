@@ -43,6 +43,7 @@ namespace RPG_003.Battle
             {
                 CreateSkillButton(skill);
             }
+            Debug.Log(_skillButtons.Count);
             SetSkill(_skillButtons[0]);
             _idx = 0;
             ShowButtons();
@@ -103,12 +104,15 @@ namespace RPG_003.Battle
         {
             var before = _chosen;
             _chosen = skill as SkillButton;
-            _chosen.SetSelectingState(true);
-            before?.SetSelectingState(false);
+            if (_chosen == null) Debug.LogError("!!!!!");
+            _chosen.Selected = true;
+            if (before != null)
+                before.Selected = false;
         }
         private void ResetSkill()
         {
-            _chosen?.SetSelectingState(false);
+            if (_chosen != null)
+                _chosen.Selected = false;
             _chosen = null;
         }
         private void OnConfirm()
@@ -141,7 +145,7 @@ namespace RPG_003.Battle
                 if (_idx >= _skillButtons.Count)
                     _idx = 0;
             }
-            SetSkill(_skillButtons[_idx]);
+            _skillButtons[_idx].OnClick();
         }
         // === Unity Lifecycle ===
         private void Awake()

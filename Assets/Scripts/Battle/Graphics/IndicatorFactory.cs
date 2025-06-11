@@ -9,7 +9,7 @@ namespace RPG_003.Battle
         // === Reference ===
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
         [BoxGroup("Reference"), SerializeField] private IntervalIndicator _prefab;
-        [BoxGroup("Reference"), SerializeField] private CharacterTransformHalper _characterTransformHalper;
+        [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHalper;
         [BoxGroup("Reference"), SerializeField] private Transform _container;
         private Pool<IntervalIndicator> _pool;
 

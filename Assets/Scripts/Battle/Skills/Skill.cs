@@ -1,12 +1,13 @@
-﻿namespace RPG_003.Battle.Skills
-{
-    using RPG_003.Battle.Characters;
-    using RPG_003.Battle.Characters.Player;
-    using RPG_003.Skills;
-    using System;
-    using System.Collections.Generic;
-    using UnityEngine;
+﻿using RPG_003.Battle.Characters;
+using RPG_003.Battle.Characters.Player;
+using RPG_003.Skills;
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using System.Linq.Expressions;
 
+namespace RPG_003.Battle.Skills
+{
     /// <summary>
     /// スキルの細かい実装が決まっていないため簡素な実装
     /// </summary>
@@ -17,6 +18,57 @@
         public DamageInfo damageInfo;
         public string skillName;
         public SkillData skillData;
+        private Func<StatusManager, bool> _activationPredicate;
+        private void BuildActivationPredicate(IEnumerable<CostData> costs)
+        {
+            // StatusManager 型のパラメータ
+            var smParam = Expression.Parameter(typeof(StatusManager), "sm");
+            Expression body = null;
+
+            // GetAmounts メソッド情報
+            var getAmt = typeof(StatusManager).GetMethod(nameof(StatusManager.GetAmounts), new[] { typeof(StatusAttribute) });
+
+            foreach (var cost in costs)
+            {
+                // sm.GetAmounts(cost.type)
+                var callGet = Expression.Call(
+                    smParam,
+                    getAmt,
+                    Expression.Constant(cost.type)
+                );
+                var constAmt = Expression.Constant(cost.amount, typeof(float));
+
+                // cost.symbol に応じた比較式
+                Expression cmp = cost.symbol switch
+                {
+                    CostData.Symbol.GreaterThen => Expression.GreaterThan(callGet, constAmt),
+                    CostData.Symbol.More => Expression.GreaterThanOrEqual(callGet, constAmt),
+                    CostData.Symbol.Below => Expression.LessThanOrEqual(callGet, constAmt),
+                    CostData.Symbol.Less => Expression.LessThan(callGet, constAmt),
+                    _ => throw new NotSupportedException($"Unknown symbol: {cost.symbol}")
+                };
+
+                // AND で繋ぐ
+                body = body == null ? cmp : Expression.AndAlso(body, cmp);
+            }
+
+            // ラムダにしてコンパイル
+            var lambda = Expression.Lambda<Func<StatusManager, bool>>(body!, smParam);
+            _activationPredicate = lambda.Compile();
+        }
+
+        public bool IsActive
+        {
+            get
+            {
+#if UNITY_EDITOR
+                if (DebugSwitch.instance.isThought_cost) return true;
+#endif
+                // ここは一行でＯＫ！
+                return _activationPredicate(parent.StatusManager);
+            }
+        }
+
         public void Execute(List<CharacterBase> targets)
         {
             foreach (var target in targets)
@@ -63,6 +115,7 @@
             skillData = data;
             skillName = data.Name;
             this.parent = parent;
+            BuildActivationPredicate(data.CostDatas);
         }
     }
 }

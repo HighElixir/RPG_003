@@ -6,10 +6,10 @@ namespace RPG_003.Battle
 {
     public interface ISkillSelectorComponent
     {
+        public bool Selected { get; set; }
         Skill Skill { get; }
         ISkillSelectorComponent Setup(Skill item, Action<ISkillSelectorComponent> onClick);
         void SetDecorationData(SkillSelectorData data);
-        void SetSelectingState(bool selected);
     }
 
     [Serializable]
@@ -17,5 +17,6 @@ namespace RPG_003.Battle
     {
         public Color selectedColor;
         public Color defaultColor;
+        public Color inactibeColor;
     }
 }

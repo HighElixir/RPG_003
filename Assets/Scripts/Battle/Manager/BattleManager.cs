@@ -1,4 +1,5 @@
-﻿using RPG_003.Battle.Behaviour;
+﻿using HighElixir.PauseManage;
+using RPG_003.Battle.Behaviour;
 using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
 using RPG_003.Battle.Characters.Player;
@@ -6,13 +7,14 @@ using RPG_003.Battle.Factions;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
 namespace RPG_003.Battle
 {
     [DefaultExecutionOrder(-1)]
-    public class BattleManager : MonoBehaviour
+    public class BattleManager : PausableMonoBehaviour
     {
         //=== Reference ===
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
@@ -20,9 +22,8 @@ namespace RPG_003.Battle
         [BoxGroup("Reference"), SerializeField] private CharacterBase _characterBase;
         [BoxGroup("Reference"), SerializeField] private SelectTarget _selectTarget;
         [BoxGroup("Reference"), SerializeField] private Player _player;
-        [BoxGroup("Reference"), SerializeField] private CharacterTransformHalper _characterTransformHalper;
+        [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
         [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
-        [BoxGroup("Reference"), SerializeField] private BattleDataToUI _toUI;
         [BoxGroup("Reference"), SerializeField] private GraphicalManager _graphicalManager;
 
         private PositionManager _posManager;
@@ -120,11 +121,11 @@ namespace RPG_003.Battle
         // 各派生クラスにキャラクターを登録する
         public void RegisterCharacter(CharacterPosition position, CharacterBase character)
         {
-            var indicator = _indicatorFactory.Create(_characterTransformHalper.GetPosition(position));
+            var indicator = _indicatorFactory.Create(_characterTransformHelper.GetPosition(position));
             character.BehaviorIntervalCount.SetIndicator(indicator);
             _posManager.RegisterCharacter(position, character);
             character.transform.SetParent(_charactersContainer);
-            _characterTransformHalper.SetPosition(character, position);
+            _characterTransformHelper.SetPosition(character, position);
             Debug.Log($"Starting battle with player: {character.Data.Name} at position: {position}");
         }
 
@@ -166,15 +167,27 @@ namespace RPG_003.Battle
         public void ApplyDamage(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage, Color.red);
+            _graphicalManager.ThrowText((info.Target as CharacterBase).transform.position, $"{info.Damage}", Color.red);
             info.Target.TakeDamage(info);
         }
 
         public void ApplyHeal(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking heal: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage, Color.green);
+            _graphicalManager.ThrowText((info.Target as CharacterBase).transform.position, $"{info.Damage}", Color.green);
             info.Target.TakeHeal(info);
+        }
+
+        // === Pause ===
+
+        protected override void OnPaused()
+        {
+            throw new NotImplementedException();
+        }
+
+        protected override void OnResumed()
+        {
+            throw new NotImplementedException();
         }
 
         // === Notify ===
@@ -195,7 +208,7 @@ namespace RPG_003.Battle
         }
 #endif
 
-        //=== Private Methods ===
+        //=== Private ===
         public void ProcessTurn()
         {
             if (!_isBattleContinue) return;

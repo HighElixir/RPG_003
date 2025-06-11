@@ -15,6 +15,7 @@ namespace RPG_003.Battle
         private Action<SkillButton> _onClickAction;
         [SerializeField, ReadOnly] private Skill _skill;
 
+        public bool Selected { get; set; }
         public Skill Skill => _skill;
         public virtual ISkillSelectorComponent Setup(Skill hold, Action<ISkillSelectorComponent> onClick)
         {
@@ -26,9 +27,16 @@ namespace RPG_003.Battle
             _image.sprite = hold.skillData.Sprite;
             return this;
         }
-        private void OnClick()
+        public void OnClick()
         {
-            _onClickAction?.Invoke(this);
+            if (_skill.IsActive)
+                _onClickAction?.Invoke(this);
+            else
+            {
+                var gM = _skill.parent.BattleManager.GraphicalManager;
+                var pos = gM.ScreenPointToWorld(transform.position);
+                gM.ThrowText(pos, "使用できません！", Color.red);
+            }
         }
 
         public virtual void SetDecorationData(SkillSelectorData data)
@@ -39,15 +47,26 @@ namespace RPG_003.Battle
                 _data.defaultColor = Color.white;
             }
         }
-        public virtual void SetSelectingState(bool selected)
+        public virtual void ChangeColor()
         {
-            if (selected)
+            if (Selected)
             {
                 _image.color = _data.selectedColor;
             }
             else
             {
                 _image.color = _data.defaultColor;
+            }
+        }
+
+        private void FixedUpdate()
+        {
+            if (_skill == null) return;
+            if (_skill.IsActive) ChangeColor();
+            else
+            {
+                Selected = false;
+                _image.color = _data.inactibeColor;
             }
         }
     }

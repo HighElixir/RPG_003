@@ -70,5 +70,14 @@ namespace RPG_003.Battle.Characters.Player
     {
         public float amount;
         public StatusAttribute type;
+        public Symbol symbol;
+
+        public enum Symbol
+        {
+            GreaterThen,
+            More,
+            Below,
+            Less,
+        }
     }
 }

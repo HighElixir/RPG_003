@@ -139,6 +139,7 @@ MonoBehaviour:
   _data:
     selectedColor: {r: 0.5245282, g: 0.5245282, b: 0.5245282, a: 1}
     defaultColor: {r: 1, g: 1, b: 1, a: 1}
+    inactibeColor: {r: 0.4792453, g: 0.179943, b: 0.179943, a: 1}
   _image: {fileID: 8123380955160607702}
   _skill:
     parent: {fileID: 0}
@@ -149,6 +150,9 @@ MonoBehaviour:
       _sprite: {fileID: 0}
       _damageData: []
       _costDatas: []
+      _target: 0
+      _targetCount: 0
+      _vFXData: {fileID: 0}
 --- !u!1 &6975922330289961776
 GameObject:
   m_ObjectHideFlags: 0

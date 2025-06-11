@@ -8,7 +8,7 @@ namespace RPG_003.Battle.Characters
     public class CharacterBase : MonoBehaviour, ICharacter
     {
         // === Reference ===
-        private IStatusManager _statusManager;
+        private StatusManager _statusManager;
         private ICharacterBehaviour _characterBehaviour;
         private BehaviorIntervalCount _BehaviorIntervalCount;
         private BattleManager _battleManager;
@@ -20,7 +20,7 @@ namespace RPG_003.Battle.Characters
         public Action<ICharacter> OnDeath { get; set; }
 
         // === Property ===
-        public IStatusManager StatusManager => _statusManager;
+        public StatusManager StatusManager => _statusManager;
         public BehaviorIntervalCount BehaviorIntervalCount => _BehaviorIntervalCount;
         public BattleManager BattleManager => _battleManager;
         public virtual CharacterData Data => _characterData;
@@ -28,7 +28,7 @@ namespace RPG_003.Battle.Characters
         public bool IsAlive { get; private set; } = true;
 
         // === Public Methode ===
-        public void Initialize(CharacterData data, IStatusManager statusManager, ICharacterBehaviour characterBehaviour, BattleManager battleManager)
+        public void Initialize(CharacterData data, StatusManager statusManager, ICharacterBehaviour characterBehaviour, BattleManager battleManager)
         {
             _statusManager = statusManager;
             _characterData = data;

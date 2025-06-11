@@ -3,13 +3,14 @@ using UnityEngine;
 
 namespace RPG_003.Battle.Characters
 {
-    public class StatusManager : IStatusManager
+    public class StatusManager
     {
         private readonly Dictionary<StatusAttribute, StatusAmount> _statusAmounts = new();
         public IReadOnlyDictionary<StatusAttribute, StatusAmount> StatusPair => _statusAmounts;
         public ICharacter Parent { get; set; }
 
         private StatusAmount _HPAmount;
+        private StatusAmount _MPAmount;
         public float HP
         {
             get => _HPAmount.currentAmount;
@@ -17,6 +18,12 @@ namespace RPG_003.Battle.Characters
         }
         public float MaxHP => _HPAmount.ChangedMax;
 
+        public float MP
+        {
+            get => _MPAmount.currentAmount;
+            set => _MPAmount.currentAmount = Mathf.Clamp(value, 0, MaxMP);
+        }
+        public float MaxMP => _MPAmount.ChangedMax;
         public void Initialize(ICharacter parent, CharacterData data)
         {
             Parent = parent;
@@ -35,6 +42,8 @@ namespace RPG_003.Battle.Characters
             // 現在HPを最大値に設定
             _HPAmount = _statusAmounts[StatusAttribute.HP];
             _HPAmount.currentAmount = _HPAmount.ChangedMax;
+            _MPAmount = _statusAmounts[StatusAttribute.MP];
+            _MPAmount.currentAmount = _HPAmount.ChangedMax;
         }
 
         public void AddStatus(StatusAttribute status, float amount)
@@ -74,6 +83,17 @@ namespace RPG_003.Battle.Characters
 
         public List<StatusAttribute> GetStatusList() => new List<StatusAttribute>(_statusAmounts.Keys);
 
+        public float GetAmounts(StatusAttribute status)
+        {
+            return status switch
+            {
+                StatusAttribute.HP => HP,
+                StatusAttribute.MP => MP,
+                StatusAttribute.MaxHP => MaxHP,
+                StatusAttribute.MaxMP => MaxMP,
+                _ => TryGetStatus(status, out var r) ? r.ChangedMax : -100
+            };
+        }
         public void UpdateStatus(StatusAttribute status, float amount)
         {
             if (!IsRegistered(status))

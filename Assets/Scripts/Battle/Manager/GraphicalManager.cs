@@ -1,4 +1,5 @@
-﻿using RPG_003.Effect;
+﻿using HighElixir.Pool;
+using RPG_003.Effect;
 using System;
 using System.Collections;
 using System.Collections.Generic;
@@ -8,8 +9,10 @@ namespace RPG_003.Battle
 {
     public class GraphicalManager : MonoBehaviour
     {
+        [SerializeField] private Camera _camera;
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private EffectPlayer _effectPlayer;
+        [SerializeField] private PopText _popText;
 
         public void SetBackground(Sprite sprite)
         {
@@ -21,10 +24,8 @@ namespace RPG_003.Battle
             yield return _effectPlayer.Play(data, vFXposition);
         }
 
-        // オーバーロードのほう
         public IEnumerator EffectPlay(SoundVFXData data, List<Vector2> vFXpositions, bool parallel = true)
         {
-            // 配列が空なら何もしない
             if (vFXpositions == null || vFXpositions.Count == 0)
                 yield break;
             if (parallel)
@@ -53,7 +54,16 @@ namespace RPG_003.Battle
             }
         }
 
-        // ヘルパーコルーチン：再生後にコールバック
+        public void ThrowText(Vector2 position, string text, Color col)
+        {
+            var c = ColorUtility.ToHtmlStringRGB(col);
+            _popText.CreateText(position, $"<color=#{c}>{text}</color>");
+        }
+
+        public Vector2 ScreenPointToWorld(Vector3 position)
+        {
+            return _camera.ScreenToWorldPoint(position);
+        }
         private IEnumerator PlayAndNotify(SoundVFXData data, Vector2 pos, Action onComplete)
         {
             yield return _effectPlayer.Play(data, pos);
