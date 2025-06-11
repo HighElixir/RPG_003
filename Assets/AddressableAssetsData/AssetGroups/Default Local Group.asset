@@ -25,6 +25,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 211ff720d571c2345ac909c61ae87872
+    m_Address: Assets/Data/Enemy/EnemyDatas/Night.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 61f872344731bbc4c978b06bd503e916
     m_Address: Assets/Data/Enemy/Skills/Sp_1/Punch.asset
     m_ReadOnly: 0

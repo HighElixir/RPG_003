@@ -126,9 +126,9 @@ namespace RPG_003.Battle.Characters
             _statusAmounts[status].ResetRatio();
         }
 
-        public void Heal(float amount)
+        public void TakeHeal(DamageInfo info)
         {
-            HP = Mathf.Min(MaxHP, HP + amount);
+            HP = Mathf.Min(MaxHP, HP + info.Damage);
         }
 
         public void TakeDamage(DamageInfo info)

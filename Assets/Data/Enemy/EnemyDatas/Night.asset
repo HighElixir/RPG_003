@@ -34,4 +34,4 @@ MonoBehaviour:
     _def: 1500
     _mdef: 1500
     _luk: 100
-  enemyBehaviorData: {fileID: 11400000, guid: 213671e97d2a60844be0364510bb0229, type: 2}
+  enemyBehaviorData: {fileID: 11400000, guid: ed7bd1ddf01bbe746a4da30bac9be05c, type: 2}

@@ -11,7 +11,7 @@ namespace RPG_003.Battle
         [Button("Summon Enemy"), DisableInEditorMode]
         public void Execute()
         {
-            if (_battleManager.TryGetUsablePosition(out var position, 2))
+            if (_battleManager.TryGetUsablePosition(out var position, Factions.Faction.Enemy))
                 _battleManager.SummonEnemy(_spawningTable.GetSpawnData(0.5f).GetEnemyData(), position);
         }
     }

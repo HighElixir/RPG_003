@@ -8,9 +8,9 @@ namespace RPG_003.Battle
         // === Reference ===
         [BoxGroup("Reference"), SerializeField] private ShowDamage showDamage;
 
-        public void CreateDamageText(Transform target, float damage, bool isCrit = false)
+        public void CreateDamageText(Transform target, float damage, Color col, bool isCrit = false)
         {
-            showDamage.Show(target, damage, isCrit);
+            showDamage.Show(target, damage, col, isCrit);
         }
     }
 }

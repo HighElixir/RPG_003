@@ -16,6 +16,7 @@ namespace RPG_003.Battle.Characters
         Action<ICharacter> OnDeath { get; set; }
         void Initialize(CharacterData data, IStatusManager statusManager, ICharacterBehaviour characterBehaviour, BattleManager battleManager);
         void TakeDamage(DamageInfo damage);
+        void TakeHeal(DamageInfo damage);
         void SetIcon(Sprite sprite);
         IEnumerator TurnBehaviour(bool instant = false);
 

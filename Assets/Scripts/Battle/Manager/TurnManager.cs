@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -16,31 +17,39 @@ namespace RPG_003.Battle
 
         // === Data ===
         private List<CharacterBase> _turnActors = new List<CharacterBase>();
-        private int _turnCount = 0;
 
         // === Action & Callback ===
         public Action<CharacterBase> OnExecuteTurn;
 
+        private Dictionary<CharacterBase, Coroutine> _coroutines = new();
+        private MonoBehaviour _coroutineRunner;
+
         // === Constructor ===
-        public TurnManager(BattleManager parent)
+        public TurnManager(BattleManager parent, MonoBehaviour coroutineRunner)
         {
             _parent = parent;
+            _coroutineRunner = coroutineRunner;
         }
 
-        // === Public Methode ===
+        // === Public ===
 
         /// <summary>
         /// BattleManager.ProcessTurn で呼ばれる。
         /// </summary>
         public void ProcessTurn()
         {
-            if (_turnCount >= 100) return;
+            if (_turnActors.Count > 0)
+            {
+                var next = _turnActors[0];
+                ExecuteTurn(next);
+                return;
+            }
 
             var all = _parent.GetCharacters();
             if (all.Count == 0) return;
 
             int delta = all.Min(c => c.BehaviorIntervalCount.CurrentAmount);
-            Debug.Log($"[TurnManager] Processing turn: {_turnCount}, advancing all by {delta}");
+            Debug.Log($"[TurnManager] Processing turn: advancing all by {delta}");
 
             if (delta > 0)
             {
@@ -54,12 +63,19 @@ namespace RPG_003.Battle
             var ready = all.Where(c => c.BehaviorIntervalCount.IsReady)
                            .OrderByDescending(c => c.BehaviorIntervalCount.Speed);
             _turnActors.AddRange(ready);
-
-            if (_turnActors.Count > 0)
+#if UNITY_EDITOR       
+            if (_turnActors.Count != 0)
             {
-                var next = _turnActors[0];
-                ExecuteTurn(next);
+
+                var sb = new StringBuilder("[TurnManager] _turnActors:");
+                foreach (var turnActor in _turnActors)
+                {
+                    sb.Append($"\n {turnActor.Data.Name},");
+                }
+                Debug.Log(sb.ToString());
             }
+#endif
+            _parent.ProcessTurn();
         }
 
         /// <summary>
@@ -74,31 +90,33 @@ namespace RPG_003.Battle
             }
             else
             {
-                _turnCount++;
-#if !UNITY_EDITOR
                 ProcessTurn();
-#endif
             }
         }
         public void RemoveCharacter(CharacterBase character)
         {
             _turnActors.Remove(character);
-            _parent.StopCoroutine(character.TurnBehaviour());
-            
+            if (_coroutines.ContainsKey(character))
+                _coroutineRunner.StopCoroutine(_coroutines[character]);
+
         }
 
         public void Reset()
         {
+            foreach (var c in _coroutines.Values)
+            {
+                _coroutineRunner.StopCoroutine(c);
+            }
             _turnActors.Clear();
-            _turnCount = 0;
         }
-        // === PrivateMethode ===
+        // === Private ===
         private void ExecuteTurn(CharacterBase actor, bool instantStart = false)
         {
-            actor.BehaviorIntervalCount.Reset();
+            if (actor == null) return;
             _turnActors.Remove(actor);
-            // BattleManager の StartCoroutine を呼びたいので、OnExecuteTurn を通して BattleManager 側に委譲
+            actor.BehaviorIntervalCount.Reset();
             OnExecuteTurn?.Invoke(actor);
+            _coroutines[actor] = _coroutineRunner.StartCoroutine(actor.TurnBehaviour());
         }
     }
 }

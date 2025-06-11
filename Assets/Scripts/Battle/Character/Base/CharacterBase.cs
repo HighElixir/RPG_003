@@ -47,7 +47,11 @@ namespace RPG_003.Battle.Characters
             if (IsAlive)
                 _statusManager.TakeDamage(damage);
         }
-
+        public void TakeHeal(DamageInfo info)
+        {
+            if (IsAlive)
+                _statusManager.TakeHeal(info);
+        }
         public void SetIcon(Sprite icon)
         {
             GetComponent<SpriteRenderer>().sprite = icon;
@@ -63,10 +67,7 @@ namespace RPG_003.Battle.Characters
         // === 各状況で呼ばれるメソッド ===
         public virtual void NotifyDeath()
         {
-            Debug.Log($"{gameObject.name} has been notified of death.");
-            _BehaviorIntervalCount.HideIndicator();
-            IsAlive = false;
-            OnDeath?.Invoke(this);
+            _battleManager.OnDeath(this);
         }
 
         public virtual void NotifyTurnEnd()
@@ -82,6 +83,11 @@ namespace RPG_003.Battle.Characters
             // CharacterBaseが持つクラスの初期化を行う
             _characterBehaviour.Initialize(this, _battleManager);
             _statusManager.Initialize(this, _characterData);
+            OnDeath += (chara) =>
+            {
+                _BehaviorIntervalCount.HideIndicator();
+                IsAlive = false;
+            };
             _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD));
         }
 

@@ -10,7 +10,7 @@ namespace RPG_003.Battle.Characters
         float MaxHP { get; }
         void Initialize(ICharacter parent, CharacterData data);
         void TakeDamage(DamageInfo damage);
-        void Heal(float amount);
+        void TakeHeal(DamageInfo info);
         StatusAmount GetStatusAmount(StatusAttribute status);
         bool TryGetStatus(StatusAttribute status, out StatusAmount amount);
         List<StatusAttribute> GetStatusList();

@@ -45,7 +45,6 @@ namespace RPG_003.Battle.Behaviour
 
         public void OnDeath(ICharacter dead)
         {
-            Debug.Log($"{dead.Data.Name} が戦闘不能に！");
             _parent.BattleManager.RemoveCharacter(dead as CharacterBase);
         }
     }

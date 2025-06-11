@@ -2,9 +2,12 @@
 using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
 using RPG_003.Battle.Characters.Player;
+using RPG_003.Battle.Factions;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using TMPro;
+using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
@@ -33,30 +36,27 @@ namespace RPG_003.Battle
 
         //=== Non-Serialized Fields ===
         private Transform _charactersContainer;
+        private bool _isBattleContinue = false;
 
 #if UNITY_EDITOR
-#pragma warning disable 0219
+#pragma warning disable 0414
         private bool _allowNextTurn = false;
         [SerializeField, Tooltip("True => バトルマネージャにボタンが表示され、それを押すことでターンを進行するようになる")]
         private bool _enebleUseTurnManage = true;
-#pragma warning restore 0219
+#pragma warning restore 0414
 #endif
 
         //=== Properties ===
         public Action<CharacterBase> OnCharacterRemoved { get; set; }
         public SelectTarget SelectTarget => _selectTarget;
         public SkillSelector SkillSelector => _skillButtonManager;
+        public bool IsBattleContinue => _isBattleContinue;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
         {
             _posManager.Clear();
-            // ターンキューもクリア（内部的に新規 TurnManager を替えるか、リセット処理を追加しても OK）
             _turnManager.Reset();
-            _turnManager.OnExecuteTurn = (character) =>
-            {
-                StartCoroutine(character.TurnBehaviour());
-            };
 
             for (int i = 0; i < players.Count && i < 4; i++)
             {
@@ -68,22 +68,40 @@ namespace RPG_003.Battle
             for (int i = 0; i < 5; i++)
                 SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
 
+            _isBattleContinue = true;
             ProcessTurn(); // BattleManager のラッパー
         }
 
         public void EndBattle()
         {
             Debug.Log("Battle ended.");
+            _isBattleContinue = false;
+        }
+        public void EndBattle_Won()
+        {
+            Debug.Log("Won");
+            EndBattle();
+        }
+        public void EndBattle_Lost()
+        {
+            Debug.Log("Lost");
+            EndBattle();
         }
 
         public void FinishTurn(CharacterBase actor)
         {
-            // BattleManager が呼ばれたら、TurnManager に任せる
+            if (_isBattleContinue)
+            {
+                // BattleManager が呼ばれたら、TurnManager に任せる
 #if UNITY_EDITOR
-            _allowNextTurn = true;
+                if (_enebleUseTurnManage)
+                    _allowNextTurn = true;
+                else
+                    _turnManager.FinishTurn();
 #else
-            _turnManager.FinishTurn();
+                _turnManager.FinishTurn();
 #endif
+            }
         }
 
         // デフォルトの場合、空いてる場所にスポーンさせる
@@ -91,7 +109,7 @@ namespace RPG_003.Battle
         {
             var c = Instantiate(_characterBase, Vector3.zero, Quaternion.identity);
             _charInitializer.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
-            if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition))
+            if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition, Factions.Faction.Enemy))
             {
                 Debug.Log("モンスターをスポーンさせるために必要なスペースがありません");
                 return;
@@ -117,17 +135,18 @@ namespace RPG_003.Battle
             _turnManager.RemoveCharacter(character);
             OnCharacterRemoved?.Invoke(character);
             StopCoroutine(character.TurnBehaviour());
+            CheckBattleEnd();
             Destroy(character.gameObject);
         }
 
-        public CharacterPosition GetUsablePosition(int option = 0)
+        public CharacterPosition GetUsablePosition(Faction faction = Faction.All)
         {
-            return _posManager.GetUsablePosition(option);
+            return _posManager.GetUsablePosition(faction);
         }
 
-        public bool TryGetUsablePosition(out CharacterPosition position, int option = 0)
+        public bool TryGetUsablePosition(out CharacterPosition position, Faction faction = Faction.All)
         {
-            return _posManager.TryGetUsablePosition(out position, option);
+            return _posManager.TryGetUsablePosition(out position, faction);
         }
 
         public List<CharacterBase> GetCharacters()
@@ -148,9 +167,25 @@ namespace RPG_003.Battle
         public void ApplyDamage(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage);
+            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage, Color.red);
             info.Target.TakeDamage(info);
         }
+
+        public void ApplyHeal(DamageInfo info)
+        {
+            Debug.Log($"{info.Target} is Taking heal: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
+            _toUI.CreateDamageText((info.Target as CharacterBase).transform, info.Damage, Color.green);
+            info.Target.TakeHeal(info);
+        }
+
+        // === Notify ===
+        public void OnDeath(ICharacter character)
+        {
+            CheckBattleEnd();
+            Debug.Log(character.Data.Name + "が死亡した！");
+            character.OnDeath?.Invoke(character);
+        }
+
 #if UNITY_EDITOR
         [ShowIf("_allowNextTurn", "_enebleUseTurnManage"), Button("TurnBehavior")]
         public void Next()
@@ -164,6 +199,7 @@ namespace RPG_003.Battle
         //=== Private Methods ===
         public void ProcessTurn()
         {
+            if (!_isBattleContinue) return;
 #if UNITY_EDITOR
             _allowNextTurn = true;
             if (!_enebleUseTurnManage)
@@ -173,6 +209,12 @@ namespace RPG_003.Battle
 #endif
         }
 
+        private void CheckBattleEnd()
+        {
+            var c = _posManager.AllFactionCount();
+            if (c.allies <= 0) EndBattle_Lost();
+            if (c.enemies <= 0) EndBattle_Won();
+        }
         //=== Unity Lifecycle ===
         private void Awake()
         {
@@ -181,12 +223,7 @@ namespace RPG_003.Battle
             // 分割クラスの初期化
             _posManager = new PositionManager(out _characterPositions);
             _charInitializer = new CharacterInitializer(this);
-            _turnManager = new TurnManager(this);
-            _turnManager.OnExecuteTurn = (character) =>
-            {
-                // コルーチン実行を登録
-                StartCoroutine(character.TurnBehaviour());
-            };
+            _turnManager = new TurnManager(this, this);
         }
     }
 }

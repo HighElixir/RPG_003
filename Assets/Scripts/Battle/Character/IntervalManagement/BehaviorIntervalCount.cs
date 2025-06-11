@@ -15,7 +15,7 @@ namespace RPG_003.Battle
         private IntervalIndicator _indicator;
         private int _currentAmount = 0;
 
-        public bool IsReady { get; private set; } = false;
+        public bool IsReady => _currentAmount == 0;
         public int CurrentAmount => _currentAmount;
         public int Max
         {
@@ -36,14 +36,11 @@ namespace RPG_003.Battle
         {
             _currentAmount = Mathf.Max(0, _currentAmount - amount);
             _indicator?.SetAmount(Max - _currentAmount, Max);
-            if (_currentAmount <= 0) IsReady = true;
-            else IsReady = false;
         }
 
         public void Reset()
         {
             _currentAmount = Max;
-            IsReady = false;
             _indicator?.SetAmount(0, Max);
         }
         public void Initialize(StatusAmount speedAmount)

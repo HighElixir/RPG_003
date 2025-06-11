@@ -17,7 +17,6 @@
         public DamageInfo damageInfo;
         public string skillName;
         public SkillData skillData;
-
         public void Execute(List<CharacterBase> targets)
         {
             foreach (var target in targets)
@@ -26,10 +25,14 @@
                 foreach (var d in skillData.DamageData)
                 {
                     var dI = MakeDamageInfo(d, target, d.amountAttribute.HasFlag(AmountAttribute.Magic), d.element);
-                    parent.BattleManager.ApplyDamage(dI);
+                    if (d.amountAttribute.HasFlag(AmountAttribute.Heal))
+                        parent.BattleManager.ApplyHeal(dI);
+                    else
+                        parent.BattleManager.ApplyDamage(dI);
                 }
             }
         }
+
 
         public DamageInfo MakeDamageInfo(DamageData data, CharacterBase target, bool isMagic, Elements element)
         {

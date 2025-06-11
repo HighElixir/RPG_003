@@ -45,7 +45,6 @@ namespace RPG_003.Battle
         private Action _onCanceled;
         private CharacterBase _beforeTarget; // 前回に選択されたメインターゲット
         [SerializeField, ReadOnly] private TargetInfo _targetInfo; // ターゲット情報
-        private bool _inTargetSelect;
 
         // === Public Methode ===
         public void ShowTargets(Skill skill, Action<List<CharacterBase>, Skill> onTargetSelected, Action onCanceled)
@@ -69,6 +68,7 @@ namespace RPG_003.Battle
             CreatePoint(_beforeTarget.transform, _followObjectOffset);
 
             SetVisibleButtons(true);
+
             UpdateUI();
             EnableAction();
         }
@@ -77,7 +77,6 @@ namespace RPG_003.Battle
         {
             _confirmButton?.onClick.AddListener(SubmitSelect);
             _cancelButton?.onClick.AddListener(CancelSelect);
-
             if (!_actionMap.enabled) _actionMap.Enable();
             _submit.performed += OnSubmit;
             _cancel.performed += OnCancel;
@@ -87,7 +86,6 @@ namespace RPG_003.Battle
         {
             _confirmButton.onClick.RemoveListener(SubmitSelect);
             _cancelButton.onClick.RemoveListener(CancelSelect);
-
             _submit.performed -= OnSubmit;
             _cancel.performed -= OnCancel;
             _navigate.performed -= OnNavigate;
@@ -177,6 +175,16 @@ namespace RPG_003.Battle
             CancelSelect();
         }
 
+        private void OnClick(CallbackContext context)
+        {
+
+            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 10.0f))
+            {
+                Debug.Log(hit.point);
+            }
+        }
         // 矢印キーでメインターゲットを上下に移動させる
         private void OnNavigate(CallbackContext context)
         {
@@ -213,16 +221,6 @@ namespace RPG_003.Battle
             _submit = _actionMap.FindAction(_submitName);
             _cancel = _actionMap.FindAction(_cancelName);
             _navigate = _actionMap.FindAction(_navigateName);
-        }
-        private void Update()
-        {
-            if (!_inTargetSelect) return;
-            Ray ray = _camera.ScreenPointToRay(Input.mousePosition);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit, 10.0f))
-            {
-                Debug.Log(hit.point);
-            }
         }
         private void OnDisable()
         {

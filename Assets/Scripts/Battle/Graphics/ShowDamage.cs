@@ -7,9 +7,10 @@ namespace RPG_003.Battle
     {
         [SerializeField] private PopText _popText;
 
-        public void Show(Transform target, float damage, bool isCrit = false)
+        public void Show(Transform target, float damage, Color col, bool isCrit = false)
         {
-            _popText.CreateText(target, $"<color=red>{damage}</color>");
+            var c = ColorUtility.ToHtmlStringRGB(col);
+            _popText.CreateText(target, $"<color=#{c}>{damage}</color>");
         }
     }
 }

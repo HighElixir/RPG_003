@@ -21,9 +21,12 @@ MonoBehaviour:
     PrefabModificationsReferencedUnityObjects: []
     PrefabModifications: []
     SerializationNodes: []
+  waveSaize: 25
   spawnDatas:
   - underLimit: 0
     overLimit: 1
     enemyDataList:
+    - weight: 1
+      enemyData: {fileID: 11400000, guid: 211ff720d571c2345ac909c61ae87872, type: 2}
     - weight: 1
       enemyData: {fileID: 11400000, guid: 1b9a015eabedb144381a7ba9f5f588a7, type: 2}

@@ -1,5 +1,9 @@
-﻿using RPG_003.Battle.Characters;
+﻿using HighElixir;
+using RPG_003.Battle.Characters;
+using RPG_003.Battle.Factions;
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -9,7 +13,6 @@ namespace RPG_003.Battle
     /// </summary>
     public class PositionManager
     {
-        // BattleManager から受け渡されるべき変数
         private Dictionary<CharacterPosition, CharacterBase> _characterPositions = new();
 
         public PositionManager(out IReadOnlyDictionary<CharacterPosition, CharacterBase> characterPositions)
@@ -22,12 +25,11 @@ namespace RPG_003.Battle
         /// CharacterPositionの中から使われていない枠を探す
         /// </summary>
         /// <param name="position">結果</param>
-        /// <param name="option">0 = 未指定, 1 = 味方のみ, 2 = 敵</param>
         /// <returns>発見に成功したかどうか</returns>
-        public bool TryGetUsablePosition(out CharacterPosition position, int option = 0)
+        public bool TryGetUsablePosition(out CharacterPosition position, Faction faction)
         {
-            int start = option == 2 ? 4 : 0;
-            int end = option == 1 ? 3 : 8;
+            int start = faction == Faction.Enemy ? 4 : 0;
+            int end = faction == Faction.Ally ? 3 : 8;
             for (int i = start; i <= end; i++)
             {
                 var p = (CharacterPosition)i;
@@ -43,30 +45,20 @@ namespace RPG_003.Battle
         /// <summary>
         /// CharacterPositionの中から使われていない枠を探す
         /// </summary>
-        /// <param name="option">0 = 未指定, 1 = 味方のみ, 2 = 敵</param>
-        public CharacterPosition GetUsablePosition(int option = 0)
+        public CharacterPosition GetUsablePosition(Faction faction)
         {
-            if (TryGetUsablePosition(out var pos, option))
+            if (TryGetUsablePosition(out var pos, faction))
                 return pos;
             return CharacterPosition.None;
         }
-
         public List<CharacterBase> GetCharacters()
         {
             return new List<CharacterBase>(_characterPositions.Values);
         }
-
         public IReadOnlyDictionary<CharacterPosition, CharacterBase> GetCharacterMap()
         {
             return _characterPositions;
         }
-
-        // 仮置き
-        public float GetDepth()
-        {
-            return 0.5f;
-        }
-
         public void RemoveCharacter(CharacterBase character)
         {
             if (character == null || !_characterPositions.ContainsValue(character)) return;
@@ -82,7 +74,6 @@ namespace RPG_003.Battle
             if (pos == CharacterPosition.None) return;
             _characterPositions.Remove(pos);
         }
-
         public void RegisterCharacter(CharacterPosition position, CharacterBase character)
         {
             if (_characterPositions.ContainsKey(position))
@@ -93,10 +84,28 @@ namespace RPG_003.Battle
             _characterPositions.Add(position, character);
             character.Position = position;
         }
-
         public void Clear()
         {
             _characterPositions.Clear();
+        }
+
+        public int FactionCount(Faction faction)
+        {
+            int res = 0;
+            foreach (var p in EnumWrapper.GetEnumList<CharacterPosition>())
+            {
+                if(p.IsSameFaction(faction) && _characterPositions.ContainsKey(p))
+                    res++;
+            }
+            return res;
+        }
+
+        public (int allies, int enemies) AllFactionCount()
+        {
+            var res = (0, 0);
+            res.Item1 = FactionCount(Faction.Ally);
+            res.Item2 = FactionCount(Faction.Enemy);
+            return res;
         }
     }
 }

@@ -32,8 +32,6 @@ namespace RPG_003.Battle.Behaviour
 
         public void OnDeath(ICharacter character)
         {
-            // Handle player-specific death logic here
-            Debug.Log($"{character.Data.Name} has died in battle.");
             // Additional logic can be added here, such as updating UI or triggering events
         }
 
