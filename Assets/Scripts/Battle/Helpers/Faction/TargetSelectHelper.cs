@@ -17,6 +17,37 @@ namespace RPG_003.Battle
             return c.Count > 0 ? c[Random.Range(0, c.Count)] : null;
         }
 
+        public List<CharacterBase> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
+        {
+            var candidates = SelectTargetsByType(faction);
+            var targets = new List<CharacterBase>();
+
+            // 重複禁止で要望数が候補数より多い場合は上限を候補数に合わせる
+            if (!canSelectSameTarget && count > candidates.Count)
+                count = candidates.Count;
+
+            // 必要な数だけランダム取得
+            while (targets.Count < count)
+            {
+                var idx = Random.Range(0, candidates.Count);
+                var pick = candidates[idx];
+
+                // 重複許可 or 未登録なら追加
+                if (canSelectSameTarget || !targets.Contains(pick))
+                {
+                    targets.Add(pick);
+                }
+                // 重複禁止で満たせないならループ抜ける（安全策）
+                else if (!canSelectSameTarget && targets.Count >= candidates.Count)
+                {
+                    break;
+                }
+            }
+
+            return targets;
+        }
+
+
         public List<CharacterBase> SelectTargetsByType(Faction faction)
         {
             var characters = _battleManager.GetCharacterMap();

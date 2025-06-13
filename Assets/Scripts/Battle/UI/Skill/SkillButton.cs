@@ -24,7 +24,7 @@ namespace RPG_003.Battle
             _onClickAction = onClick;
             _button.onClick.RemoveAllListeners();
             _button.onClick.AddListener(OnClick);
-            _image.sprite = hold.skillData.Sprite;
+            _image.sprite = hold.skillDataInBattle.Sprite;
             return this;
         }
         public void OnClick()
@@ -33,7 +33,7 @@ namespace RPG_003.Battle
                 _onClickAction?.Invoke(this);
             else
             {
-                var gM = _skill.parent.BattleManager.GraphicalManager;
+                var gM = GraphicalManager.instance;
                 var pos = gM.ScreenPointToWorld(transform.position);
                 gM.ThrowText(pos, "使用できません！", Color.red);
             }

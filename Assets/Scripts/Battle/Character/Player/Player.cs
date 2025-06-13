@@ -15,10 +15,10 @@ namespace RPG_003.Battle.Characters.Player
         {
             PlayerData = playerData;
             Skills.Clear();
-            foreach (var skillData in playerData.Skills)
+            foreach (var SkillDataInBattle in playerData.Skills)
             {
-                Debug.Log($"Init Skill, Name: {skillData.Name}");
-                var skill = new Skill(skillData, this);
+                Debug.Log($"Init Skill, Name: {SkillDataInBattle.Name}");
+                var skill = new Skill(SkillDataInBattle, this);
                 Skills.Add(skill);
             }
         }

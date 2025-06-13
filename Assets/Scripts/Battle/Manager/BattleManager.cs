@@ -24,7 +24,6 @@ namespace RPG_003.Battle
         [BoxGroup("Reference"), SerializeField] private Player _player;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
         [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
-        [BoxGroup("Reference"), SerializeField] private GraphicalManager _graphicalManager;
 
         private PositionManager _posManager;
         private CharacterInitializer _charInitializer;
@@ -50,7 +49,6 @@ namespace RPG_003.Battle
         public SelectTarget SelectTarget => _selectTarget;
         public SkillSelector SkillSelector => _skillButtonManager;
         public bool IsBattleContinue => _isBattleContinue;
-        public GraphicalManager GraphicalManager => _graphicalManager;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
@@ -167,14 +165,15 @@ namespace RPG_003.Battle
         public void ApplyDamage(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            _graphicalManager.ThrowText((info.Target as CharacterBase).transform.position, $"{info.Damage}", Color.red);
+            Color c = info.Elements == RPG_003.Skills.Elements.None ? Color.red : info.Elements.GetColorElement();
+            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterBase).transform.position, 1.5f), $"{info.Damage}", c);
             info.Target.TakeDamage(info);
         }
 
         public void ApplyHeal(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking heal: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            _graphicalManager.ThrowText((info.Target as CharacterBase).transform.position, $"{info.Damage}", Color.green);
+            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterBase).transform.position, 1.5f), $"{info.Damage}", Color.green);
             info.Target.TakeHeal(info);
         }
 
@@ -182,12 +181,12 @@ namespace RPG_003.Battle
 
         protected override void OnPaused()
         {
-            throw new NotImplementedException();
+            Time.timeScale = 0;
         }
 
         protected override void OnResumed()
         {
-            throw new NotImplementedException();
+            Time.timeScale = 1.0f;
         }
 
         // === Notify ===
@@ -227,8 +226,14 @@ namespace RPG_003.Battle
             if (c.allies <= 0) EndBattle_Lost();
             if (c.enemies <= 0) EndBattle_Won();
         }
+        private Vector2 RandomPos(Vector2 pos, float radius)
+        {
+            // Random.insideUnitCircle は原点を中心とした半径1の円内のランダムな点を返す
+            Vector2 offset = UnityEngine.Random.insideUnitCircle * radius;
+            return pos + offset;
+        }
         //=== Unity Lifecycle ===
-        private void Awake()
+        protected override void Awake()
         {
             _charactersContainer = new GameObject("CharactersContainer").transform;
 

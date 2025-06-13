@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using RPG_003.Battle.Skills;
 
 namespace RPG_003.Battle.Characters.Player
 {
@@ -8,14 +9,26 @@ namespace RPG_003.Battle.Characters.Player
     public class PlayerData
     {
         [SerializeField] private CharacterData _characterData;
-        [SerializeField] private List<SkillData> _skillDatas;
+        [SerializeField] private List<SkillDataInBattle> _SkillDataInBattles = new List<SkillDataInBattle>();
         public CharacterData CharacterData => _characterData;
-        public List<SkillData> Skills => _skillDatas;
+        public List<SkillDataInBattle> Skills => _SkillDataInBattles;
 
-        public PlayerData(CharacterData characterData, List<SkillData> skills)
+        public void SetCharcter(CharacterData characterData)
         {
             _characterData = characterData;
-            _skillDatas = skills;
+        }
+
+        public void AddSkillDataInBattle(SkillDataInBattle SkillDataInBattle)
+        {
+            if (_SkillDataInBattles.Count < 3)
+            {
+                _SkillDataInBattles.Add(SkillDataInBattle);
+            }
+        }
+
+        public void SetSkillDataInBattles(List<SkillDataInBattle> SkillDataInBattles)
+        {
+            _SkillDataInBattles = new(SkillDataInBattles);
         }
     }
 }

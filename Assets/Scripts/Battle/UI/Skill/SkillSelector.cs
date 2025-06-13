@@ -9,7 +9,7 @@ using UnityEngine.UI;
 
 namespace RPG_003.Battle
 {
-    public class SkillSelector : MonoBehaviour, IActionUI
+    public class SkillSelector : MonoBehaviour
     {
         // === Settings And References ===
         [BoxGroup("Reference"), SerializeField] private SkillButton skillButtonPrefab;
@@ -49,14 +49,14 @@ namespace RPG_003.Battle
             ShowButtons();
             EnableAction();
         }
-        public void CreateSkillButton(Skill skillData)
+        public void CreateSkillButton(Skill SkillDataInBattle)
         {
             var skillButton = _skillButtonPool?.Get();
             if (skillButton == null)
             {
-                Debug.LogError("skillData is null");
+                Debug.LogError("SkillDataInBattle is null");
             }
-            _skillButtons.Add(skillButton.Setup(skillData, SetSkill) as SkillButton);
+            _skillButtons.Add(skillButton.Setup(SkillDataInBattle, SetSkill) as SkillButton);
         }
 
         public void ReleaseButtons()

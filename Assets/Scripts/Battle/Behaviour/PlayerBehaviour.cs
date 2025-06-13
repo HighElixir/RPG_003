@@ -40,8 +40,8 @@ namespace RPG_003.Battle.Behaviour
             _SkillSelector.CreateButtons(_parent.Skills, OnSkillSelected);
             yield return new WaitUntil(() => _isfinishedChosen == true);
             UseSkill(_chosen, _targets);
-            if (_chosen.skillData.VFXData != null)
-                yield return _parent.BattleManager.GraphicalManager.EffectPlay(_chosen.skillData.VFXData, _targets.ConvertAll<Vector2>((c) => { return c.transform.position; }));
+            if (_chosen.skillDataInBattle.VFXData != null)
+                yield return GraphicalManager.instance.EffectPlay(_chosen.skillDataInBattle.VFXData, _targets.ConvertAll<Vector2>((c) => { return c.transform.position; }));
 
             yield return new WaitUntil(() => _isfinishedTurn == true); // Simulate a delay for the turn behaviour
         }

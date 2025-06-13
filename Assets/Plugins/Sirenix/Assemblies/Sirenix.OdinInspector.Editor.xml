@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <doc>
     <assembly>
         <name>Sirenix.OdinInspector.Editor</name>
@@ -8149,7 +8149,7 @@
         </member>
         <member name="F:Sirenix.OdinInspector.Editor.TypeSearch.TypeSearchIndex.LOCK">
             <summary>
-            To safely change anything in the type cache, you must be holding this lock.
+            To safely change anything in the type cache, you must be SkillDataInBattleHolder this lock.
             </summary>
         </member>
         <member name="M:Sirenix.OdinInspector.Editor.TypeRegistry.GetInstantiableInheritors(System.Type,System.Boolean,System.Boolean)">

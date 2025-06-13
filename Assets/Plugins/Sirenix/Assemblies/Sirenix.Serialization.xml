@@ -1,4 +1,4 @@
-<?xml version="1.0"?>
+﻿<?xml version="1.0"?>
 <doc>
     <assembly>
         <name>Sirenix.Serialization</name>
@@ -7454,7 +7454,7 @@
         </member>
         <member name="M:Sirenix.Serialization.UnitySerializationUtility.PrefabDeserializeUtility.GetSceneObjectsToKeepSet(UnityEngine.Object,System.Boolean)">
             <summary>
-            Note: it is assumed that code calling this is holding the DeserializePrefabCaches_LOCK lock, and will continue to hold it while the returned hashset is being modified
+            Note: it is assumed that code calling this is SkillDataInBattleHolder the DeserializePrefabCaches_LOCK lock, and will continue to hold it while the returned hashset is being modified
             </summary>
         </member>
         <member name="P:Sirenix.Serialization.UnitySerializationUtility.ForceEditorModeSerialization">
@@ -8539,7 +8539,7 @@
             <para />
             Cached types which implement the <see cref="T:Sirenix.Serialization.Utilities.ICacheNotificationReceiver"/> interface will receive notifications when they are claimed and freed.
             <para />
-            Only one thread should be holding a given cache instance at a time if <see cref="T:Sirenix.Serialization.Utilities.ICacheNotificationReceiver"/> is implemented, since the invocation of 
+            Only one thread should be SkillDataInBattleHolder a given cache instance at a time if <see cref="T:Sirenix.Serialization.Utilities.ICacheNotificationReceiver"/> is implemented, since the invocation of 
             <see cref="M:Sirenix.Serialization.Utilities.ICacheNotificationReceiver.OnFreed"/> is not thread safe, IE, weird stuff might happen if multiple different threads are trying to free
             the same cache instance at the same time. This will practically never happen unless you're doing really strange stuff, but the case is documented here.
             </summary>

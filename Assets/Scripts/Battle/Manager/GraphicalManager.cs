@@ -1,4 +1,5 @@
 ﻿using HighElixir.Pool;
+using HighElixir.Utilities;
 using RPG_003.Effect;
 using System;
 using System.Collections;
@@ -7,18 +8,21 @@ using UnityEngine;
 
 namespace RPG_003.Battle
 {
-    public class GraphicalManager : MonoBehaviour
+    public class GraphicalManager : SingletonBehavior<GraphicalManager>
     {
         [SerializeField] private Camera _camera;
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private EffectPlayer _effectPlayer;
         [SerializeField] private PopText _popText;
 
-        public void SetBackground(Sprite sprite)
+        // === BackGround ===
+        public void SetBackgroundSprite(Sprite sprite)
         {
             _background.sprite = sprite;
         }
+        public void SetBackground(SpriteRenderer background) => _background = background;
 
+        // === EffectPlayer ===
         public IEnumerator EffectPlay(SoundVFXData data, Vector2 vFXposition)
         {
             yield return _effectPlayer.Play(data, vFXposition);
@@ -54,6 +58,7 @@ namespace RPG_003.Battle
             }
         }
 
+        // === ThorwText ===
         public void ThrowText(Vector2 position, string text, Color col)
         {
             var c = ColorUtility.ToHtmlStringRGB(col);
@@ -70,5 +75,9 @@ namespace RPG_003.Battle
             onComplete?.Invoke();
         }
 
+        protected override void Awake()
+        {
+            base.Awake();
+        }
     }
 }

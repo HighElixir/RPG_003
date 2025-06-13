@@ -1,0 +1,48 @@
+﻿using System.Collections.Generic;
+using System;
+using UnityEngine;
+namespace RPG_003.Skills
+{
+    [CreateAssetMenu(fileName = "Addon", menuName = "RPG_003/Skills/Modifier/Addon")]
+    public class AddonData : SkillData
+    {
+        // このアドオンをつけられるスキルをIDで制限
+        [SerializeField] private List<string> _limitIds; 
+        [SerializeField] private List<AddonEffectForDamage> _forDamage;
+        [SerializeField] private List<AddonEffectForCost> _forCost;
+        [SerializeField] private bool _isOverrideTarget = false;
+        [SerializeField] private TargetData _overrideTarget;
+        [SerializeField] private bool _isOverrideTargetCount = false;
+        [SerializeField] private int _overrideTargetCount;
+        [SerializeField] private List<(Elements from, Elements to)> _overrideElement;
+
+        public List<string> LimitIds => _limitIds;
+        public List<AddonEffectForDamage> ForDamages => _forDamage;
+        public List<AddonEffectForCost > Costs => _forCost;
+        public bool IsOverrideTarget => _isOverrideTarget;
+        public TargetData OverrideTarget => _overrideTarget;
+        public bool IsOverrideTargetCount => _isOverrideTargetCount;
+        public int OverrideTargetCount => _overrideTargetCount;
+        public List<(Elements from, Elements to)> OverrideElement => _overrideElement;
+    }
+
+    [Serializable]
+    public struct AddonEffectForDamage
+    {
+        // 条件は両方真で成立。片方しか指定していない場合、それだけを条件にする
+        // HealやConsumeの場合、Elementは無視される
+        public AmountAttribute amountAttribute;
+        public Elements elements;
+        // scaleをかけた後にfixedAmountを加算する
+        public float scale; // 元の数値にかかる倍率
+        public float fixedAmount; // 固定の増減
+    }
+    [Serializable]
+    public struct AddonEffectForCost
+    {
+        public bool isHP; // 条件
+        // scaleをかけた後にfixedAmountを加算する
+        public float scale; // 元の数値にかかる倍率
+        public float fixedAmount; // 固定の増減
+    }
+}

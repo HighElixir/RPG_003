@@ -16,7 +16,7 @@ namespace RPG_003.Battle
     /// プレイヤー向けにスキルの効果対象を選ぶためのUIを提供するクラス
     /// </summary>
     [RequireComponent(typeof(FollowObjectPool))]
-    public class SelectTarget : MonoBehaviour, IActionUI
+    public class SelectTarget : MonoBehaviour
     {
         // === Reference ===
         [BoxGroup("Reference"), SerializeField] private FollowObjectPool _pool;
@@ -34,10 +34,12 @@ namespace RPG_003.Battle
         [BoxGroup("InputActionAsset"), SerializeField] private string _navigateName = "Navigate";
         [BoxGroup("InputActionAsset"), SerializeField] private string _submitName = "Submit";
         [BoxGroup("InputActionAsset"), SerializeField] private string _cancelName = "Cancel";
+        [BoxGroup("InputActionAsset"), SerializeField] private string _clickName = "Click";
         private InputActionMap _actionMap;
         private InputAction _navigate;
         private InputAction _submit;
         private InputAction _cancel;
+        private InputAction _click;
 
         // === Data ===
         private Skill _skill;
@@ -60,8 +62,8 @@ namespace RPG_003.Battle
             _onCanceled = onCanceled;
 
             // 前回ターゲットがない or スキルターゲットになる勢力が違う場合はランダム選択
-            if (NeedsNewTarget(_beforeTarget, skill.skillData.Target))
-                _beforeTarget = _targetSelectHelper.SelectRandomTarget(skill.skillData.Target);
+            if (NeedsNewTarget(_beforeTarget, skill.skillDataInBattle.Target))
+                _beforeTarget = _targetSelectHelper.SelectRandomTarget(skill.skillDataInBattle.Target);
             _targetInfo = new(_beforeTarget);
             Debug.Log($"[SelectTarget] skill={skill.skillName}, caster={skill.parent.Data.Name}");
 
@@ -73,23 +75,7 @@ namespace RPG_003.Battle
             EnableAction();
         }
 
-        public void EnableAction()
-        {
-            _confirmButton?.onClick.AddListener(SubmitSelect);
-            _cancelButton?.onClick.AddListener(CancelSelect);
-            if (!_actionMap.enabled) _actionMap.Enable();
-            _submit.performed += OnSubmit;
-            _cancel.performed += OnCancel;
-            _navigate.performed += OnNavigate;
-        }
-        public void DisableAction()
-        {
-            _confirmButton.onClick.RemoveListener(SubmitSelect);
-            _cancelButton.onClick.RemoveListener(CancelSelect);
-            _submit.performed -= OnSubmit;
-            _cancel.performed -= OnCancel;
-            _navigate.performed -= OnNavigate;
-        }
+       
         // === Private Methode ===
         private bool NeedsNewTarget(ICharacter before, Faction targetFaction) =>
     before == null || !before.Position.IsSameFaction(targetFaction) || !before.IsAlive;
@@ -164,6 +150,25 @@ namespace RPG_003.Battle
         }
 
         // === InputAction ===
+        public void EnableAction()
+        {
+            _confirmButton?.onClick.AddListener(SubmitSelect);
+            _cancelButton?.onClick.AddListener(CancelSelect);
+            if (!_actionMap.enabled) _actionMap.Enable();
+            _submit.performed += OnSubmit;
+            _cancel.performed += OnCancel;
+            _navigate.performed += OnNavigate;
+            _click.performed += OnClick;
+        }
+        public void DisableAction()
+        {
+            _confirmButton.onClick.RemoveListener(SubmitSelect);
+            _cancelButton.onClick.RemoveListener(CancelSelect);
+            _submit.performed -= OnSubmit;
+            _cancel.performed -= OnCancel;
+            _navigate.performed -= OnNavigate;
+            _click.performed -= OnClick;
+        }
         private void OnSubmit(CallbackContext context)
         {
             if (_targetInfo.IsValid)
@@ -221,6 +226,7 @@ namespace RPG_003.Battle
             _submit = _actionMap.FindAction(_submitName);
             _cancel = _actionMap.FindAction(_cancelName);
             _navigate = _actionMap.FindAction(_navigateName);
+            _click = _actionMap.FindAction(_clickName);
         }
         private void OnDisable()
         {

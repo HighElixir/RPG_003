@@ -17,7 +17,7 @@ namespace RPG_003.Battle.Skills
         public CharacterBase parent;
         public DamageInfo damageInfo;
         public string skillName;
-        public SkillData skillData;
+        public SkillDataInBattle skillDataInBattle;
         private Func<StatusManager, bool> _activationPredicate;
         private void BuildActivationPredicate(IEnumerable<CostData> costs)
         {
@@ -34,7 +34,7 @@ namespace RPG_003.Battle.Skills
                 var callGet = Expression.Call(
                     smParam,
                     getAmt,
-                    Expression.Constant(cost.type)
+                    Expression.Constant(cost.isHP ? StatusAttribute.HP : StatusAttribute.MP)
                 );
                 var constAmt = Expression.Constant(cost.amount, typeof(float));
 
@@ -68,13 +68,37 @@ namespace RPG_003.Battle.Skills
                 return _activationPredicate(parent.StatusManager);
             }
         }
-
+        public void PaymentCost()
+        {
+            Vector2 pos = parent.gameObject.transform.position;
+            foreach (var c in skillDataInBattle.CostDatas)
+            {
+                if (c.amount == 0) continue;
+                string head = c.amount < 0 ? "+" : "-";
+                if (c.isHP)
+                {
+                    parent.BattleManager.ApplyDamage(new DamageInfo(
+                        parent,
+                        parent,
+                        c.amount,
+                        AmountAttribute.Consume
+                        ));
+                }
+                else
+                {
+                    parent.StatusManager.MP -= c.amount;
+                    GraphicalManager.instance.ThrowText(pos, head + c.amount, new Color(30, 144, 255));
+                }
+                
+            }
+        }
         public void Execute(List<CharacterBase> targets)
         {
+            PaymentCost();
             foreach (var target in targets)
             {
                 Debug.Log($"Executing skill on {target.Data.Name}");
-                foreach (var d in skillData.DamageData)
+                foreach (var d in skillDataInBattle.DamageData)
                 {
                     var dI = MakeDamageInfo(d, target, d.amountAttribute.HasFlag(AmountAttribute.Magic), d.element);
                     if (d.amountAttribute.HasFlag(AmountAttribute.Heal))
@@ -108,11 +132,13 @@ namespace RPG_003.Battle.Skills
             }
             damage += amount * data.amount;
             d.Damage = damage;
+            d.Elements = data.element;
+            d.AmountAttribute = data.amountAttribute;
             return d;
         }
-        public Skill(SkillData data, CharacterBase parent)
+        public Skill(SkillDataInBattle data, CharacterBase parent)
         {
-            skillData = data;
+            skillDataInBattle = data;
             skillName = data.Name;
             this.parent = parent;
             BuildActivationPredicate(data.CostDatas);

@@ -1,7 +1,10 @@
 ﻿using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
+using RPG_003.Battle.Skills;
+using RPG_003.Skills;
 using System.Collections;
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 namespace RPG_003.Battle.Behaviour
 {
@@ -32,17 +35,50 @@ namespace RPG_003.Battle.Behaviour
             var chosenSkill = _EnemyBehaviorData.GetSkill();
 
             // --- 3. ターゲット選択 ---
-            var target = _TargetSelectHelper.SelectRandomTarget(chosenSkill.GetTargetFaction());
-            Debug.Log($"{_parent.Data.Name} のターン: {chosenSkill.skillName} を使用。ターゲット: {target.Data.Name}");
+            var targets = _TargetSelectHelper.SelectRandomTargets(chosenSkill.GetTargetFaction(), chosenSkill.targetData.Count, chosenSkill.canSecanSelectSameTargetlect);
             yield return new WaitForSeconds(1.5f);
 
             // --- 4. ダメージ計算＆適用 ---
-            var str = _parent.StatusManager.GetStatusAmount(StatusAttribute.STR).ChangedMax;
-            var intel = _parent.StatusManager.GetStatusAmount(StatusAttribute.INT).ChangedMax;
-            float dmg = str * chosenSkill.damage_with_str + intel * chosenSkill.damage_with_int;
-            _parent.BattleManager.ApplyDamage(new DamageInfo(_parent, target, dmg));
+            foreach (var target in targets)
+            {
+                Debug.Log($"Executing skill on {target.Data.Name}");
+                foreach (var d in chosenSkill.damageDatas)
+                {
+                    var dI = MakeDamageInfo(d, target, d.amountAttribute.HasFlag(AmountAttribute.Magic), d.element);
+                    if (d.amountAttribute.HasFlag(AmountAttribute.Heal))
+                        _parent.BattleManager.ApplyHeal(dI);
+                    else
+                        _parent.BattleManager.ApplyDamage(dI);
+                }
+            }
         }
 
+        public DamageInfo MakeDamageInfo(DamageData data, CharacterBase target, bool isMagic, Elements element)
+        {
+            var d = new DamageInfo(_parent, target, 0);
+            float damage = data.fixedAmount;
+            float amount;
+            switch (data.type)
+            {
+                case StatusAttribute.HP:
+                    amount = _parent.StatusManager.HP;
+                    break;
+                case StatusAttribute.MaxHP:
+                    amount = _parent.StatusManager.MaxHP;
+                    break;
+                case StatusAttribute.MP:
+                    amount = _parent.StatusManager.GetStatusAmount(StatusAttribute.MP).currentAmount;
+                    break;
+                default:
+                    amount = _parent.StatusManager.GetStatusAmount(data.type).ChangedMax;
+                    break;
+            }
+            damage += amount * data.amount;
+            d.Damage = damage;
+            d.Elements = data.element;
+            d.AmountAttribute = data.amountAttribute;
+            return d;
+        }
         public void OnDeath(ICharacter dead)
         {
             _parent.BattleManager.RemoveCharacter(dead as CharacterBase);

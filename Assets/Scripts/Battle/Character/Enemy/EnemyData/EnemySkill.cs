@@ -2,6 +2,7 @@
 using RPG_003.Skills;
 using Sirenix.OdinInspector;
 using UnityEngine;
+using System.Collections.Generic;
 
 namespace RPG_003.Battle.Characters.Enemy
 {
@@ -11,20 +12,18 @@ namespace RPG_003.Battle.Characters.Enemy
         public string skillName;
         public Elements elements;
         public AmountAttribute skillType;
-        public Faction target;
-        [Min(0)] public float damage_with_str; // 1f = 100%
-        [Min(0)] public float damage_with_int; // 1f = 100%
-        [Min(0)] public float heal_with_int; // 1f = 100%
-        [Min(0)] public float heal_with_str; // 1f = 100%
+        public List<DamageData> damageDatas;
+        public TargetData targetData;
+        public bool canSecanSelectSameTargetlect = true;
         // Note : 今後追加デバフなどを追加する
 
         public Faction GetTargetFaction()
         {
-            return target switch
+            return targetData.Faction switch
             {
                 Faction.Enemy => Faction.Ally,
                 Faction.Ally => Faction.Enemy,
-                _ => target,
+                _ => targetData.Faction,
             };
         }
     }
