@@ -6,12 +6,9 @@ namespace RPG_003.Battle.Behaviour
     public interface ICharacterBehaviour
     {
         void Initialize(ICharacter parent, BattleManager battleManager);
-        IEnumerator TurnBehaviour(bool instant = false);
 
-        void OnDeath(ICharacter character)
-        {
-            // Default implementation can be empty or can log the death event
-            // This method can be overridden in derived classes if specific behavior is needed on death
-        }
+        /// <param name="instant">ターン開始処理や終了処理を飛ばすかどうか(ターン割込みなどでTrue)</param>
+        IEnumerator TurnBehaviour(bool instant = false);
+        void OnDeath(ICharacter character);
     }
 }
