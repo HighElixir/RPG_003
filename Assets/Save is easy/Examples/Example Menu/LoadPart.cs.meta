@@ -1,0 +1,18 @@
+fileFormatVersion: 2
+guid: c11f4b1b580b85d4f9ab65c53afcc2a3
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences: []
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57432
+  packageName: Save is easy
+  packageVersion: 1.7.12
+  assetPath: Assets/Save is easy/Examples/Example Menu/LoadPart.cs
+  uploadId: 638129

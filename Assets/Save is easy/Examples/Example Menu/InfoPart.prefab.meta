@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 27b43f02481efc947aec9ba7c2bf878b
+NativeFormatImporter:
+  externalObjects: {}
+  mainObjectFileID: 100100000
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57432
+  packageName: Save is easy
+  packageVersion: 1.7.12
+  assetPath: Assets/Save is easy/Examples/Example Menu/InfoPart.prefab
+  uploadId: 638129

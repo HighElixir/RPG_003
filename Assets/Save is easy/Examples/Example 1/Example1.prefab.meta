@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: c3e13744cd05ba44f804034e9cde30da
+timeCreated: 1503540179
+licenseType: Store
+NativeFormatImporter:
+  mainObjectFileID: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 57432
+  packageName: Save is easy
+  packageVersion: 1.7.12
+  assetPath: Assets/Save is easy/Examples/Example 1/Example1.prefab
+  uploadId: 638129
