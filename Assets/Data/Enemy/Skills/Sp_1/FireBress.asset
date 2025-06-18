@@ -24,8 +24,14 @@ MonoBehaviour:
   skillName: FireBress
   elements: 1
   skillType: 2
-  target: 2
-  damage_with_str: 0
-  damage_with_int: 0.8
-  heal_with_int: 0
-  heal_with_str: 0
+  damageDatas:
+  - amount: 1.2
+    fixedAmount: 0
+    type: 4
+    element: 1
+    amountAttribute: 2
+  targetData:
+    _isSelf: 0
+    _faction: 2
+    _count: 1
+  canSecanSelectSameTargetlect: 1

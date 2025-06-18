@@ -24,8 +24,14 @@ MonoBehaviour:
   skillName: Dark Slash
   elements: 32
   skillType: 1
-  target: 2
-  damage_with_str: 2
-  damage_with_int: 0
-  heal_with_int: 0
-  heal_with_str: 0
+  damageDatas:
+  - amount: 1
+    fixedAmount: 400
+    type: 1
+    element: 7
+    amountAttribute: 1
+  targetData:
+    _isSelf: 0
+    _faction: 2
+    _count: 2
+  canSecanSelectSameTargetlect: 1
