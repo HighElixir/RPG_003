@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System;
+using RPG_003.Status;
 using UnityEngine;
 namespace RPG_003.Skills
 {

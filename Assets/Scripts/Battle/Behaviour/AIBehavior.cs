@@ -1,10 +1,9 @@
 ﻿using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
-using RPG_003.Battle.Skills;
+using RPG_003.Status;
 using RPG_003.Skills;
 using System.Collections;
 using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
 
 namespace RPG_003.Battle.Behaviour
 {
@@ -28,6 +27,7 @@ namespace RPG_003.Battle.Behaviour
 
         public IEnumerator TurnBehaviour(bool instant = false)
         {
+            Debug.Log("!");
             if (!instant)
                 yield return new WaitForSeconds(0.5f);
 
@@ -81,6 +81,7 @@ namespace RPG_003.Battle.Behaviour
         }
         public virtual void OnDeath(ICharacter dead)
         {
+            Debug.Log(dead.Data.Name + "をゲームから削除");
             _parent.BattleManager.RemoveCharacter(dead as CharacterBase);
         }
     }

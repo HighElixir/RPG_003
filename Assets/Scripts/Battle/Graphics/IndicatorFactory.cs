@@ -23,6 +23,10 @@ namespace RPG_003.Battle
             return ind;
         }
 
+        public void Release(IntervalIndicator indicator)
+        {
+            _pool.Release(indicator);
+        }
         private void Awake()
         {
             _pool = new(_prefab, 10, _container, true);

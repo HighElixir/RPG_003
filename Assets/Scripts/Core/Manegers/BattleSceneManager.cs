@@ -21,16 +21,19 @@ namespace RPG_003.Core
         [SerializeField] private int _battleSceneId;
         [SerializeField] private BattleData _battleData;
         private BattleManager _battleManager;
-        private Scene _from;
-        private Scene _battleScene;
+        private int _from;
 
         // === Public ===
         public void ToBattleScene(SceneLoaderAsync loader)
         {
+            _from = SceneManager.GetActiveScene().buildIndex;
             SceneLoaderAsync.OnLoadCompleted += OnSceneLoaded;
             loader.StartSceneLoad(_battleSceneId);
         }
-
+        public void BackScene(SceneLoaderAsync loader)
+        {
+            loader.StartSceneLoad(_from);
+        }
         public void OnSceneLoaded()
         {
             if (_battleManager == null)
@@ -43,6 +46,7 @@ namespace RPG_003.Core
                     }
                 }
             }
+            Debug.Log("Start");
             _battleManager.StartBattle(GameDataHolder.instance.GetPlayerDatas(), _battleData.Wave1);
         }
 

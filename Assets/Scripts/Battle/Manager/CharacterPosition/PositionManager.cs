@@ -87,22 +87,22 @@ namespace RPG_003.Battle
             _characterPositions.Clear();
         }
 
-        public int FactionCount(Faction faction)
+        public int FactionCount(Faction faction, bool isAlive = true)
         {
             int res = 0;
             foreach (var p in EnumWrapper.GetEnumList<CharacterPosition>())
             {
-                if (p.IsSameFaction(faction) && _characterPositions.ContainsKey(p))
+                if (p.IsSameFaction(faction) && _characterPositions.ContainsKey(p) && (!isAlive || _characterPositions[p].IsAlive))
                     res++;
             }
             return res;
         }
 
-        public (int allies, int enemies) AllFactionCount()
+        public (int allies, int enemies) AllFactionCount(bool isAlive = true)
         {
             var res = (0, 0);
-            res.Item1 = FactionCount(Faction.Ally);
-            res.Item2 = FactionCount(Faction.Enemy);
+            res.Item1 = FactionCount(Faction.Ally, isAlive);
+            res.Item2 = FactionCount(Faction.Enemy, isAlive);
             return res;
         }
     }

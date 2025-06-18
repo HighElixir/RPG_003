@@ -44,7 +44,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 73c9b8684cbc06e42a320f93baa3290c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _battleSceneId: 1
+  _battleSceneId: 0
   _battleData:
     Wave1: {fileID: 11400000, guid: 6901d00c7a672e24bb9024eed88a0c51, type: 2}
     Wave2: {fileID: 0}

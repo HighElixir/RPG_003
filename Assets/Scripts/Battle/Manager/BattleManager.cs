@@ -25,6 +25,7 @@ namespace RPG_003.Battle
         [BoxGroup("Reference"), SerializeField] private Player _player;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
         [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
+        [BoxGroup("Reference"), SerializeField] private SceneLoaderAsync _sceneLoaderAsync;
 
         private PositionManager _posManager;
         private CharacterInitializer _charInitializer;
@@ -54,8 +55,7 @@ namespace RPG_003.Battle
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
         {
-            _posManager.Clear();
-            _turnManager.Reset();
+            Initialize();
 
             for (int i = 0; i < players.Count && i < 4; i++)
             {
@@ -90,6 +90,7 @@ namespace RPG_003.Battle
         {
             Debug.Log("Battle ended.");
             _isBattleContinue = false;
+            foreach(var c in _posManager.GetCharacters())c.Release();
         }
         public void EndBattle_Won()
         {
@@ -123,7 +124,7 @@ namespace RPG_003.Battle
         {
             var c = Instantiate(_characterBase, Vector3.zero, Quaternion.identity);
             _charInitializer.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
-            if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition, Factions.Faction.Enemy))
+            if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition, Faction.Enemy))
             {
                 Debug.Log("モンスターをスポーンさせるために必要なスペースがありません");
                 return;
@@ -208,9 +209,9 @@ namespace RPG_003.Battle
         // === Notify ===
         public void OnDeath(ICharacter character)
         {
-            CheckBattleEnd();
             Debug.Log(character.Data.Name + "が死亡した！");
             character.OnDeath?.Invoke(character);
+            CheckBattleEnd();
         }
 
 #if UNITY_EDITOR
@@ -248,15 +249,20 @@ namespace RPG_003.Battle
             Vector2 offset = UnityEngine.Random.insideUnitCircle * radius;
             return pos + offset;
         }
-        //=== Unity Lifecycle ===
-        protected override void Awake()
+        private void Initialize()
         {
-            _charactersContainer = new GameObject("CharactersContainer").transform;
+            if (!_charactersContainer)
+                _charactersContainer = new GameObject("CharactersContainer").transform;
             BattleSceneManager.instance.SetBattleManageer(this);
             // 分割クラスの初期化
             _posManager = new PositionManager(out _characterPositions);
             _charInitializer = new CharacterInitializer(this);
             _turnManager = new TurnManager(this, this);
+        }
+        //=== Unity Lifecycle ===
+        protected override void Awake()
+        {
+            Initialize();
         }
     }
 }

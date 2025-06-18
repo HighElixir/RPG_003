@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Skills;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace RPG_003.Skills
 {

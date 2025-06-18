@@ -49,6 +49,7 @@ namespace RPG_003.Battle.Behaviour
         public void OnDeath(ICharacter character)
         {
             // Additional logic can be added here, such as updating UI or triggering events
+            Debug.Log(character.Data.Name + "は死亡した");
         }
 
         private void OnSkillSelected(Skill skill)

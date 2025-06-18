@@ -73,7 +73,11 @@ namespace RPG_003.Battle.Characters
             BattleManager.FinishTurn(this);
         }
 
-
+        public void Release()
+        {
+            _BehaviorIntervalCount.ReleaceIndicator();
+            Destroy(gameObject);
+        }
         // === Protected Methode ===
         protected virtual void InitializeClass()
         {
@@ -82,7 +86,7 @@ namespace RPG_003.Battle.Characters
             _statusManager.Initialize(this, _characterData);
             OnDeath += (chara) =>
             {
-                _BehaviorIntervalCount.HideIndicator();
+                Release();
                 IsAlive = false;
             };
             _BehaviorIntervalCount.Initialize(_statusManager.GetStatusAmount(StatusAttribute.SPD));
@@ -91,7 +95,7 @@ namespace RPG_003.Battle.Characters
         // === Unity Lifecycle ===
         private void OnDestroy()
         {
-            _BehaviorIntervalCount.ReleaceIndicator();
+            Release();
         }
     }
 }

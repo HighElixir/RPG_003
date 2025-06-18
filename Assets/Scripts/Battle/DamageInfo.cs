@@ -1,5 +1,6 @@
 ﻿using RPG_003.Battle.Characters;
 using RPG_003.Skills;
+using RPG_003.Status;
 using System;
 
 namespace RPG_003.Battle

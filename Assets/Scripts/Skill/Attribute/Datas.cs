@@ -1,4 +1,4 @@
-﻿using RPG_003.Battle.Characters;
+﻿using RPG_003.Status;
 using RPG_003.Battle.Factions;
 using System;
 using UnityEngine;
