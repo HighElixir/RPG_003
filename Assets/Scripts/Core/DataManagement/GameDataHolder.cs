@@ -27,10 +27,7 @@ namespace RPG_003.Core
         public void SetPlayerDatas(List<PlayerDataHolder> data) => _players = new(data);
         public List<PlayerData> GetPlayerDatas()
         {
-            var list = new List<PlayerData>();
-            foreach (var player in _players)
-                list.Add(player.Convert());
-            return list;
+            return _players.ConvertAll<PlayerData>((item) => item.Convert());
         }
         // === UnityLifecycle ===
         protected override void Awake()

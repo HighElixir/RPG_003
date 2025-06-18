@@ -79,7 +79,7 @@ namespace RPG_003.Battle.Behaviour
             d.AmountAttribute = data.amountAttribute;
             return d;
         }
-        public void OnDeath(ICharacter dead)
+        public virtual void OnDeath(ICharacter dead)
         {
             _parent.BattleManager.RemoveCharacter(dead as CharacterBase);
         }

@@ -12,12 +12,13 @@ namespace RPG_003.Core
     public class PlayerDataHolder
     {
         // == ==
-        [SerializeField] private CharacterData _characterData = new();
-        [OdinSerialize] private List<SkillDataHolder> _skills = new();
+        [SerializeField]private CharacterData _characterData = new();
+        [SerializeField]private List<SkillDataHolder> _skills = new();
 
         // == Property ==
         public CharacterData CharacterData => _characterData;
-        public List<SkillDataHolder> Skills => _skills;
+        public List<SkillDataHolder> Skills => _skills ??= new List<SkillDataHolder>();
+
 
         // === Public ===
         public void SetCharacter(CharacterData characterData) => _characterData = characterData;
@@ -38,10 +39,10 @@ namespace RPG_003.Core
         }
 
         // === Constracter ===
-        public PlayerDataHolder(CharacterData characterData, List<SkillDataHolder> skills)
+        public PlayerDataHolder(CharacterData characterData)
         {
             _characterData = characterData;
-            _skills = skills;
+            _skills = new List<SkillDataHolder>();
         }
     }
 }

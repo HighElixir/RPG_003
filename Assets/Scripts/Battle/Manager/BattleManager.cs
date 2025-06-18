@@ -4,6 +4,7 @@ using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
 using RPG_003.Battle.Characters.Player;
 using RPG_003.Battle.Factions;
+using RPG_003.Core;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
@@ -69,7 +70,22 @@ namespace RPG_003.Battle
             _isBattleContinue = true;
             ProcessTurn(); // BattleManager のラッパー
         }
+        public void StartBattle(List<Player> players, SpawningTable table)
+        {
+            _posManager.Clear();
+            _turnManager.Reset();
 
+            for (int i = 0; i < players.Count && i < 4; i++)
+            {
+                RegisterCharacter((CharacterPosition)i, players[i]);
+            }
+
+            for (int i = 0; i < 5; i++)
+                SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
+
+            _isBattleContinue = true;
+            ProcessTurn(); // BattleManager のラッパー
+        }
         public void EndBattle()
         {
             Debug.Log("Battle ended.");
@@ -236,7 +252,7 @@ namespace RPG_003.Battle
         protected override void Awake()
         {
             _charactersContainer = new GameObject("CharactersContainer").transform;
-
+            BattleSceneManager.instance.SetBattleManageer(this);
             // 分割クラスの初期化
             _posManager = new PositionManager(out _characterPositions);
             _charInitializer = new CharacterInitializer(this);

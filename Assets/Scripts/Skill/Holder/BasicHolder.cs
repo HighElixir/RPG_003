@@ -14,6 +14,17 @@ namespace RPG_003.Skills
 
         public override string Desc => string.IsNullOrEmpty(_custonDesc) ? _skill.Description : _custonDesc;
 
+        // ===- Constructor ===
+        public BasicHolder(BasicData skill)
+        {
+            _skill = skill;
+        }
+
+        // === Public ===
+        public void SetSkillData(BasicData data)
+        {
+            _skill = data;
+        }
         public override SkillDataInBattle ConvartData()
         {
             var s = new SkillDataInBattle(_skill.Name, _skill.Description, _skill.DamageDatas, _skill.CostDatas, _skill.Target);
