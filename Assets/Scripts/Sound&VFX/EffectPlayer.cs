@@ -20,7 +20,7 @@ namespace RPG_003.Effect
             if (vFXData.VFX != null)
             {
                 var v = Instantiate(vFXData.VFX, position, Quaternion.identity);
-                yield return new WaitWhile(() => v.IsAlive());
+                yield return new WaitWhile(() => v != null && v.IsAlive());
                 Destroy(v.gameObject);
             }
             yield break;
