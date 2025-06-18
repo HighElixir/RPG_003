@@ -1,5 +1,5 @@
 ﻿using RPG_003.Battle.Characters;
-using RPG_003.Battle.Characters.Player;
+using RPG_003.Status;
 using RPG_003.Skills;
 using System;
 using System.Collections.Generic;

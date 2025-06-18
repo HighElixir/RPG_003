@@ -1,4 +1,5 @@
 ﻿using RPG_003.Battle.Behaviour;
+using RPG_003.Status;
 using System;
 using System.Collections;
 using UnityEngine;

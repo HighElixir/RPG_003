@@ -1,6 +1,7 @@
 ﻿using RPG_003.Battle.Behaviour;
 using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Player;
+using RPG_003.Status;
 
 namespace RPG_003.Battle
 {

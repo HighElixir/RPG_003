@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using RPG_003.Battle;
+using RPG_003.Battle.Characters;
 
 namespace RPG_003.Status
 {

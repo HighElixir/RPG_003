@@ -1,4 +1,5 @@
 ﻿using RPG_003.Battle.Characters;
+using RPG_003.Status;
 using Sirenix.OdinInspector;
 using Sirenix.Utilities.Editor;
 using System.Collections.Generic;

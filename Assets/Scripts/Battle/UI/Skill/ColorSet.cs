@@ -1,5 +1,4 @@
-﻿using RPG_003.Skills;
-using Unity.VisualScripting;
+﻿using RPG_003.Status;
 using UnityEngine;
 
 namespace RPG_003.Battle

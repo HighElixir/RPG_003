@@ -1,4 +1,5 @@
 ﻿using RPG_003.Battle.Skills;
+using RPG_003.Status;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

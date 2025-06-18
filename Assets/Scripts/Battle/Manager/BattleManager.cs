@@ -4,11 +4,11 @@ using RPG_003.Battle.Characters;
 using RPG_003.Battle.Characters.Enemy;
 using RPG_003.Battle.Characters.Player;
 using RPG_003.Battle.Factions;
+using RPG_003.Status;
 using RPG_003.Core;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
-using UnityEditor;
 using UnityEngine;
 using UnityEngine.UIElements;
 
@@ -182,7 +182,7 @@ namespace RPG_003.Battle
         public void ApplyDamage(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            Color c = info.Elements == RPG_003.Skills.Elements.None ? Color.red : info.Elements.GetColorElement();
+            Color c = info.Elements == Elements.None ? Color.red : info.Elements.GetColorElement();
             GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterBase).transform.position, 1.5f), $"{info.Damage}", c);
             info.Target.TakeDamage(info);
         }

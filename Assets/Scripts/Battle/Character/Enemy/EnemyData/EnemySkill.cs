@@ -1,4 +1,5 @@
 ﻿using RPG_003.Battle.Factions;
+using RPG_003.Status;
 using RPG_003.Skills;
 using Sirenix.OdinInspector;
 using UnityEngine;
