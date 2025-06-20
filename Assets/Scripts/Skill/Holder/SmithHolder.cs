@@ -31,8 +31,8 @@ namespace RPG_003.Skills
             get
             {
                 var p = 0f;
-                foreach (EffectChip chip in _effect) p -= chip.ConsumePower;
-                foreach (CostChip chip in _cost) p += chip.ProductionPower;
+                foreach (EffectChip chip in _effect) p += chip.Power;
+                foreach (CostChip chip in _cost) p += chip.Power;
                 return p;
             }
         }

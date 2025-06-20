@@ -10,7 +10,8 @@ namespace RPG_003.Skills
         [SerializeField] private SoundVFXData _soundVFXData;
         protected override SkillDataHolder Inner()
         {
-            var h = new BasicHolder(_basicData);
+            var h = new BasicHolder();
+            h.SetSkillData(_basicData);
             h.SetCustomName(_skillName);
             h.SetIcon(_icon);
             h.SetSoundVFXData(_soundVFXData);
