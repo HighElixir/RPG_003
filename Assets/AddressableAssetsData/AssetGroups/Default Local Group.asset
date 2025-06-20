@@ -30,6 +30,11 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4955f02a78025cb4d9c4887bbd3628ef
+    m_Address: Assets/Data/Equipments/RightHand/SmallAxe.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 61f872344731bbc4c978b06bd503e916
     m_Address: Assets/Data/Enemy/Skills/Sp_1/Punch.asset
     m_ReadOnly: 0
