@@ -65,6 +65,17 @@ namespace HighElixir.Pool
                 Debug.LogWarning($"{obj.name} はプール外のオブジェクトです", obj);
             }
         }
+        public void Dispose()
+        {
+            foreach (var obj in _available)
+            {
+                UnityEngine.Object.Destroy(obj);
+            }
+            foreach(var obj in _inUse)
+            {
+                UnityEngine.Object.Destroy(obj);
+            }
+        }
     }
 
 }

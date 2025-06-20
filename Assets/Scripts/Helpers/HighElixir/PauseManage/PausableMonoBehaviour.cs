@@ -1,10 +1,9 @@
 ﻿using System;
 using UnityEngine;
-using HighElixir.PauseManage;
 
 namespace HighElixir.PauseManage
 {
-    public abstract class PausableMonoBehaviour : MonoBehaviour, IObserver<PauseManage>
+    public abstract class PausableMonoBehaviour : MonoBehaviour, IObserver<PauseManage.PauseState>
     {
         private IDisposable _subscription;
         protected PauseManage.PauseState CurrentState { get; private set; }
@@ -12,8 +11,8 @@ namespace HighElixir.PauseManage
         protected virtual void Awake()
         {
             // 起動時に自動で購読
-            if (PauseManage.Instance != null)
-                _subscription = PauseManage.Instance.Subscribe(this);
+            if (PauseManage.instance != null)
+                _subscription = PauseManage.instance.Subscribe(this);
         }
 
         protected virtual void OnDestroy()
@@ -23,17 +22,15 @@ namespace HighElixir.PauseManage
         }
 
         // IObserver 実装
-        public void OnNext(PauseManage manager)
+        public void OnNext(PauseManage.PauseState state)
         {
             // 状態が変わったら、Pause/Resume の抽象メソッド呼び出し
-            if (CurrentState != manager.State)
-            {
-                CurrentState = manager.State;
-                if (CurrentState == PauseManage.PauseState.Pause)
-                    OnPaused();
-                else
-                    OnResumed();
-            }
+            CurrentState = state;
+            if (CurrentState == PauseManage.PauseState.Pause)
+                OnPaused();
+            else
+                OnResumed();
+
         }
 
         public void OnCompleted()

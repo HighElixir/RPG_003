@@ -1,20 +1,18 @@
-﻿using System;
+﻿using HighElixir.Utilities;
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
 namespace HighElixir.PauseManage
 {
-    public class PauseManage : MonoBehaviour, IObservable<PauseManage>
+    public class PauseManage : SingletonBehavior<PauseManage>, IObservable<PauseManage.PauseState>
     {
-        // シングルトン化
-        public static PauseManage Instance { get; private set; }
-
         private class Unsubscriber : IDisposable
         {
-            private List<IObserver<PauseManage>> _obs;
-            private IObserver<PauseManage> _observer;
-            public Unsubscriber(List<IObserver<PauseManage>> obs, IObserver<PauseManage> observer)
+            private List<IObserver<PauseState>> _obs;
+            private IObserver<PauseState> _observer;
+            public Unsubscriber(List<IObserver<PauseState>> obs, IObserver<PauseState> observer)
             {
                 _obs = obs;
                 _observer = observer;
@@ -29,18 +27,12 @@ namespace HighElixir.PauseManage
         public enum PauseState { Pause, Play }
         public PauseState State { get; private set; } = PauseState.Play;
 
-        private List<IObserver<PauseManage>> _observers = new();
+        private List<IObserver<PauseState>> _observers = new();
         private InputAction _togglePauseAction;
 
-        private void Awake()
+        protected override void Awake()
         {
-            // シングルトン初期化
-            if (Instance != null && Instance != this)
-            {
-                Destroy(gameObject);
-                return;
-            }
-            Instance = this;
+            base.Awake();
             DontDestroyOnLoad(gameObject);
 
             // InputActionセットアップ（ESCキーでトグル）
@@ -49,20 +41,20 @@ namespace HighElixir.PauseManage
             _togglePauseAction.Enable();
         }
 
-        private void OnDestroy()
+        protected override void OnDestroy()
         {
             // 完了通知してオブザーバー解放
             Notify_OnCompleted();
             _togglePauseAction.Disable();
         }
 
-        public IDisposable Subscribe(IObserver<PauseManage> observer)
+        public IDisposable Subscribe(IObserver<PauseState> observer)
         {
             if (!_observers.Contains(observer))
             {
                 _observers.Add(observer);
                 // 初回通知で現在状態を教える
-                observer.OnNext(this);
+                observer.OnNext(State);
             }
             return new Unsubscriber(_observers, observer);
         }
@@ -78,7 +70,7 @@ namespace HighElixir.PauseManage
         private void Notify_StateChanged()
         {
             foreach (var obs in _observers)
-                obs.OnNext(this);
+                obs.OnNext(State);
         }
 
         private void Notify_OnCompleted()
