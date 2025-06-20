@@ -1,11 +1,11 @@
 ﻿using RPG_003.Status;
-
 using System;
 using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPG_003.Equipments
 {
+    [CreateAssetMenu(fileName ="new Equipment", menuName = "RPG_003/Equipments")]
     public class EquipmentBase : ScriptableObject
     {
         [Serializable]

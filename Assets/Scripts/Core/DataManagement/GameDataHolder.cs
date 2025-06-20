@@ -13,13 +13,15 @@ namespace RPG_003.Core
     {
         // == holders ==
         [SerializeField] private List<PlayerDataHolder> _players = new List<PlayerDataHolder>();
-
-        // 全てのスキルへの参照を持つ
-        [SerializeField] private List<SkillDataHolder> skillDatas = new List<SkillDataHolder>();
+        [SerializeField] private List<SkillDataHolder> _skillDatas = new List<SkillDataHolder>();// 全てのスキルへの参照を持つ
+        [SerializeField] private ItemHolder _itemHolder = new();
+        [SerializeField] private SkillDatasHolder _skillDataCount = new(); 
 
         // == property ==
-        public List<PlayerDataHolder> Players => _players;
-
+        public IReadOnlyList<PlayerDataHolder> Players => _players.AsReadOnly();
+        public IReadOnlyList<SkillDataHolder> Skills => _skillDatas.AsReadOnly();
+        public ItemHolder Items => _itemHolder;
+        public SkillDatasHolder SkillDatas => _skillDataCount;
         // === Public ===
         // PlayerDataHolder関連
         public void AddPlayerData(PlayerDataHolder player) => _players.Add(player);
@@ -29,11 +31,16 @@ namespace RPG_003.Core
         {
             return _players.ConvertAll<PlayerData>((item) => item.Convert());
         }
+        // SkillHolder
+        public void AddSkill(SkillDataHolder skill) => _skillDatas.Add(skill);
+        public void RemoveSkill(SkillDataHolder skill) => _skillDatas.Remove(skill);
+
         // === UnityLifecycle ===
         protected override void Awake()
         {
             base.Awake();
-            DontDestroyOnLoad(gameObject);
+            if (gameObject)
+                DontDestroyOnLoad(gameObject);
         }
     }
 }
