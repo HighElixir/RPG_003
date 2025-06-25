@@ -21,9 +21,9 @@ namespace Cysharp.Threading.Tasks.Triggers
     [DisallowMultipleComponent]
     public sealed class AsyncDestroyTrigger : MonoBehaviour
     {
-        bool awakeCalled = false;
-        bool called = false;
-        CancellationTokenSource cancellationTokenSource;
+        private bool awakeCalled = false;
+        private bool called = false;
+        private CancellationTokenSource cancellationTokenSource;
 
         public CancellationToken CancellationToken
         {
@@ -41,12 +41,12 @@ namespace Cysharp.Threading.Tasks.Triggers
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             awakeCalled = true;
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             called = true;
 
@@ -70,9 +70,9 @@ namespace Cysharp.Threading.Tasks.Triggers
             return tcs.Task;
         }
 
-        class AwakeMonitor : IPlayerLoopItem
+        private class AwakeMonitor : IPlayerLoopItem
         {
-            readonly AsyncDestroyTrigger trigger;
+            private readonly AsyncDestroyTrigger trigger;
 
             public AwakeMonitor(AsyncDestroyTrigger trigger)
             {

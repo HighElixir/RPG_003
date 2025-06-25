@@ -45,9 +45,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Zip<TFirst, TSecond, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TFirst> first;
-        readonly IUniTaskAsyncEnumerable<TSecond> second;
-        readonly Func<TFirst, TSecond, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TFirst> first;
+        private readonly IUniTaskAsyncEnumerable<TSecond> second;
+        private readonly Func<TFirst, TSecond, TResult> resultSelector;
 
         public Zip(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector)
         {
@@ -61,22 +61,22 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Zip(first, second, resultSelector, cancellationToken);
         }
 
-        sealed class _Zip : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _Zip : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
-            static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
+            private static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
+            private static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TFirst> first;
-            readonly IUniTaskAsyncEnumerable<TSecond> second;
-            readonly Func<TFirst, TSecond, TResult> resultSelector;
+            private readonly IUniTaskAsyncEnumerable<TFirst> first;
+            private readonly IUniTaskAsyncEnumerable<TSecond> second;
+            private readonly Func<TFirst, TSecond, TResult> resultSelector;
 
-            CancellationToken cancellationToken;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
-            IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
+            private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
+            private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
 
-            UniTask<bool>.Awaiter firstAwaiter;
-            UniTask<bool>.Awaiter secondAwaiter;
+            private UniTask<bool>.Awaiter firstAwaiter;
+            private UniTask<bool>.Awaiter secondAwaiter;
 
             public _Zip(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -113,7 +113,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void FirstMoveNextCore(object state)
+            private static void FirstMoveNextCore(object state)
             {
                 var self = (_Zip)state;
 
@@ -147,7 +147,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SecondMoveNextCore(object state)
+            private static void SecondMoveNextCore(object state)
             {
                 var self = (_Zip)state;
 
@@ -197,9 +197,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class ZipAwait<TFirst, TSecond, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TFirst> first;
-        readonly IUniTaskAsyncEnumerable<TSecond> second;
-        readonly Func<TFirst, TSecond, UniTask<TResult>> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TFirst> first;
+        private readonly IUniTaskAsyncEnumerable<TSecond> second;
+        private readonly Func<TFirst, TSecond, UniTask<TResult>> resultSelector;
 
         public ZipAwait(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, UniTask<TResult>> resultSelector)
         {
@@ -213,24 +213,24 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _ZipAwait(first, second, resultSelector, cancellationToken);
         }
 
-        sealed class _ZipAwait : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _ZipAwait : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
-            static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
-            static readonly Action<object> resultAwaitCoreDelegate = ResultAwaitCore;
+            private static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
+            private static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
+            private static readonly Action<object> resultAwaitCoreDelegate = ResultAwaitCore;
 
-            readonly IUniTaskAsyncEnumerable<TFirst> first;
-            readonly IUniTaskAsyncEnumerable<TSecond> second;
-            readonly Func<TFirst, TSecond, UniTask<TResult>> resultSelector;
+            private readonly IUniTaskAsyncEnumerable<TFirst> first;
+            private readonly IUniTaskAsyncEnumerable<TSecond> second;
+            private readonly Func<TFirst, TSecond, UniTask<TResult>> resultSelector;
 
-            CancellationToken cancellationToken;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
-            IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
+            private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
+            private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
 
-            UniTask<bool>.Awaiter firstAwaiter;
-            UniTask<bool>.Awaiter secondAwaiter;
-            UniTask<TResult>.Awaiter resultAwaiter;
+            private UniTask<bool>.Awaiter firstAwaiter;
+            private UniTask<bool>.Awaiter secondAwaiter;
+            private UniTask<TResult>.Awaiter resultAwaiter;
 
             public _ZipAwait(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, UniTask<TResult>> resultSelector, CancellationToken cancellationToken)
             {
@@ -267,7 +267,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void FirstMoveNextCore(object state)
+            private static void FirstMoveNextCore(object state)
             {
                 var self = (_ZipAwait)state;
 
@@ -301,7 +301,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SecondMoveNextCore(object state)
+            private static void SecondMoveNextCore(object state)
             {
                 var self = (_ZipAwait)state;
 
@@ -333,7 +333,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void ResultAwaitCore(object state)
+            private static void ResultAwaitCore(object state)
             {
                 var self = (_ZipAwait)state;
 
@@ -369,9 +369,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class ZipAwaitWithCancellation<TFirst, TSecond, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TFirst> first;
-        readonly IUniTaskAsyncEnumerable<TSecond> second;
-        readonly Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TFirst> first;
+        private readonly IUniTaskAsyncEnumerable<TSecond> second;
+        private readonly Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector;
 
         public ZipAwaitWithCancellation(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector)
         {
@@ -385,24 +385,24 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _ZipAwaitWithCancellation(first, second, resultSelector, cancellationToken);
         }
 
-        sealed class _ZipAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _ZipAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
-            static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
-            static readonly Action<object> resultAwaitCoreDelegate = ResultAwaitCore;
+            private static readonly Action<object> firstMoveNextCoreDelegate = FirstMoveNextCore;
+            private static readonly Action<object> secondMoveNextCoreDelegate = SecondMoveNextCore;
+            private static readonly Action<object> resultAwaitCoreDelegate = ResultAwaitCore;
 
-            readonly IUniTaskAsyncEnumerable<TFirst> first;
-            readonly IUniTaskAsyncEnumerable<TSecond> second;
-            readonly Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector;
+            private readonly IUniTaskAsyncEnumerable<TFirst> first;
+            private readonly IUniTaskAsyncEnumerable<TSecond> second;
+            private readonly Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector;
 
-            CancellationToken cancellationToken;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
-            IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
+            private IUniTaskAsyncEnumerator<TFirst> firstEnumerator;
+            private IUniTaskAsyncEnumerator<TSecond> secondEnumerator;
 
-            UniTask<bool>.Awaiter firstAwaiter;
-            UniTask<bool>.Awaiter secondAwaiter;
-            UniTask<TResult>.Awaiter resultAwaiter;
+            private UniTask<bool>.Awaiter firstAwaiter;
+            private UniTask<bool>.Awaiter secondAwaiter;
+            private UniTask<TResult>.Awaiter resultAwaiter;
 
             public _ZipAwaitWithCancellation(IUniTaskAsyncEnumerable<TFirst> first, IUniTaskAsyncEnumerable<TSecond> second, Func<TFirst, TSecond, CancellationToken, UniTask<TResult>> resultSelector, CancellationToken cancellationToken)
             {
@@ -439,7 +439,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void FirstMoveNextCore(object state)
+            private static void FirstMoveNextCore(object state)
             {
                 var self = (_ZipAwaitWithCancellation)state;
 
@@ -473,7 +473,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SecondMoveNextCore(object state)
+            private static void SecondMoveNextCore(object state)
             {
                 var self = (_ZipAwaitWithCancellation)state;
 
@@ -505,7 +505,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void ResultAwaitCore(object state)
+            private static void ResultAwaitCore(object state)
             {
                 var self = (_ZipAwaitWithCancellation)state;
 

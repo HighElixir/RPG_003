@@ -1,23 +1,23 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using System.Threading;
-using System;
 using Cysharp.Threading.Tasks.Internal;
+using System;
+using System.Threading;
 using UnityEngine;
 
 namespace Cysharp.Threading.Tasks
 {
     public abstract class PlayerLoopTimer : IDisposable, IPlayerLoopItem
     {
-        readonly CancellationToken cancellationToken;
-        readonly Action<object> timerCallback;
-        readonly object state;
-        readonly PlayerLoopTiming playerLoopTiming;
-        readonly bool periodic;
+        private readonly CancellationToken cancellationToken;
+        private readonly Action<object> timerCallback;
+        private readonly object state;
+        private readonly PlayerLoopTiming playerLoopTiming;
+        private readonly bool periodic;
 
-        bool isRunning;
-        bool tryStop;
-        bool isDisposed;
+        private bool isRunning;
+        private bool tryStop;
+        private bool isDisposed;
 
         protected PlayerLoopTimer(bool periodic, PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken, Action<object> timerCallback, object state)
         {
@@ -144,11 +144,11 @@ namespace Cysharp.Threading.Tasks
         protected abstract bool MoveNextCore();
     }
 
-    sealed class DeltaTimePlayerLoopTimer : PlayerLoopTimer
+    internal sealed class DeltaTimePlayerLoopTimer : PlayerLoopTimer
     {
-        int initialFrame;
-        float elapsed;
-        float interval;
+        private int initialFrame;
+        private float elapsed;
+        private float interval;
 
         public DeltaTimePlayerLoopTimer(TimeSpan interval, bool periodic, PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken, Action<object> timerCallback, object state)
             : base(periodic, playerLoopTiming, cancellationToken, timerCallback, state)
@@ -186,11 +186,11 @@ namespace Cysharp.Threading.Tasks
         }
     }
 
-    sealed class IgnoreTimeScalePlayerLoopTimer : PlayerLoopTimer
+    internal sealed class IgnoreTimeScalePlayerLoopTimer : PlayerLoopTimer
     {
-        int initialFrame;
-        float elapsed;
-        float interval;
+        private int initialFrame;
+        private float elapsed;
+        private float interval;
 
         public IgnoreTimeScalePlayerLoopTimer(TimeSpan interval, bool periodic, PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken, Action<object> timerCallback, object state)
             : base(periodic, playerLoopTiming, cancellationToken, timerCallback, state)
@@ -228,10 +228,10 @@ namespace Cysharp.Threading.Tasks
         }
     }
 
-    sealed class RealtimePlayerLoopTimer : PlayerLoopTimer
+    internal sealed class RealtimePlayerLoopTimer : PlayerLoopTimer
     {
-        ValueStopwatch stopwatch;
-        long intervalTicks;
+        private ValueStopwatch stopwatch;
+        private long intervalTicks;
 
         public RealtimePlayerLoopTimer(TimeSpan interval, bool periodic, PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken, Action<object> timerCallback, object state)
             : base(periodic, playerLoopTiming, cancellationToken, timerCallback, state)

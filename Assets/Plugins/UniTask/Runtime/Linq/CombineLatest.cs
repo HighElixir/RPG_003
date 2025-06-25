@@ -227,16 +227,16 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        
-        readonly Func<T1, T2, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+
+        private readonly Func<T1, T2, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, Func<T1, T2, TResult> resultSelector)
         {
             this.source1 = source1;
             this.source2 = source2;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -245,39 +245,39 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            const int CompleteCount = 2;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private const int CompleteCount = 2;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-       
-            readonly Func<T1, T2, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, Func<T1, T2, TResult> resultSelector, CancellationToken cancellationToken)
             {
                 this.source1 = source1;
                 this.source2 = source2;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -298,7 +298,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -336,7 +336,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -367,7 +367,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -386,12 +386,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -422,7 +422,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -441,12 +441,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2)
                 {
@@ -477,18 +477,18 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        
-        readonly Func<T1, T2, T3, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+
+        private readonly Func<T1, T2, T3, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, Func<T1, T2, T3, TResult> resultSelector)
         {
             this.source1 = source1;
             this.source2 = source2;
             this.source3 = source3;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -497,48 +497,48 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            const int CompleteCount = 3;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private const int CompleteCount = 3;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-       
-            readonly Func<T1, T2, T3, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, Func<T1, T2, T3, TResult> resultSelector, CancellationToken cancellationToken)
             {
                 this.source1 = source1;
                 this.source2 = source2;
                 this.source3 = source3;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -560,7 +560,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -611,7 +611,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -642,7 +642,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -661,12 +661,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -697,7 +697,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -716,12 +716,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -752,7 +752,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -771,12 +771,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3)
                 {
@@ -811,12 +811,12 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        
-        readonly Func<T1, T2, T3, T4, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+
+        private readonly Func<T1, T2, T3, T4, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, Func<T1, T2, T3, T4, TResult> resultSelector)
         {
@@ -824,7 +824,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source2 = source2;
             this.source3 = source3;
             this.source4 = source4;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -833,49 +833,49 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            const int CompleteCount = 4;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private const int CompleteCount = 4;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-       
-            readonly Func<T1, T2, T3, T4, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, Func<T1, T2, T3, T4, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -883,7 +883,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source2 = source2;
                 this.source3 = source3;
                 this.source4 = source4;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -906,7 +906,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -970,7 +970,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -1001,7 +1001,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1020,12 +1020,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -1056,7 +1056,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1075,12 +1075,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -1111,7 +1111,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1130,12 +1130,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -1166,7 +1166,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1185,12 +1185,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4)
                 {
@@ -1229,13 +1229,13 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        
-        readonly Func<T1, T2, T3, T4, T5, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+
+        private readonly Func<T1, T2, T3, T4, T5, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, Func<T1, T2, T3, T4, T5, TResult> resultSelector)
         {
@@ -1244,7 +1244,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source3 = source3;
             this.source4 = source4;
             this.source5 = source5;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -1253,57 +1253,57 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            const int CompleteCount = 5;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private const int CompleteCount = 5;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-       
-            readonly Func<T1, T2, T3, T4, T5, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, Func<T1, T2, T3, T4, T5, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -1312,7 +1312,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source3 = source3;
                 this.source4 = source4;
                 this.source5 = source5;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -1336,7 +1336,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -1413,7 +1413,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -1444,7 +1444,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1463,12 +1463,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -1499,7 +1499,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1518,12 +1518,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -1554,7 +1554,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1573,12 +1573,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -1609,7 +1609,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1628,12 +1628,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -1664,7 +1664,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1683,12 +1683,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5)
                 {
@@ -1731,14 +1731,14 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector)
         {
@@ -1748,7 +1748,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source4 = source4;
             this.source5 = source5;
             this.source6 = source6;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -1757,65 +1757,65 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            const int CompleteCount = 6;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private const int CompleteCount = 6;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, Func<T1, T2, T3, T4, T5, T6, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -1825,7 +1825,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source4 = source4;
                 this.source5 = source5;
                 this.source6 = source6;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -1850,7 +1850,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -1940,7 +1940,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -1971,7 +1971,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -1990,12 +1990,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -2026,7 +2026,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2045,12 +2045,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -2081,7 +2081,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2100,12 +2100,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -2136,7 +2136,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2155,12 +2155,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -2191,7 +2191,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2210,12 +2210,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -2246,7 +2246,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2265,12 +2265,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6)
                 {
@@ -2317,15 +2317,15 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector)
         {
@@ -2336,7 +2336,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source5 = source5;
             this.source6 = source6;
             this.source7 = source7;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -2345,73 +2345,73 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            const int CompleteCount = 7;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private const int CompleteCount = 7;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, Func<T1, T2, T3, T4, T5, T6, T7, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -2422,7 +2422,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source5 = source5;
                 this.source6 = source6;
                 this.source7 = source7;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -2448,7 +2448,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -2551,7 +2551,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -2582,7 +2582,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2601,12 +2601,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -2637,7 +2637,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2656,12 +2656,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -2692,7 +2692,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2711,12 +2711,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -2747,7 +2747,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2766,12 +2766,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -2802,7 +2802,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2821,12 +2821,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -2857,7 +2857,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2876,12 +2876,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -2912,7 +2912,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -2931,12 +2931,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7)
                 {
@@ -2987,16 +2987,16 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector)
         {
@@ -3008,7 +3008,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source6 = source6;
             this.source7 = source7;
             this.source8 = source8;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -3017,81 +3017,81 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            const int CompleteCount = 8;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private const int CompleteCount = 8;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, Func<T1, T2, T3, T4, T5, T6, T7, T8, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -3103,7 +3103,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source6 = source6;
                 this.source7 = source7;
                 this.source8 = source8;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -3130,7 +3130,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -3246,7 +3246,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -3277,7 +3277,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3296,12 +3296,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -3332,7 +3332,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3351,12 +3351,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -3387,7 +3387,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3406,12 +3406,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -3442,7 +3442,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3461,12 +3461,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -3497,7 +3497,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3516,12 +3516,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -3552,7 +3552,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3571,12 +3571,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -3607,7 +3607,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3626,12 +3626,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -3662,7 +3662,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -3681,12 +3681,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8)
                 {
@@ -3741,17 +3741,17 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector)
         {
@@ -3764,7 +3764,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source7 = source7;
             this.source8 = source8;
             this.source9 = source9;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -3773,89 +3773,89 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            const int CompleteCount = 9;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private const int CompleteCount = 9;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -3868,7 +3868,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source7 = source7;
                 this.source8 = source8;
                 this.source9 = source9;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -3896,7 +3896,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -4025,7 +4025,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -4056,7 +4056,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4075,12 +4075,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -4111,7 +4111,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4130,12 +4130,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -4166,7 +4166,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4185,12 +4185,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -4221,7 +4221,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4240,12 +4240,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -4276,7 +4276,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4295,12 +4295,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -4331,7 +4331,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4350,12 +4350,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -4386,7 +4386,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4405,12 +4405,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -4441,7 +4441,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4460,12 +4460,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -4496,7 +4496,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4515,12 +4515,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9)
                 {
@@ -4579,18 +4579,18 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector)
         {
@@ -4604,7 +4604,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source8 = source8;
             this.source9 = source9;
             this.source10 = source10;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -4613,97 +4613,97 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            const int CompleteCount = 10;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private const int CompleteCount = 10;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -4717,7 +4717,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source8 = source8;
                 this.source9 = source9;
                 this.source10 = source10;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -4746,7 +4746,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -4888,7 +4888,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -4919,7 +4919,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4938,12 +4938,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -4974,7 +4974,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -4993,12 +4993,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -5029,7 +5029,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5048,12 +5048,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -5084,7 +5084,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5103,12 +5103,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -5139,7 +5139,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5158,12 +5158,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -5194,7 +5194,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5213,12 +5213,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -5249,7 +5249,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5268,12 +5268,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -5304,7 +5304,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5323,12 +5323,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -5359,7 +5359,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5378,12 +5378,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -5414,7 +5414,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5433,12 +5433,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10)
                 {
@@ -5501,19 +5501,19 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        readonly IUniTaskAsyncEnumerable<T11> source11;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+        private readonly IUniTaskAsyncEnumerable<T11> source11;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector)
         {
@@ -5528,7 +5528,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source9 = source9;
             this.source10 = source10;
             this.source11 = source11;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -5537,105 +5537,105 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, source11, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            static readonly Action<object> Completed11Delegate = Completed11;
-            const int CompleteCount = 11;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private static readonly Action<object> Completed11Delegate = Completed11;
+            private const int CompleteCount = 11;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-            readonly IUniTaskAsyncEnumerable<T11> source11;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
+            private readonly IUniTaskAsyncEnumerable<T11> source11;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            IUniTaskAsyncEnumerator<T11> enumerator11;
-            UniTask<bool>.Awaiter awaiter11;
-            bool hasCurrent11;
-            bool running11;
-            T11 current11;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T11> enumerator11;
+            private UniTask<bool>.Awaiter awaiter11;
+            private bool hasCurrent11;
+            private bool running11;
+            private T11 current11;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -5650,7 +5650,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source9 = source9;
                 this.source10 = source10;
                 this.source11 = source11;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -5680,7 +5680,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -5835,7 +5835,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -5866,7 +5866,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5885,12 +5885,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -5921,7 +5921,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5940,12 +5940,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -5976,7 +5976,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -5995,12 +5995,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -6031,7 +6031,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6050,12 +6050,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -6086,7 +6086,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6105,12 +6105,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -6141,7 +6141,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6160,12 +6160,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -6196,7 +6196,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6215,12 +6215,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -6251,7 +6251,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6270,12 +6270,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -6306,7 +6306,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6325,12 +6325,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -6361,7 +6361,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6380,12 +6380,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed11(object state)
+            private static void Completed11(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running11 = false;
@@ -6416,7 +6416,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6435,12 +6435,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter11.SourceOnCompleted(Completed11Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10 && hasCurrent11)
                 {
@@ -6507,20 +6507,20 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        readonly IUniTaskAsyncEnumerable<T11> source11;
-        readonly IUniTaskAsyncEnumerable<T12> source12;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+        private readonly IUniTaskAsyncEnumerable<T11> source11;
+        private readonly IUniTaskAsyncEnumerable<T12> source12;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector)
         {
@@ -6536,7 +6536,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source10 = source10;
             this.source11 = source11;
             this.source12 = source12;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -6545,113 +6545,113 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, source11, source12, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            static readonly Action<object> Completed11Delegate = Completed11;
-            static readonly Action<object> Completed12Delegate = Completed12;
-            const int CompleteCount = 12;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private static readonly Action<object> Completed11Delegate = Completed11;
+            private static readonly Action<object> Completed12Delegate = Completed12;
+            private const int CompleteCount = 12;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-            readonly IUniTaskAsyncEnumerable<T11> source11;
-            readonly IUniTaskAsyncEnumerable<T12> source12;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
+            private readonly IUniTaskAsyncEnumerable<T11> source11;
+            private readonly IUniTaskAsyncEnumerable<T12> source12;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            IUniTaskAsyncEnumerator<T11> enumerator11;
-            UniTask<bool>.Awaiter awaiter11;
-            bool hasCurrent11;
-            bool running11;
-            T11 current11;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
 
-            IUniTaskAsyncEnumerator<T12> enumerator12;
-            UniTask<bool>.Awaiter awaiter12;
-            bool hasCurrent12;
-            bool running12;
-            T12 current12;
+            private IUniTaskAsyncEnumerator<T11> enumerator11;
+            private UniTask<bool>.Awaiter awaiter11;
+            private bool hasCurrent11;
+            private bool running11;
+            private T11 current11;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T12> enumerator12;
+            private UniTask<bool>.Awaiter awaiter12;
+            private bool hasCurrent12;
+            private bool running12;
+            private T12 current12;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -6667,7 +6667,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source10 = source10;
                 this.source11 = source11;
                 this.source12 = source12;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -6698,7 +6698,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -6866,7 +6866,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -6897,7 +6897,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6916,12 +6916,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -6952,7 +6952,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -6971,12 +6971,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -7007,7 +7007,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7026,12 +7026,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -7062,7 +7062,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7081,12 +7081,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -7117,7 +7117,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7136,12 +7136,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -7172,7 +7172,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7191,12 +7191,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -7227,7 +7227,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7246,12 +7246,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -7282,7 +7282,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7301,12 +7301,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -7337,7 +7337,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7356,12 +7356,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -7392,7 +7392,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7411,12 +7411,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed11(object state)
+            private static void Completed11(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running11 = false;
@@ -7447,7 +7447,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7466,12 +7466,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter11.SourceOnCompleted(Completed11Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed12(object state)
+            private static void Completed12(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running12 = false;
@@ -7502,7 +7502,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -7521,12 +7521,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter12.SourceOnCompleted(Completed12Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10 && hasCurrent11 && hasCurrent12)
                 {
@@ -7597,21 +7597,21 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        readonly IUniTaskAsyncEnumerable<T11> source11;
-        readonly IUniTaskAsyncEnumerable<T12> source12;
-        readonly IUniTaskAsyncEnumerable<T13> source13;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+        private readonly IUniTaskAsyncEnumerable<T11> source11;
+        private readonly IUniTaskAsyncEnumerable<T12> source12;
+        private readonly IUniTaskAsyncEnumerable<T13> source13;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector)
         {
@@ -7628,7 +7628,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source11 = source11;
             this.source12 = source12;
             this.source13 = source13;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -7637,121 +7637,121 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, source11, source12, source13, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            static readonly Action<object> Completed11Delegate = Completed11;
-            static readonly Action<object> Completed12Delegate = Completed12;
-            static readonly Action<object> Completed13Delegate = Completed13;
-            const int CompleteCount = 13;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private static readonly Action<object> Completed11Delegate = Completed11;
+            private static readonly Action<object> Completed12Delegate = Completed12;
+            private static readonly Action<object> Completed13Delegate = Completed13;
+            private const int CompleteCount = 13;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-            readonly IUniTaskAsyncEnumerable<T11> source11;
-            readonly IUniTaskAsyncEnumerable<T12> source12;
-            readonly IUniTaskAsyncEnumerable<T13> source13;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
+            private readonly IUniTaskAsyncEnumerable<T11> source11;
+            private readonly IUniTaskAsyncEnumerable<T12> source12;
+            private readonly IUniTaskAsyncEnumerable<T13> source13;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            IUniTaskAsyncEnumerator<T11> enumerator11;
-            UniTask<bool>.Awaiter awaiter11;
-            bool hasCurrent11;
-            bool running11;
-            T11 current11;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
 
-            IUniTaskAsyncEnumerator<T12> enumerator12;
-            UniTask<bool>.Awaiter awaiter12;
-            bool hasCurrent12;
-            bool running12;
-            T12 current12;
+            private IUniTaskAsyncEnumerator<T11> enumerator11;
+            private UniTask<bool>.Awaiter awaiter11;
+            private bool hasCurrent11;
+            private bool running11;
+            private T11 current11;
 
-            IUniTaskAsyncEnumerator<T13> enumerator13;
-            UniTask<bool>.Awaiter awaiter13;
-            bool hasCurrent13;
-            bool running13;
-            T13 current13;
+            private IUniTaskAsyncEnumerator<T12> enumerator12;
+            private UniTask<bool>.Awaiter awaiter12;
+            private bool hasCurrent12;
+            private bool running12;
+            private T12 current12;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T13> enumerator13;
+            private UniTask<bool>.Awaiter awaiter13;
+            private bool hasCurrent13;
+            private bool running13;
+            private T13 current13;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -7768,7 +7768,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source11 = source11;
                 this.source12 = source12;
                 this.source13 = source13;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -7800,7 +7800,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -7981,7 +7981,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -8012,7 +8012,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8031,12 +8031,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -8067,7 +8067,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8086,12 +8086,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -8122,7 +8122,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8141,12 +8141,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -8177,7 +8177,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8196,12 +8196,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -8232,7 +8232,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8251,12 +8251,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -8287,7 +8287,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8306,12 +8306,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -8342,7 +8342,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8361,12 +8361,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -8397,7 +8397,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8416,12 +8416,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -8452,7 +8452,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8471,12 +8471,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -8507,7 +8507,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8526,12 +8526,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed11(object state)
+            private static void Completed11(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running11 = false;
@@ -8562,7 +8562,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8581,12 +8581,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter11.SourceOnCompleted(Completed11Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed12(object state)
+            private static void Completed12(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running12 = false;
@@ -8617,7 +8617,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8636,12 +8636,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter12.SourceOnCompleted(Completed12Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed13(object state)
+            private static void Completed13(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running13 = false;
@@ -8672,7 +8672,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -8691,12 +8691,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter13.SourceOnCompleted(Completed13Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10 && hasCurrent11 && hasCurrent12 && hasCurrent13)
                 {
@@ -8771,22 +8771,22 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        readonly IUniTaskAsyncEnumerable<T11> source11;
-        readonly IUniTaskAsyncEnumerable<T12> source12;
-        readonly IUniTaskAsyncEnumerable<T13> source13;
-        readonly IUniTaskAsyncEnumerable<T14> source14;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+        private readonly IUniTaskAsyncEnumerable<T11> source11;
+        private readonly IUniTaskAsyncEnumerable<T12> source12;
+        private readonly IUniTaskAsyncEnumerable<T13> source13;
+        private readonly IUniTaskAsyncEnumerable<T14> source14;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, IUniTaskAsyncEnumerable<T14> source14, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector)
         {
@@ -8804,7 +8804,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source12 = source12;
             this.source13 = source13;
             this.source14 = source14;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -8813,129 +8813,129 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, source11, source12, source13, source14, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            static readonly Action<object> Completed11Delegate = Completed11;
-            static readonly Action<object> Completed12Delegate = Completed12;
-            static readonly Action<object> Completed13Delegate = Completed13;
-            static readonly Action<object> Completed14Delegate = Completed14;
-            const int CompleteCount = 14;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private static readonly Action<object> Completed11Delegate = Completed11;
+            private static readonly Action<object> Completed12Delegate = Completed12;
+            private static readonly Action<object> Completed13Delegate = Completed13;
+            private static readonly Action<object> Completed14Delegate = Completed14;
+            private const int CompleteCount = 14;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-            readonly IUniTaskAsyncEnumerable<T11> source11;
-            readonly IUniTaskAsyncEnumerable<T12> source12;
-            readonly IUniTaskAsyncEnumerable<T13> source13;
-            readonly IUniTaskAsyncEnumerable<T14> source14;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
+            private readonly IUniTaskAsyncEnumerable<T11> source11;
+            private readonly IUniTaskAsyncEnumerable<T12> source12;
+            private readonly IUniTaskAsyncEnumerable<T13> source13;
+            private readonly IUniTaskAsyncEnumerable<T14> source14;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            IUniTaskAsyncEnumerator<T11> enumerator11;
-            UniTask<bool>.Awaiter awaiter11;
-            bool hasCurrent11;
-            bool running11;
-            T11 current11;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
 
-            IUniTaskAsyncEnumerator<T12> enumerator12;
-            UniTask<bool>.Awaiter awaiter12;
-            bool hasCurrent12;
-            bool running12;
-            T12 current12;
+            private IUniTaskAsyncEnumerator<T11> enumerator11;
+            private UniTask<bool>.Awaiter awaiter11;
+            private bool hasCurrent11;
+            private bool running11;
+            private T11 current11;
 
-            IUniTaskAsyncEnumerator<T13> enumerator13;
-            UniTask<bool>.Awaiter awaiter13;
-            bool hasCurrent13;
-            bool running13;
-            T13 current13;
+            private IUniTaskAsyncEnumerator<T12> enumerator12;
+            private UniTask<bool>.Awaiter awaiter12;
+            private bool hasCurrent12;
+            private bool running12;
+            private T12 current12;
 
-            IUniTaskAsyncEnumerator<T14> enumerator14;
-            UniTask<bool>.Awaiter awaiter14;
-            bool hasCurrent14;
-            bool running14;
-            T14 current14;
+            private IUniTaskAsyncEnumerator<T13> enumerator13;
+            private UniTask<bool>.Awaiter awaiter13;
+            private bool hasCurrent13;
+            private bool running13;
+            private T13 current13;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T14> enumerator14;
+            private UniTask<bool>.Awaiter awaiter14;
+            private bool hasCurrent14;
+            private bool running14;
+            private T14 current14;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, IUniTaskAsyncEnumerable<T14> source14, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -8953,7 +8953,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source12 = source12;
                 this.source13 = source13;
                 this.source14 = source14;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -8986,7 +8986,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -9180,7 +9180,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -9211,7 +9211,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9230,12 +9230,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -9266,7 +9266,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9285,12 +9285,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -9321,7 +9321,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9340,12 +9340,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -9376,7 +9376,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9395,12 +9395,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -9431,7 +9431,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9450,12 +9450,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -9486,7 +9486,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9505,12 +9505,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -9541,7 +9541,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9560,12 +9560,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -9596,7 +9596,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9615,12 +9615,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -9651,7 +9651,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9670,12 +9670,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -9706,7 +9706,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9725,12 +9725,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed11(object state)
+            private static void Completed11(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running11 = false;
@@ -9761,7 +9761,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9780,12 +9780,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter11.SourceOnCompleted(Completed11Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed12(object state)
+            private static void Completed12(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running12 = false;
@@ -9816,7 +9816,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9835,12 +9835,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter12.SourceOnCompleted(Completed12Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed13(object state)
+            private static void Completed13(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running13 = false;
@@ -9871,7 +9871,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9890,12 +9890,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter13.SourceOnCompleted(Completed13Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed14(object state)
+            private static void Completed14(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running14 = false;
@@ -9926,7 +9926,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -9945,12 +9945,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter14.SourceOnCompleted(Completed14Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10 && hasCurrent11 && hasCurrent12 && hasCurrent13 && hasCurrent14)
                 {
@@ -10029,23 +10029,23 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class CombineLatest<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<T1> source1;
-        readonly IUniTaskAsyncEnumerable<T2> source2;
-        readonly IUniTaskAsyncEnumerable<T3> source3;
-        readonly IUniTaskAsyncEnumerable<T4> source4;
-        readonly IUniTaskAsyncEnumerable<T5> source5;
-        readonly IUniTaskAsyncEnumerable<T6> source6;
-        readonly IUniTaskAsyncEnumerable<T7> source7;
-        readonly IUniTaskAsyncEnumerable<T8> source8;
-        readonly IUniTaskAsyncEnumerable<T9> source9;
-        readonly IUniTaskAsyncEnumerable<T10> source10;
-        readonly IUniTaskAsyncEnumerable<T11> source11;
-        readonly IUniTaskAsyncEnumerable<T12> source12;
-        readonly IUniTaskAsyncEnumerable<T13> source13;
-        readonly IUniTaskAsyncEnumerable<T14> source14;
-        readonly IUniTaskAsyncEnumerable<T15> source15;
-        
-        readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<T1> source1;
+        private readonly IUniTaskAsyncEnumerable<T2> source2;
+        private readonly IUniTaskAsyncEnumerable<T3> source3;
+        private readonly IUniTaskAsyncEnumerable<T4> source4;
+        private readonly IUniTaskAsyncEnumerable<T5> source5;
+        private readonly IUniTaskAsyncEnumerable<T6> source6;
+        private readonly IUniTaskAsyncEnumerable<T7> source7;
+        private readonly IUniTaskAsyncEnumerable<T8> source8;
+        private readonly IUniTaskAsyncEnumerable<T9> source9;
+        private readonly IUniTaskAsyncEnumerable<T10> source10;
+        private readonly IUniTaskAsyncEnumerable<T11> source11;
+        private readonly IUniTaskAsyncEnumerable<T12> source12;
+        private readonly IUniTaskAsyncEnumerable<T13> source13;
+        private readonly IUniTaskAsyncEnumerable<T14> source14;
+        private readonly IUniTaskAsyncEnumerable<T15> source15;
+
+        private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector;
 
         public CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, IUniTaskAsyncEnumerable<T14> source14, IUniTaskAsyncEnumerable<T15> source15, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector)
         {
@@ -10064,7 +10064,7 @@ namespace Cysharp.Threading.Tasks.Linq
             this.source13 = source13;
             this.source14 = source14;
             this.source15 = source15;
-        
+
             this.resultSelector = resultSelector;
         }
 
@@ -10073,137 +10073,137 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _CombineLatest(source1, source2, source3, source4, source5, source6, source7, source8, source9, source10, source11, source12, source13, source14, source15, resultSelector, cancellationToken);
         }
 
-        class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private class _CombineLatest : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> Completed1Delegate = Completed1;
-            static readonly Action<object> Completed2Delegate = Completed2;
-            static readonly Action<object> Completed3Delegate = Completed3;
-            static readonly Action<object> Completed4Delegate = Completed4;
-            static readonly Action<object> Completed5Delegate = Completed5;
-            static readonly Action<object> Completed6Delegate = Completed6;
-            static readonly Action<object> Completed7Delegate = Completed7;
-            static readonly Action<object> Completed8Delegate = Completed8;
-            static readonly Action<object> Completed9Delegate = Completed9;
-            static readonly Action<object> Completed10Delegate = Completed10;
-            static readonly Action<object> Completed11Delegate = Completed11;
-            static readonly Action<object> Completed12Delegate = Completed12;
-            static readonly Action<object> Completed13Delegate = Completed13;
-            static readonly Action<object> Completed14Delegate = Completed14;
-            static readonly Action<object> Completed15Delegate = Completed15;
-            const int CompleteCount = 15;
+            private static readonly Action<object> Completed1Delegate = Completed1;
+            private static readonly Action<object> Completed2Delegate = Completed2;
+            private static readonly Action<object> Completed3Delegate = Completed3;
+            private static readonly Action<object> Completed4Delegate = Completed4;
+            private static readonly Action<object> Completed5Delegate = Completed5;
+            private static readonly Action<object> Completed6Delegate = Completed6;
+            private static readonly Action<object> Completed7Delegate = Completed7;
+            private static readonly Action<object> Completed8Delegate = Completed8;
+            private static readonly Action<object> Completed9Delegate = Completed9;
+            private static readonly Action<object> Completed10Delegate = Completed10;
+            private static readonly Action<object> Completed11Delegate = Completed11;
+            private static readonly Action<object> Completed12Delegate = Completed12;
+            private static readonly Action<object> Completed13Delegate = Completed13;
+            private static readonly Action<object> Completed14Delegate = Completed14;
+            private static readonly Action<object> Completed15Delegate = Completed15;
+            private const int CompleteCount = 15;
 
-            readonly IUniTaskAsyncEnumerable<T1> source1;
-            readonly IUniTaskAsyncEnumerable<T2> source2;
-            readonly IUniTaskAsyncEnumerable<T3> source3;
-            readonly IUniTaskAsyncEnumerable<T4> source4;
-            readonly IUniTaskAsyncEnumerable<T5> source5;
-            readonly IUniTaskAsyncEnumerable<T6> source6;
-            readonly IUniTaskAsyncEnumerable<T7> source7;
-            readonly IUniTaskAsyncEnumerable<T8> source8;
-            readonly IUniTaskAsyncEnumerable<T9> source9;
-            readonly IUniTaskAsyncEnumerable<T10> source10;
-            readonly IUniTaskAsyncEnumerable<T11> source11;
-            readonly IUniTaskAsyncEnumerable<T12> source12;
-            readonly IUniTaskAsyncEnumerable<T13> source13;
-            readonly IUniTaskAsyncEnumerable<T14> source14;
-            readonly IUniTaskAsyncEnumerable<T15> source15;
-       
-            readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<T1> source1;
+            private readonly IUniTaskAsyncEnumerable<T2> source2;
+            private readonly IUniTaskAsyncEnumerable<T3> source3;
+            private readonly IUniTaskAsyncEnumerable<T4> source4;
+            private readonly IUniTaskAsyncEnumerable<T5> source5;
+            private readonly IUniTaskAsyncEnumerable<T6> source6;
+            private readonly IUniTaskAsyncEnumerable<T7> source7;
+            private readonly IUniTaskAsyncEnumerable<T8> source8;
+            private readonly IUniTaskAsyncEnumerable<T9> source9;
+            private readonly IUniTaskAsyncEnumerable<T10> source10;
+            private readonly IUniTaskAsyncEnumerable<T11> source11;
+            private readonly IUniTaskAsyncEnumerable<T12> source12;
+            private readonly IUniTaskAsyncEnumerable<T13> source13;
+            private readonly IUniTaskAsyncEnumerable<T14> source14;
+            private readonly IUniTaskAsyncEnumerable<T15> source15;
 
-            IUniTaskAsyncEnumerator<T1> enumerator1;
-            UniTask<bool>.Awaiter awaiter1;
-            bool hasCurrent1;
-            bool running1;
-            T1 current1;
+            private readonly Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<T2> enumerator2;
-            UniTask<bool>.Awaiter awaiter2;
-            bool hasCurrent2;
-            bool running2;
-            T2 current2;
+            private IUniTaskAsyncEnumerator<T1> enumerator1;
+            private UniTask<bool>.Awaiter awaiter1;
+            private bool hasCurrent1;
+            private bool running1;
+            private T1 current1;
 
-            IUniTaskAsyncEnumerator<T3> enumerator3;
-            UniTask<bool>.Awaiter awaiter3;
-            bool hasCurrent3;
-            bool running3;
-            T3 current3;
+            private IUniTaskAsyncEnumerator<T2> enumerator2;
+            private UniTask<bool>.Awaiter awaiter2;
+            private bool hasCurrent2;
+            private bool running2;
+            private T2 current2;
 
-            IUniTaskAsyncEnumerator<T4> enumerator4;
-            UniTask<bool>.Awaiter awaiter4;
-            bool hasCurrent4;
-            bool running4;
-            T4 current4;
+            private IUniTaskAsyncEnumerator<T3> enumerator3;
+            private UniTask<bool>.Awaiter awaiter3;
+            private bool hasCurrent3;
+            private bool running3;
+            private T3 current3;
 
-            IUniTaskAsyncEnumerator<T5> enumerator5;
-            UniTask<bool>.Awaiter awaiter5;
-            bool hasCurrent5;
-            bool running5;
-            T5 current5;
+            private IUniTaskAsyncEnumerator<T4> enumerator4;
+            private UniTask<bool>.Awaiter awaiter4;
+            private bool hasCurrent4;
+            private bool running4;
+            private T4 current4;
 
-            IUniTaskAsyncEnumerator<T6> enumerator6;
-            UniTask<bool>.Awaiter awaiter6;
-            bool hasCurrent6;
-            bool running6;
-            T6 current6;
+            private IUniTaskAsyncEnumerator<T5> enumerator5;
+            private UniTask<bool>.Awaiter awaiter5;
+            private bool hasCurrent5;
+            private bool running5;
+            private T5 current5;
 
-            IUniTaskAsyncEnumerator<T7> enumerator7;
-            UniTask<bool>.Awaiter awaiter7;
-            bool hasCurrent7;
-            bool running7;
-            T7 current7;
+            private IUniTaskAsyncEnumerator<T6> enumerator6;
+            private UniTask<bool>.Awaiter awaiter6;
+            private bool hasCurrent6;
+            private bool running6;
+            private T6 current6;
 
-            IUniTaskAsyncEnumerator<T8> enumerator8;
-            UniTask<bool>.Awaiter awaiter8;
-            bool hasCurrent8;
-            bool running8;
-            T8 current8;
+            private IUniTaskAsyncEnumerator<T7> enumerator7;
+            private UniTask<bool>.Awaiter awaiter7;
+            private bool hasCurrent7;
+            private bool running7;
+            private T7 current7;
 
-            IUniTaskAsyncEnumerator<T9> enumerator9;
-            UniTask<bool>.Awaiter awaiter9;
-            bool hasCurrent9;
-            bool running9;
-            T9 current9;
+            private IUniTaskAsyncEnumerator<T8> enumerator8;
+            private UniTask<bool>.Awaiter awaiter8;
+            private bool hasCurrent8;
+            private bool running8;
+            private T8 current8;
 
-            IUniTaskAsyncEnumerator<T10> enumerator10;
-            UniTask<bool>.Awaiter awaiter10;
-            bool hasCurrent10;
-            bool running10;
-            T10 current10;
+            private IUniTaskAsyncEnumerator<T9> enumerator9;
+            private UniTask<bool>.Awaiter awaiter9;
+            private bool hasCurrent9;
+            private bool running9;
+            private T9 current9;
 
-            IUniTaskAsyncEnumerator<T11> enumerator11;
-            UniTask<bool>.Awaiter awaiter11;
-            bool hasCurrent11;
-            bool running11;
-            T11 current11;
+            private IUniTaskAsyncEnumerator<T10> enumerator10;
+            private UniTask<bool>.Awaiter awaiter10;
+            private bool hasCurrent10;
+            private bool running10;
+            private T10 current10;
 
-            IUniTaskAsyncEnumerator<T12> enumerator12;
-            UniTask<bool>.Awaiter awaiter12;
-            bool hasCurrent12;
-            bool running12;
-            T12 current12;
+            private IUniTaskAsyncEnumerator<T11> enumerator11;
+            private UniTask<bool>.Awaiter awaiter11;
+            private bool hasCurrent11;
+            private bool running11;
+            private T11 current11;
 
-            IUniTaskAsyncEnumerator<T13> enumerator13;
-            UniTask<bool>.Awaiter awaiter13;
-            bool hasCurrent13;
-            bool running13;
-            T13 current13;
+            private IUniTaskAsyncEnumerator<T12> enumerator12;
+            private UniTask<bool>.Awaiter awaiter12;
+            private bool hasCurrent12;
+            private bool running12;
+            private T12 current12;
 
-            IUniTaskAsyncEnumerator<T14> enumerator14;
-            UniTask<bool>.Awaiter awaiter14;
-            bool hasCurrent14;
-            bool running14;
-            T14 current14;
+            private IUniTaskAsyncEnumerator<T13> enumerator13;
+            private UniTask<bool>.Awaiter awaiter13;
+            private bool hasCurrent13;
+            private bool running13;
+            private T13 current13;
 
-            IUniTaskAsyncEnumerator<T15> enumerator15;
-            UniTask<bool>.Awaiter awaiter15;
-            bool hasCurrent15;
-            bool running15;
-            T15 current15;
+            private IUniTaskAsyncEnumerator<T14> enumerator14;
+            private UniTask<bool>.Awaiter awaiter14;
+            private bool hasCurrent14;
+            private bool running14;
+            private T14 current14;
 
-            int completedCount;
-            bool syncRunning;
-            TResult result;
+            private IUniTaskAsyncEnumerator<T15> enumerator15;
+            private UniTask<bool>.Awaiter awaiter15;
+            private bool hasCurrent15;
+            private bool running15;
+            private T15 current15;
+
+            private int completedCount;
+            private bool syncRunning;
+            private TResult result;
 
             public _CombineLatest(IUniTaskAsyncEnumerable<T1> source1, IUniTaskAsyncEnumerable<T2> source2, IUniTaskAsyncEnumerable<T3> source3, IUniTaskAsyncEnumerable<T4> source4, IUniTaskAsyncEnumerable<T5> source5, IUniTaskAsyncEnumerable<T6> source6, IUniTaskAsyncEnumerable<T7> source7, IUniTaskAsyncEnumerable<T8> source8, IUniTaskAsyncEnumerable<T9> source9, IUniTaskAsyncEnumerable<T10> source10, IUniTaskAsyncEnumerable<T11> source11, IUniTaskAsyncEnumerable<T12> source12, IUniTaskAsyncEnumerable<T13> source13, IUniTaskAsyncEnumerable<T14> source14, IUniTaskAsyncEnumerable<T15> source15, Func<T1, T2, T3, T4, T5, T6, T7, T8, T9, T10, T11, T12, T13, T14, T15, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -10222,7 +10222,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.source13 = source13;
                 this.source14 = source14;
                 this.source15 = source15;
-                
+
                 this.resultSelector = resultSelector;
                 this.cancellationToken = cancellationToken;
                 TaskTracker.TrackActiveTask(this, 3);
@@ -10256,7 +10256,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 completionSource.Reset();
 
-                AGAIN:
+            AGAIN:
                 syncRunning = true;
                 if (!running1)
                 {
@@ -10463,7 +10463,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void Completed1(object state)
+            private static void Completed1(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running1 = false;
@@ -10494,7 +10494,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10513,12 +10513,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter1.SourceOnCompleted(Completed1Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed2(object state)
+            private static void Completed2(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running2 = false;
@@ -10549,7 +10549,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10568,12 +10568,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter2.SourceOnCompleted(Completed2Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed3(object state)
+            private static void Completed3(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running3 = false;
@@ -10604,7 +10604,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10623,12 +10623,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter3.SourceOnCompleted(Completed3Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed4(object state)
+            private static void Completed4(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running4 = false;
@@ -10659,7 +10659,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10678,12 +10678,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter4.SourceOnCompleted(Completed4Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed5(object state)
+            private static void Completed5(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running5 = false;
@@ -10714,7 +10714,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10733,12 +10733,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter5.SourceOnCompleted(Completed5Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed6(object state)
+            private static void Completed6(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running6 = false;
@@ -10769,7 +10769,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10788,12 +10788,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter6.SourceOnCompleted(Completed6Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed7(object state)
+            private static void Completed7(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running7 = false;
@@ -10824,7 +10824,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10843,12 +10843,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter7.SourceOnCompleted(Completed7Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed8(object state)
+            private static void Completed8(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running8 = false;
@@ -10879,7 +10879,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10898,12 +10898,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter8.SourceOnCompleted(Completed8Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed9(object state)
+            private static void Completed9(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running9 = false;
@@ -10934,7 +10934,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -10953,12 +10953,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter9.SourceOnCompleted(Completed9Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed10(object state)
+            private static void Completed10(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running10 = false;
@@ -10989,7 +10989,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11008,12 +11008,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter10.SourceOnCompleted(Completed10Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed11(object state)
+            private static void Completed11(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running11 = false;
@@ -11044,7 +11044,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11063,12 +11063,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter11.SourceOnCompleted(Completed11Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed12(object state)
+            private static void Completed12(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running12 = false;
@@ -11099,7 +11099,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11118,12 +11118,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter12.SourceOnCompleted(Completed12Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed13(object state)
+            private static void Completed13(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running13 = false;
@@ -11154,7 +11154,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11173,12 +11173,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter13.SourceOnCompleted(Completed13Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed14(object state)
+            private static void Completed14(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running14 = false;
@@ -11209,7 +11209,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11228,12 +11228,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter14.SourceOnCompleted(Completed14Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            static void Completed15(object state)
+            private static void Completed15(object state)
             {
                 var self = (_CombineLatest)state;
                 self.running15 = false;
@@ -11264,7 +11264,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                SUCCESS:
+            SUCCESS:
                 if (!self.TrySetResult())
                 {
                     if (self.syncRunning) return;
@@ -11283,12 +11283,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     self.awaiter15.SourceOnCompleted(Completed15Delegate, self);
                 }
                 return;
-                COMPLETE:
+            COMPLETE:
                 self.completionSource.TrySetResult(false);
                 return;
             }
 
-            bool TrySetResult()
+            private bool TrySetResult()
             {
                 if (hasCurrent1 && hasCurrent2 && hasCurrent3 && hasCurrent4 && hasCurrent5 && hasCurrent6 && hasCurrent7 && hasCurrent8 && hasCurrent9 && hasCurrent10 && hasCurrent11 && hasCurrent12 && hasCurrent13 && hasCurrent14 && hasCurrent15)
                 {

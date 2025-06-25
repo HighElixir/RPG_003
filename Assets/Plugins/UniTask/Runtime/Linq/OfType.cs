@@ -16,7 +16,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class OfType<TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<object> source;
+        private readonly IUniTaskAsyncEnumerable<object> source;
 
         public OfType(IUniTaskAsyncEnumerable<object> source)
         {
@@ -28,7 +28,7 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _OfType(source, cancellationToken);
         }
 
-        class _OfType : AsyncEnumeratorBase<object, TResult>
+        private class _OfType : AsyncEnumeratorBase<object, TResult>
         {
             public _OfType(IUniTaskAsyncEnumerable<object> source, CancellationToken cancellationToken)
 

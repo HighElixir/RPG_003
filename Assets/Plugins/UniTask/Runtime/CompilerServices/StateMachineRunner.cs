@@ -1,9 +1,8 @@
 ﻿#pragma warning disable CS1591
 
-using Cysharp.Threading.Tasks.Internal;
 using System;
-using System.Linq;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 
 namespace Cysharp.Threading.Tasks.CompilerServices
@@ -52,13 +51,13 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     internal sealed class AsyncUniTaskVoid<TStateMachine> : IStateMachineRunner, ITaskPoolNode<AsyncUniTaskVoid<TStateMachine>>, IUniTaskSource
         where TStateMachine : IAsyncStateMachine
     {
-        static TaskPool<AsyncUniTaskVoid<TStateMachine>> pool;
+        private static TaskPool<AsyncUniTaskVoid<TStateMachine>> pool;
 
 #if ENABLE_IL2CPP
         public Action ReturnAction { get; }
 #endif
 
-        TStateMachine stateMachine;
+        private TStateMachine stateMachine;
 
         public Action MoveNext { get; }
 
@@ -87,7 +86,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             TaskPool.RegisterSizeGetter(typeof(AsyncUniTaskVoid<TStateMachine>), () => pool.Size);
         }
 
-        AsyncUniTaskVoid<TStateMachine> nextNode;
+        private AsyncUniTaskVoid<TStateMachine> nextNode;
         public ref AsyncUniTaskVoid<TStateMachine> NextNode => ref nextNode;
 
         public void Return()
@@ -99,7 +98,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void Run()
+        private void Run()
         {
             stateMachine.MoveNext();
         }
@@ -128,17 +127,17 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     internal sealed class AsyncUniTask<TStateMachine> : IStateMachineRunnerPromise, IUniTaskSource, ITaskPoolNode<AsyncUniTask<TStateMachine>>
         where TStateMachine : IAsyncStateMachine
     {
-        static TaskPool<AsyncUniTask<TStateMachine>> pool;
+        private static TaskPool<AsyncUniTask<TStateMachine>> pool;
 
 #if ENABLE_IL2CPP
         readonly Action returnDelegate;  
 #endif
         public Action MoveNext { get; }
 
-        TStateMachine stateMachine;
-        UniTaskCompletionSourceCore<AsyncUnit> core;
+        private TStateMachine stateMachine;
+        private UniTaskCompletionSourceCore<AsyncUnit> core;
 
-        AsyncUniTask()
+        private AsyncUniTask()
         {
             MoveNext = Run;
 #if ENABLE_IL2CPP
@@ -158,7 +157,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             result.stateMachine = stateMachine; // copy struct StateMachine(in release build).
         }
 
-        AsyncUniTask<TStateMachine> nextNode;
+        private AsyncUniTask<TStateMachine> nextNode;
         public ref AsyncUniTask<TStateMachine> NextNode => ref nextNode;
 
         static AsyncUniTask()
@@ -166,7 +165,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             TaskPool.RegisterSizeGetter(typeof(AsyncUniTask<TStateMachine>), () => pool.Size);
         }
 
-        void Return()
+        private void Return()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -174,7 +173,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             pool.TryPush(this);
         }
 
-        bool TryReturn()
+        private bool TryReturn()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -184,7 +183,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void Run()
+        private void Run()
         {
             stateMachine.MoveNext();
         }
@@ -250,7 +249,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     internal sealed class AsyncUniTask<TStateMachine, T> : IStateMachineRunnerPromise<T>, IUniTaskSource<T>, ITaskPoolNode<AsyncUniTask<TStateMachine, T>>
         where TStateMachine : IAsyncStateMachine
     {
-        static TaskPool<AsyncUniTask<TStateMachine, T>> pool;
+        private static TaskPool<AsyncUniTask<TStateMachine, T>> pool;
 
 #if ENABLE_IL2CPP
         readonly Action returnDelegate;  
@@ -258,10 +257,10 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
         public Action MoveNext { get; }
 
-        TStateMachine stateMachine;
-        UniTaskCompletionSourceCore<T> core;
+        private TStateMachine stateMachine;
+        private UniTaskCompletionSourceCore<T> core;
 
-        AsyncUniTask()
+        private AsyncUniTask()
         {
             MoveNext = Run;
 #if ENABLE_IL2CPP
@@ -281,7 +280,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             result.stateMachine = stateMachine; // copy struct StateMachine(in release build).
         }
 
-        AsyncUniTask<TStateMachine, T> nextNode;
+        private AsyncUniTask<TStateMachine, T> nextNode;
         public ref AsyncUniTask<TStateMachine, T> NextNode => ref nextNode;
 
         static AsyncUniTask()
@@ -289,7 +288,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             TaskPool.RegisterSizeGetter(typeof(AsyncUniTask<TStateMachine, T>), () => pool.Size);
         }
 
-        void Return()
+        private void Return()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -297,7 +296,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
             pool.TryPush(this);
         }
 
-        bool TryReturn()
+        private bool TryReturn()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -307,7 +306,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        void Run()
+        private void Run()
         {
             // UnityEngine.Debug.Log($"MoveNext State:" + StateMachineUtility.GetState(stateMachine));
             stateMachine.MoveNext();

@@ -6,17 +6,17 @@ namespace Cysharp.Threading.Tasks.Internal
 {
     internal sealed class PlayerLoopRunner
     {
-        const int InitialSize = 16;
+        private const int InitialSize = 16;
 
-        readonly PlayerLoopTiming timing;
-        readonly object runningAndQueueLock = new object();
-        readonly object arrayLock = new object();
-        readonly Action<Exception> unhandledExceptionCallback;
+        private readonly PlayerLoopTiming timing;
+        private readonly object runningAndQueueLock = new object();
+        private readonly object arrayLock = new object();
+        private readonly Action<Exception> unhandledExceptionCallback;
 
-        int tail = 0;
-        bool running = false;
-        IPlayerLoopItem[] loopItems = new IPlayerLoopItem[InitialSize];
-        MinimumQueue<IPlayerLoopItem> waitQueue = new MinimumQueue<IPlayerLoopItem>(InitialSize);
+        private int tail = 0;
+        private bool running = false;
+        private IPlayerLoopItem[] loopItems = new IPlayerLoopItem[InitialSize];
+        private MinimumQueue<IPlayerLoopItem> waitQueue = new MinimumQueue<IPlayerLoopItem>(InitialSize);
 
 
 
@@ -134,27 +134,27 @@ namespace Cysharp.Threading.Tasks.Internal
 #endif
         }
 
-        void Initialization() => RunCore();
-        void LastInitialization() => RunCore();
-        void EarlyUpdate() => RunCore();
-        void LastEarlyUpdate() => RunCore();
-        void FixedUpdate() => RunCore();
-        void LastFixedUpdate() => RunCore();
-        void PreUpdate() => RunCore();
-        void LastPreUpdate() => RunCore();
-        void Update() => RunCore();
-        void LastUpdate() => RunCore();
-        void PreLateUpdate() => RunCore();
-        void LastPreLateUpdate() => RunCore();
-        void PostLateUpdate() => RunCore();
-        void LastPostLateUpdate() => RunCore();
+        private void Initialization() => RunCore();
+        private void LastInitialization() => RunCore();
+        private void EarlyUpdate() => RunCore();
+        private void LastEarlyUpdate() => RunCore();
+        private void FixedUpdate() => RunCore();
+        private void LastFixedUpdate() => RunCore();
+        private void PreUpdate() => RunCore();
+        private void LastPreUpdate() => RunCore();
+        private void Update() => RunCore();
+        private void LastUpdate() => RunCore();
+        private void PreLateUpdate() => RunCore();
+        private void LastPreLateUpdate() => RunCore();
+        private void PostLateUpdate() => RunCore();
+        private void LastPostLateUpdate() => RunCore();
 #if UNITY_2020_2_OR_NEWER
-        void TimeUpdate() => RunCore();
-        void LastTimeUpdate() => RunCore();
+        private void TimeUpdate() => RunCore();
+        private void LastTimeUpdate() => RunCore();
 #endif
 
         [System.Diagnostics.DebuggerHidden]
-        void RunCore()
+        private void RunCore()
         {
             lock (runningAndQueueLock)
             {
@@ -236,7 +236,7 @@ namespace Cysharp.Threading.Tasks.Internal
                     tail = i; // loop end
                     break; // LOOP END
 
-                    NEXT_LOOP:
+                NEXT_LOOP:
                     continue;
                 }
 

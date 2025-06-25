@@ -8,17 +8,17 @@ namespace Cysharp.Threading.Tasks.Triggers
 {
     public abstract class AsyncTriggerBase<T> : MonoBehaviour, IUniTaskAsyncEnumerable<T>
     {
-        TriggerEvent<T> triggerEvent;
+        private TriggerEvent<T> triggerEvent;
 
         internal protected bool calledAwake;
         internal protected bool calledDestroy;
 
-        void Awake()
+        private void Awake()
         {
             calledAwake = true;
         }
 
-        void OnDestroy()
+        private void OnDestroy()
         {
             if (calledDestroy) return;
             calledDestroy = true;
@@ -56,15 +56,15 @@ namespace Cysharp.Threading.Tasks.Triggers
             return new AsyncTriggerEnumerator(this, cancellationToken);
         }
 
-        sealed class AsyncTriggerEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
+        private sealed class AsyncTriggerEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
         {
-            static Action<object> cancellationCallback = CancellationCallback;
+            private static Action<object> cancellationCallback = CancellationCallback;
 
-            readonly AsyncTriggerBase<T> parent;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration registration;
-            bool called;
-            bool isDisposed;
+            private readonly AsyncTriggerBase<T> parent;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration registration;
+            private bool called;
+            private bool isDisposed;
 
             public AsyncTriggerEnumerator(AsyncTriggerBase<T> parent, CancellationToken cancellationToken)
             {
@@ -93,7 +93,7 @@ namespace Cysharp.Threading.Tasks.Triggers
                 completionSource.TrySetException(ex);
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (AsyncTriggerEnumerator)state;
                 self.DisposeAsync().Forget(); // sync
@@ -139,9 +139,9 @@ namespace Cysharp.Threading.Tasks.Triggers
             }
         }
 
-        class AwakeMonitor : IPlayerLoopItem
+        private class AwakeMonitor : IPlayerLoopItem
         {
-            readonly AsyncTriggerBase<T> trigger;
+            private readonly AsyncTriggerBase<T> trigger;
 
             public AwakeMonitor(AsyncTriggerBase<T> trigger)
             {
@@ -177,16 +177,16 @@ namespace Cysharp.Threading.Tasks.Triggers
 
     public sealed partial class AsyncTriggerHandler<T> : IUniTaskSource<T>, ITriggerHandler<T>, IDisposable
     {
-        static Action<object> cancellationCallback = CancellationCallback;
+        private static Action<object> cancellationCallback = CancellationCallback;
 
-        readonly AsyncTriggerBase<T> trigger;
+        private readonly AsyncTriggerBase<T> trigger;
 
-        CancellationToken cancellationToken;
-        CancellationTokenRegistration registration;
-        bool isDisposed;
-        bool callOnce;
+        private CancellationToken cancellationToken;
+        private CancellationTokenRegistration registration;
+        private bool isDisposed;
+        private bool callOnce;
 
-        UniTaskCompletionSourceCore<T> core;
+        private UniTaskCompletionSourceCore<T> core;
 
         internal CancellationToken CancellationToken => cancellationToken;
 
@@ -233,7 +233,7 @@ namespace Cysharp.Threading.Tasks.Triggers
             TaskTracker.TrackActiveTask(this, 3);
         }
 
-        static void CancellationCallback(object state)
+        private static void CancellationCallback(object state)
         {
             var self = (AsyncTriggerHandler<T>)state;
             self.Dispose();

@@ -1,27 +1,25 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using UnityEngine;
-using UnityEditor;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System;
-using UnityEditor.IMGUI.Controls;
-using Cysharp.Threading.Tasks.Internal;
 using System.Text;
 using System.Text.RegularExpressions;
+using UnityEditor;
+using UnityEditor.IMGUI.Controls;
+using UnityEngine;
 
 namespace Cysharp.Threading.Tasks.Editor
 {
     public class UniTaskTrackerViewItem : TreeViewItem
     {
-        static Regex removeHref = new Regex("<a href.+>(.+)</a>", RegexOptions.Compiled);
+        private static Regex removeHref = new Regex("<a href.+>(.+)</a>", RegexOptions.Compiled);
 
         public string TaskType { get; set; }
         public string Elapsed { get; set; }
         public string Status { get; set; }
 
-        string position;
+        private string position;
         public string Position
         {
             get { return position; }
@@ -34,7 +32,7 @@ namespace Cysharp.Threading.Tasks.Editor
 
         public string PositionFirstLine { get; private set; }
 
-        static string GetFirstLine(string str)
+        private static string GetFirstLine(string str)
         {
             var sb = new StringBuilder();
             for (int i = 0; i < str.Length; i++)
@@ -57,7 +55,7 @@ namespace Cysharp.Threading.Tasks.Editor
 
     public class UniTaskTrackerTreeView : TreeView
     {
-        const string sortedColumnIndexStateKey = "UniTaskTrackerTreeView_sortedColumnIndex";
+        private const string sortedColumnIndexStateKey = "UniTaskTrackerTreeView_sortedColumnIndex";
 
         public IReadOnlyList<TreeViewItem> CurrentBindingItems;
 
@@ -72,7 +70,7 @@ namespace Cysharp.Threading.Tasks.Editor
         {
         }
 
-        UniTaskTrackerTreeView(TreeViewState state, MultiColumnHeader header)
+        private UniTaskTrackerTreeView(TreeViewState state, MultiColumnHeader header)
             : base(state, header)
         {
             rowHeight = 20;

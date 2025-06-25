@@ -14,7 +14,7 @@ namespace Cysharp.Threading.Tasks
 {
     public static class AddressablesAsyncExtensions
     {
-#region AsyncOperationHandle
+        #region AsyncOperationHandle
 
         public static UniTask.Awaiter GetAwaiter(this AsyncOperationHandle handle)
         {
@@ -50,8 +50,8 @@ namespace Cysharp.Threading.Tasks
 
         public struct AsyncOperationHandleAwaiter : ICriticalNotifyCompletion
         {
-            AsyncOperationHandle handle;
-            Action<AsyncOperationHandle> continuationAction;
+            private AsyncOperationHandle handle;
+            private Action<AsyncOperationHandle> continuationAction;
 
             public AsyncOperationHandleAwaiter(AsyncOperationHandle handle)
             {
@@ -93,10 +93,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class AsyncOperationHandleConfiguredSource : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource>
+        private sealed class AsyncOperationHandleConfiguredSource : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource>
         {
-            static TaskPool<AsyncOperationHandleConfiguredSource> pool;
-            AsyncOperationHandleConfiguredSource nextNode;
+            private static TaskPool<AsyncOperationHandleConfiguredSource> pool;
+            private AsyncOperationHandleConfiguredSource nextNode;
             public ref AsyncOperationHandleConfiguredSource NextNode => ref nextNode;
 
             static AsyncOperationHandleConfiguredSource()
@@ -104,18 +104,18 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(AsyncOperationHandleConfiguredSource), () => pool.Size);
             }
 
-            readonly Action<AsyncOperationHandle> completedCallback;
-            AsyncOperationHandle handle;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            IProgress<float> progress;
-            bool autoReleaseWhenCanceled;
-            bool cancelImmediately;
-            bool completed;
+            private readonly Action<AsyncOperationHandle> completedCallback;
+            private AsyncOperationHandle handle;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private IProgress<float> progress;
+            private bool autoReleaseWhenCanceled;
+            private bool cancelImmediately;
+            private bool completed;
 
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
-            AsyncOperationHandleConfiguredSource()
+            private AsyncOperationHandleConfiguredSource()
             {
                 completedCallback = HandleCompleted;
             }
@@ -138,7 +138,7 @@ namespace Cysharp.Threading.Tasks
                 result.cancelImmediately = cancelImmediately;
                 result.autoReleaseWhenCanceled = autoReleaseWhenCanceled;
                 result.completed = false;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -162,7 +162,7 @@ namespace Cysharp.Threading.Tasks
                 return result;
             }
 
-            void HandleCompleted(AsyncOperationHandle _)
+            private void HandleCompleted(AsyncOperationHandle _)
             {
                 if (handle.IsValid())
                 {
@@ -173,7 +173,7 @@ namespace Cysharp.Threading.Tasks
                 {
                     return;
                 }
-                
+
                 completed = true;
                 if (cancellationToken.IsCancellationRequested)
                 {
@@ -253,7 +253,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -265,9 +265,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-#endregion
+        #endregion
 
-#region AsyncOperationHandle_T
+        #region AsyncOperationHandle_T
 
         public static UniTask<T>.Awaiter GetAwaiter<T>(this AsyncOperationHandle<T> handle)
         {
@@ -300,10 +300,10 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(AsyncOperationHandleConfiguredSource<T>.Create(handle, timing, progress, cancellationToken, cancelImmediately, autoReleaseWhenCanceled, out var token), token);
         }
 
-        sealed class AsyncOperationHandleConfiguredSource<T> : IUniTaskSource<T>, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource<T>>
+        private sealed class AsyncOperationHandleConfiguredSource<T> : IUniTaskSource<T>, IPlayerLoopItem, ITaskPoolNode<AsyncOperationHandleConfiguredSource<T>>
         {
-            static TaskPool<AsyncOperationHandleConfiguredSource<T>> pool;
-            AsyncOperationHandleConfiguredSource<T> nextNode;
+            private static TaskPool<AsyncOperationHandleConfiguredSource<T>> pool;
+            private AsyncOperationHandleConfiguredSource<T> nextNode;
             public ref AsyncOperationHandleConfiguredSource<T> NextNode => ref nextNode;
 
             static AsyncOperationHandleConfiguredSource()
@@ -311,18 +311,18 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(AsyncOperationHandleConfiguredSource<T>), () => pool.Size);
             }
 
-            readonly Action<AsyncOperationHandle<T>> completedCallback;
-            AsyncOperationHandle<T> handle;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            IProgress<float> progress;
-            bool autoReleaseWhenCanceled;
-            bool cancelImmediately;
-            bool completed;
+            private readonly Action<AsyncOperationHandle<T>> completedCallback;
+            private AsyncOperationHandle<T> handle;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private IProgress<float> progress;
+            private bool autoReleaseWhenCanceled;
+            private bool cancelImmediately;
+            private bool completed;
 
-            UniTaskCompletionSourceCore<T> core;
+            private UniTaskCompletionSourceCore<T> core;
 
-            AsyncOperationHandleConfiguredSource()
+            private AsyncOperationHandleConfiguredSource()
             {
                 completedCallback = HandleCompleted;
             }
@@ -345,7 +345,7 @@ namespace Cysharp.Threading.Tasks
                 result.progress = progress;
                 result.autoReleaseWhenCanceled = autoReleaseWhenCanceled;
                 result.cancelImmediately = cancelImmediately;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -369,7 +369,7 @@ namespace Cysharp.Threading.Tasks
                 return result;
             }
 
-            void HandleCompleted(AsyncOperationHandle<T> argHandle)
+            private void HandleCompleted(AsyncOperationHandle<T> argHandle)
             {
                 if (handle.IsValid())
                 {
@@ -464,7 +464,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -476,7 +476,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-#endregion
+        #endregion
     }
 }
 

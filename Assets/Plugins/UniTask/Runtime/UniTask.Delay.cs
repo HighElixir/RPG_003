@@ -124,17 +124,17 @@ namespace Cysharp.Threading.Tasks
             return UniTask.Yield(PlayerLoopTiming.LastFixedUpdate, cancellationToken, cancelImmediately);
         }
 
-		public static UniTask WaitForSeconds(float duration, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
-		{
-			return Delay(Mathf.RoundToInt(1000 * duration), ignoreTimeScale, delayTiming, cancellationToken, cancelImmediately);
-		}
+        public static UniTask WaitForSeconds(float duration, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
+        {
+            return Delay(Mathf.RoundToInt(1000 * duration), ignoreTimeScale, delayTiming, cancellationToken, cancelImmediately);
+        }
 
-		public static UniTask WaitForSeconds(int duration, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
-		{
-			return Delay(1000 * duration, ignoreTimeScale, delayTiming, cancellationToken, cancelImmediately);
-		}
+        public static UniTask WaitForSeconds(int duration, bool ignoreTimeScale = false, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
+        {
+            return Delay(1000 * duration, ignoreTimeScale, delayTiming, cancellationToken, cancelImmediately);
+        }
 
-		public static UniTask DelayFrame(int delayFrameCount, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
+        public static UniTask DelayFrame(int delayFrameCount, PlayerLoopTiming delayTiming = PlayerLoopTiming.Update, CancellationToken cancellationToken = default(CancellationToken), bool cancelImmediately = false)
         {
             if (delayFrameCount < 0)
             {
@@ -195,10 +195,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class YieldPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<YieldPromise>
+        private sealed class YieldPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<YieldPromise>
         {
-            static TaskPool<YieldPromise> pool;
-            YieldPromise nextNode;
+            private static TaskPool<YieldPromise> pool;
+            private YieldPromise nextNode;
             public ref YieldPromise NextNode => ref nextNode;
 
             static YieldPromise()
@@ -206,12 +206,12 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(YieldPromise), () => pool.Size);
             }
 
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
-            UniTaskCompletionSourceCore<object> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
+            private UniTaskCompletionSourceCore<object> core;
 
-            YieldPromise()
+            private YieldPromise()
             {
             }
 
@@ -229,7 +229,7 @@ namespace Cysharp.Threading.Tasks
 
                 result.cancellationToken = cancellationToken;
                 result.cancelImmediately = cancelImmediately;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     result.cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -293,7 +293,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -304,10 +304,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class NextFramePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<NextFramePromise>
+        private sealed class NextFramePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<NextFramePromise>
         {
-            static TaskPool<NextFramePromise> pool;
-            NextFramePromise nextNode;
+            private static TaskPool<NextFramePromise> pool;
+            private NextFramePromise nextNode;
             public ref NextFramePromise NextNode => ref nextNode;
 
             static NextFramePromise()
@@ -315,13 +315,13 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(NextFramePromise), () => pool.Size);
             }
 
-            int frameCount;
-            UniTaskCompletionSourceCore<AsyncUnit> core;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private int frameCount;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            NextFramePromise()
+            private NextFramePromise()
             {
             }
 
@@ -409,7 +409,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -419,10 +419,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitForEndOfFramePromise : IUniTaskSource, ITaskPoolNode<WaitForEndOfFramePromise>, System.Collections.IEnumerator
+        private sealed class WaitForEndOfFramePromise : IUniTaskSource, ITaskPoolNode<WaitForEndOfFramePromise>, System.Collections.IEnumerator
         {
-            static TaskPool<WaitForEndOfFramePromise> pool;
-            WaitForEndOfFramePromise nextNode;
+            private static TaskPool<WaitForEndOfFramePromise> pool;
+            private WaitForEndOfFramePromise nextNode;
             public ref WaitForEndOfFramePromise NextNode => ref nextNode;
 
             static WaitForEndOfFramePromise()
@@ -430,12 +430,12 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitForEndOfFramePromise), () => pool.Size);
             }
 
-            UniTaskCompletionSourceCore<object> core;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private UniTaskCompletionSourceCore<object> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            WaitForEndOfFramePromise()
+            private WaitForEndOfFramePromise()
             {
             }
 
@@ -505,7 +505,7 @@ namespace Cysharp.Threading.Tasks
                 core.OnCompleted(continuation, state, token);
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -517,8 +517,8 @@ namespace Cysharp.Threading.Tasks
 
             // Coroutine Runner implementation
 
-            static readonly WaitForEndOfFrame waitForEndOfFrameYieldInstruction = new WaitForEndOfFrame();
-            bool isFirst = true;
+            private static readonly WaitForEndOfFrame waitForEndOfFrameYieldInstruction = new WaitForEndOfFrame();
+            private bool isFirst = true;
 
             object IEnumerator.Current => waitForEndOfFrameYieldInstruction;
 
@@ -546,10 +546,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DelayFramePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayFramePromise>
+        private sealed class DelayFramePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayFramePromise>
         {
-            static TaskPool<DelayFramePromise> pool;
-            DelayFramePromise nextNode;
+            private static TaskPool<DelayFramePromise> pool;
+            private DelayFramePromise nextNode;
             public ref DelayFramePromise NextNode => ref nextNode;
 
             static DelayFramePromise()
@@ -557,16 +557,16 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(DelayFramePromise), () => pool.Size);
             }
 
-            int initialFrame;
-            int delayFrameCount;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private int initialFrame;
+            private int delayFrameCount;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            int currentFrameCount;
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private int currentFrameCount;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
-            DelayFramePromise()
+            private DelayFramePromise()
             {
             }
 
@@ -682,7 +682,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -695,10 +695,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DelayPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayPromise>
+        private sealed class DelayPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayPromise>
         {
-            static TaskPool<DelayPromise> pool;
-            DelayPromise nextNode;
+            private static TaskPool<DelayPromise> pool;
+            private DelayPromise nextNode;
             public ref DelayPromise NextNode => ref nextNode;
 
             static DelayPromise()
@@ -706,16 +706,16 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(DelayPromise), () => pool.Size);
             }
 
-            int initialFrame;
-            float delayTimeSpan;
-            float elapsed;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private int initialFrame;
+            private float delayTimeSpan;
+            private float elapsed;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            DelayPromise()
+            private DelayPromise()
             {
             }
 
@@ -814,7 +814,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -827,10 +827,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DelayIgnoreTimeScalePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayIgnoreTimeScalePromise>
+        private sealed class DelayIgnoreTimeScalePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayIgnoreTimeScalePromise>
         {
-            static TaskPool<DelayIgnoreTimeScalePromise> pool;
-            DelayIgnoreTimeScalePromise nextNode;
+            private static TaskPool<DelayIgnoreTimeScalePromise> pool;
+            private DelayIgnoreTimeScalePromise nextNode;
             public ref DelayIgnoreTimeScalePromise NextNode => ref nextNode;
 
             static DelayIgnoreTimeScalePromise()
@@ -838,16 +838,16 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(DelayIgnoreTimeScalePromise), () => pool.Size);
             }
 
-            float delayFrameTimeSpan;
-            float elapsed;
-            int initialFrame;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private float delayFrameTimeSpan;
+            private float elapsed;
+            private int initialFrame;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            DelayIgnoreTimeScalePromise()
+            private DelayIgnoreTimeScalePromise()
             {
             }
 
@@ -946,7 +946,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -959,10 +959,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DelayRealtimePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayRealtimePromise>
+        private sealed class DelayRealtimePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<DelayRealtimePromise>
         {
-            static TaskPool<DelayRealtimePromise> pool;
-            DelayRealtimePromise nextNode;
+            private static TaskPool<DelayRealtimePromise> pool;
+            private DelayRealtimePromise nextNode;
             public ref DelayRealtimePromise NextNode => ref nextNode;
 
             static DelayRealtimePromise()
@@ -970,15 +970,15 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(DelayRealtimePromise), () => pool.Size);
             }
 
-            long delayTimeSpanTicks;
-            ValueStopwatch stopwatch;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private long delayTimeSpanTicks;
+            private ValueStopwatch stopwatch;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
-            DelayRealtimePromise()
+            private DelayRealtimePromise()
             {
             }
 
@@ -1073,7 +1073,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -1088,7 +1088,7 @@ namespace Cysharp.Threading.Tasks
 
     public readonly struct YieldAwaitable
     {
-        readonly PlayerLoopTiming timing;
+        private readonly PlayerLoopTiming timing;
 
         public YieldAwaitable(PlayerLoopTiming timing)
         {
@@ -1107,7 +1107,7 @@ namespace Cysharp.Threading.Tasks
 
         public readonly struct Awaiter : ICriticalNotifyCompletion
         {
-            readonly PlayerLoopTiming timing;
+            private readonly PlayerLoopTiming timing;
 
             public Awaiter(PlayerLoopTiming timing)
             {

@@ -286,7 +286,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class CancellationTokenDisposable : IDisposable
     {
-        readonly CancellationTokenSource cts = new CancellationTokenSource();
+        private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
         public CancellationToken Token => cts.Token;
 

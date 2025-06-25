@@ -28,11 +28,11 @@ namespace Cysharp.Threading.Tasks
         /// Dispatch exception event to Unity MainThread. Default is true.
         /// </summary>
         public static bool DispatchUnityMainThread = true;
-        
-        // cache delegate.
-        static readonly SendOrPostCallback handleExceptionInvoke = InvokeUnobservedTaskException;
 
-        static void InvokeUnobservedTaskException(object state)
+        // cache delegate.
+        private static readonly SendOrPostCallback handleExceptionInvoke = InvokeUnobservedTaskException;
+
+        private static void InvokeUnobservedTaskException(object state)
         {
             UnobservedTaskException((Exception)state);
         }

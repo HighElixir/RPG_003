@@ -24,9 +24,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class TakeUntil<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly UniTask other;
-        readonly Func<CancellationToken, UniTask> other2;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly UniTask other;
+        private readonly Func<CancellationToken, UniTask> other2;
 
         public TakeUntil(IUniTaskAsyncEnumerable<TSource> source, UniTask other, Func<CancellationToken, UniTask> other2)
         {
@@ -47,19 +47,19 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        sealed class _TakeUntil : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _TakeUntil : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            static readonly Action<object> CancelDelegate1 = OnCanceled1;
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> CancelDelegate1 = OnCanceled1;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            CancellationToken cancellationToken1;
-            CancellationTokenRegistration cancellationTokenRegistration1;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private CancellationToken cancellationToken1;
+            private CancellationTokenRegistration cancellationTokenRegistration1;
 
-            bool completed;
-            Exception exception;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
+            private bool completed;
+            private Exception exception;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
 
             public _TakeUntil(IUniTaskAsyncEnumerable<TSource> source, UniTask other, CancellationToken cancellationToken1)
             {
@@ -105,7 +105,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void SourceMoveNext()
+            private void SourceMoveNext()
             {
                 try
                 {
@@ -125,7 +125,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_TakeUntil)state;
 
@@ -154,7 +154,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            async UniTaskVoid RunOther(UniTask other)
+            private async UniTaskVoid RunOther(UniTask other)
             {
                 try
                 {
@@ -169,7 +169,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void OnCanceled1(object state)
+            private static void OnCanceled1(object state)
             {
                 var self = (_TakeUntil)state;
                 self.completionSource.TrySetCanceled(self.cancellationToken1);

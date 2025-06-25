@@ -13,7 +13,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class QueueOperator<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
 
         public QueueOperator(IUniTaskAsyncEnumerable<TSource> source)
         {
@@ -25,15 +25,15 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Queue(source, cancellationToken);
         }
 
-        sealed class _Queue : IUniTaskAsyncEnumerator<TSource>
+        private sealed class _Queue : IUniTaskAsyncEnumerator<TSource>
         {
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private CancellationToken cancellationToken;
 
-            Channel<TSource> channel;
-            IUniTaskAsyncEnumerator<TSource> channelEnumerator;
-            IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
-            bool channelClosed;
+            private Channel<TSource> channel;
+            private IUniTaskAsyncEnumerator<TSource> channelEnumerator;
+            private IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
+            private bool channelClosed;
 
             public _Queue(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
             {
@@ -60,7 +60,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return channelEnumerator.MoveNextAsync();
             }
 
-            static async UniTaskVoid ConsumeAll(_Queue self, IUniTaskAsyncEnumerator<TSource> enumerator, ChannelWriter<TSource> writer)
+            private static async UniTaskVoid ConsumeAll(_Queue self, IUniTaskAsyncEnumerator<TSource> enumerator, ChannelWriter<TSource> writer)
             {
                 try
                 {

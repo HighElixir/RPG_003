@@ -82,7 +82,7 @@ namespace Cysharp.Threading.Tasks
 
     internal sealed class WhenEachEnumerable<T> : IUniTaskAsyncEnumerable<WhenEachResult<T>>
     {
-        IEnumerable<UniTask<T>> source;
+        private IEnumerable<UniTask<T>> source;
 
         public WhenEachEnumerable(IEnumerable<UniTask<T>> source)
         {
@@ -94,15 +94,15 @@ namespace Cysharp.Threading.Tasks
             return new Enumerator(source, cancellationToken);
         }
 
-        sealed class Enumerator : IUniTaskAsyncEnumerator<WhenEachResult<T>>
+        private sealed class Enumerator : IUniTaskAsyncEnumerator<WhenEachResult<T>>
         {
-            readonly IEnumerable<UniTask<T>> source;
-            CancellationToken cancellationToken;
+            private readonly IEnumerable<UniTask<T>> source;
+            private CancellationToken cancellationToken;
 
-            Channel<WhenEachResult<T>> channel;
-            IUniTaskAsyncEnumerator<WhenEachResult<T>> channelEnumerator;
-            int completeCount;
-            WhenEachState state;
+            private Channel<WhenEachResult<T>> channel;
+            private IUniTaskAsyncEnumerator<WhenEachResult<T>> channelEnumerator;
+            private int completeCount;
+            private WhenEachState state;
 
             public Enumerator(IEnumerable<UniTask<T>> source, CancellationToken cancellationToken)
             {
@@ -138,7 +138,7 @@ namespace Cysharp.Threading.Tasks
                 return channelEnumerator.MoveNextAsync();
             }
 
-            static void ConsumeAll(Enumerator self, UniTask<T>[] array, int length)
+            private static void ConsumeAll(Enumerator self, UniTask<T>[] array, int length)
             {
                 for (int i = 0; i < length; i++)
                 {
@@ -146,7 +146,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static async UniTaskVoid RunWhenEachTask(Enumerator self, UniTask<T> task, int length)
+            private static async UniTaskVoid RunWhenEachTask(Enumerator self, UniTask<T> task, int length)
             {
                 try
                 {

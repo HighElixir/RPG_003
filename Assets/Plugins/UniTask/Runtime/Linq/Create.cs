@@ -20,7 +20,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Create<T> : IUniTaskAsyncEnumerable<T>
     {
-        readonly Func<IAsyncWriter<T>, CancellationToken, UniTask> create;
+        private readonly Func<IAsyncWriter<T>, CancellationToken, UniTask> create;
 
         public Create(Func<IAsyncWriter<T>, CancellationToken, UniTask> create)
         {
@@ -32,13 +32,13 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Create(create, cancellationToken);
         }
 
-        sealed class _Create : MoveNextSource, IUniTaskAsyncEnumerator<T>
+        private sealed class _Create : MoveNextSource, IUniTaskAsyncEnumerator<T>
         {
-            readonly Func<IAsyncWriter<T>, CancellationToken, UniTask> create;
-            readonly CancellationToken cancellationToken;
+            private readonly Func<IAsyncWriter<T>, CancellationToken, UniTask> create;
+            private readonly CancellationToken cancellationToken;
 
-            int state = -1;
-            AsyncWriter writer;
+            private int state = -1;
+            private AsyncWriter writer;
 
             public _Create(Func<IAsyncWriter<T>, CancellationToken, UniTask> create, CancellationToken cancellationToken)
             {
@@ -65,7 +65,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNext()
+            private void MoveNext()
             {
                 try
                 {
@@ -96,13 +96,13 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 state = -2;
                 completionSource.TrySetResult(false);
                 return;
             }
 
-            async UniTaskVoid RunWriterTask(UniTask task)
+            private async UniTaskVoid RunWriterTask(UniTask task)
             {
                 try
                 {
@@ -116,7 +116,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 Volatile.Write(ref state, -2);
                 completionSource.TrySetResult(false);
             }
@@ -128,17 +128,17 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        sealed class AsyncWriter : IUniTaskSource, IAsyncWriter<T>, IDisposable
+        private sealed class AsyncWriter : IUniTaskSource, IAsyncWriter<T>, IDisposable
         {
-            readonly _Create enumerator;
+            private readonly _Create enumerator;
 
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
             public AsyncWriter(_Create enumerator)
             {
                 this.enumerator = enumerator;
             }
-            
+
             public void Dispose()
             {
                 var status = core.GetStatus(core.Version);
@@ -146,7 +146,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     core.TrySetCanceled();
                 }
-            }            
+            }
 
             public void GetResult(short token)
             {

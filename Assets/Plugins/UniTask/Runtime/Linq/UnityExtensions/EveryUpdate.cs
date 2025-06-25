@@ -12,8 +12,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class EveryUpdate : IUniTaskAsyncEnumerable<AsyncUnit>
     {
-        readonly PlayerLoopTiming updateTiming;
-        readonly bool cancelImmediately;
+        private readonly PlayerLoopTiming updateTiming;
+        private readonly bool cancelImmediately;
 
         public EveryUpdate(PlayerLoopTiming updateTiming, bool cancelImmediately)
         {
@@ -26,13 +26,13 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _EveryUpdate(updateTiming, cancellationToken, cancelImmediately);
         }
 
-        class _EveryUpdate : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
+        private class _EveryUpdate : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
         {
-            readonly PlayerLoopTiming updateTiming;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly PlayerLoopTiming updateTiming;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-            bool disposed;
+            private bool disposed;
 
             public _EveryUpdate(PlayerLoopTiming updateTiming, CancellationToken cancellationToken, bool cancelImmediately)
             {
@@ -57,7 +57,7 @@ namespace Cysharp.Threading.Tasks.Linq
             public UniTask<bool> MoveNextAsync()
             {
                 if (disposed) return CompletedTasks.False;
-                
+
                 completionSource.Reset();
 
                 if (cancellationToken.IsCancellationRequested)
@@ -85,7 +85,7 @@ namespace Cysharp.Threading.Tasks.Linq
                     completionSource.TrySetCanceled(cancellationToken);
                     return false;
                 }
-                
+
                 if (disposed)
                 {
                     completionSource.TrySetResult(false);

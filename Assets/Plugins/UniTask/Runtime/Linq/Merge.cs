@@ -1,8 +1,8 @@
+﻿using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -13,7 +13,7 @@ namespace Cysharp.Threading.Tasks.Linq
             Error.ThrowArgumentNullException(first, nameof(first));
             Error.ThrowArgumentNullException(second, nameof(second));
 
-            return new Merge<T>(new [] { first, second });
+            return new Merge<T>(new[] { first, second });
         }
 
         public static IUniTaskAsyncEnumerable<T> Merge<T>(this IUniTaskAsyncEnumerable<T> first, IUniTaskAsyncEnumerable<T> second, IUniTaskAsyncEnumerable<T> third)
@@ -40,7 +40,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Merge<T> : IUniTaskAsyncEnumerable<T>
     {
-        readonly IUniTaskAsyncEnumerable<T>[] sources;
+        private readonly IUniTaskAsyncEnumerable<T>[] sources;
 
         public Merge(IUniTaskAsyncEnumerable<T>[] sources)
         {
@@ -54,24 +54,24 @@ namespace Cysharp.Threading.Tasks.Linq
         public IUniTaskAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
             => new _Merge(sources, cancellationToken);
 
-        enum MergeSourceState
+        private enum MergeSourceState
         {
             Pending,
             Running,
             Completed,
         }
 
-        sealed class _Merge : MoveNextSource, IUniTaskAsyncEnumerator<T>
+        private sealed class _Merge : MoveNextSource, IUniTaskAsyncEnumerator<T>
         {
-            static readonly Action<object> GetResultAtAction = GetResultAt;
+            private static readonly Action<object> GetResultAtAction = GetResultAt;
 
-            readonly int length;
-            readonly IUniTaskAsyncEnumerator<T>[] enumerators;
-            readonly MergeSourceState[] states;
-            readonly Queue<(T, Exception, bool)> queuedResult = new Queue<(T, Exception, bool)>();
-            readonly CancellationToken cancellationToken;
+            private readonly int length;
+            private readonly IUniTaskAsyncEnumerator<T>[] enumerators;
+            private readonly MergeSourceState[] states;
+            private readonly Queue<(T, Exception, bool)> queuedResult = new Queue<(T, Exception, bool)>();
+            private readonly CancellationToken cancellationToken;
 
-            int moveNextCompleted;
+            private int moveNextCompleted;
 
             public T Current { get; private set; }
 
@@ -84,7 +84,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 for (var i = 0; i < length; i++)
                 {
                     enumerators[i] = sources[i].GetAsyncEnumerator(cancellationToken);
-                    states[i] = (int)MergeSourceState.Pending;;
+                    states[i] = (int)MergeSourceState.Pending; ;
                 }
             }
 
@@ -153,7 +153,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 ArrayPool<IUniTaskAsyncEnumerator<T>>.Shared.Return(enumerators, true);
             }
 
-            static void GetResultAt(object state)
+            private static void GetResultAt(object state)
             {
                 using (var tuple = (StateTuple<_Merge, int, UniTask<bool>.Awaiter>)state)
                 {
@@ -161,7 +161,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            void GetResultAt(int index, UniTask<bool>.Awaiter awaiter)
+            private void GetResultAt(int index, UniTask<bool>.Awaiter awaiter)
             {
                 bool hasNext;
                 bool completedAll;
@@ -207,7 +207,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            bool HasQueuedResult()
+            private bool HasQueuedResult()
             {
                 lock (states)
                 {
@@ -215,7 +215,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            bool IsCompletedAll()
+            private bool IsCompletedAll()
             {
                 lock (states)
                 {

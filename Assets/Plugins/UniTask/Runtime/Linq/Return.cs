@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System.Threading;
+﻿using System.Threading;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -13,7 +12,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class Return<TValue> : IUniTaskAsyncEnumerable<TValue>
     {
-        readonly TValue value;
+        private readonly TValue value;
 
         public Return(TValue value)
         {
@@ -25,12 +24,12 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Return(value, cancellationToken);
         }
 
-        class _Return : IUniTaskAsyncEnumerator<TValue>
+        private class _Return : IUniTaskAsyncEnumerator<TValue>
         {
-            readonly TValue value;
-            CancellationToken cancellationToken;
+            private readonly TValue value;
+            private CancellationToken cancellationToken;
 
-            bool called;
+            private bool called;
 
             public _Return(TValue value, CancellationToken cancellationToken)
             {

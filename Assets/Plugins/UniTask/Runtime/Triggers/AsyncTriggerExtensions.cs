@@ -1,8 +1,8 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Triggers;
 using System.Threading;
 using UnityEngine;
-using Cysharp.Threading.Tasks.Triggers;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -45,7 +45,7 @@ namespace Cysharp.Threading.Tasks.Triggers
     {
         // Util.
 
-        static T GetOrAddComponent<T>(GameObject gameObject)
+        private static T GetOrAddComponent<T>(GameObject gameObject)
             where T : Component
         {
 #if UNITY_2019_2_OR_NEWER

@@ -20,8 +20,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class Range : IUniTaskAsyncEnumerable<int>
     {
-        readonly int start;
-        readonly int end;
+        private readonly int start;
+        private readonly int end;
 
         public Range(int start, int count)
         {
@@ -34,12 +34,12 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Range(start, end, cancellationToken);
         }
 
-        class _Range : IUniTaskAsyncEnumerator<int>
+        private class _Range : IUniTaskAsyncEnumerator<int>
         {
-            readonly int start;
-            readonly int end;
-            int current;
-            CancellationToken cancellationToken;
+            private readonly int start;
+            private readonly int end;
+            private int current;
+            private CancellationToken cancellationToken;
 
             public _Range(int start, int end, CancellationToken cancellationToken)
             {

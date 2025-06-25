@@ -1,8 +1,6 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using Cysharp.Threading.Tasks.Internal;
 using System;
-using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 
@@ -10,12 +8,12 @@ namespace Cysharp.Threading.Tasks
 {
     public partial struct UniTask
     {
-        static readonly UniTask CanceledUniTask = new Func<UniTask>(() =>
+        private static readonly UniTask CanceledUniTask = new Func<UniTask>(() =>
         {
             return new UniTask(new CanceledResultSource(CancellationToken.None), 0);
         })();
 
-        static class CanceledUniTaskCache<T>
+        private static class CanceledUniTaskCache<T>
         {
             public static readonly UniTask<T> Task;
 
@@ -306,10 +304,10 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(new NeverPromise<T>(cancellationToken), 0);
         }
 
-        sealed class ExceptionResultSource : IUniTaskSource
+        private sealed class ExceptionResultSource : IUniTaskSource
         {
-            readonly ExceptionDispatchInfo exception;
-            bool calledGet;
+            private readonly ExceptionDispatchInfo exception;
+            private bool calledGet;
 
             public ExceptionResultSource(Exception exception)
             {
@@ -350,10 +348,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class ExceptionResultSource<T> : IUniTaskSource<T>
+        private sealed class ExceptionResultSource<T> : IUniTaskSource<T>
         {
-            readonly ExceptionDispatchInfo exception;
-            bool calledGet;
+            private readonly ExceptionDispatchInfo exception;
+            private bool calledGet;
 
             public ExceptionResultSource(Exception exception)
             {
@@ -405,9 +403,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class CanceledResultSource : IUniTaskSource
+        private sealed class CanceledResultSource : IUniTaskSource
         {
-            readonly CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public CanceledResultSource(CancellationToken cancellationToken)
             {
@@ -435,9 +433,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class CanceledResultSource<T> : IUniTaskSource<T>
+        private sealed class CanceledResultSource<T> : IUniTaskSource<T>
         {
-            readonly CancellationToken cancellationToken;
+            private readonly CancellationToken cancellationToken;
 
             public CanceledResultSource(CancellationToken cancellationToken)
             {
@@ -470,11 +468,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DeferPromise : IUniTaskSource
+        private sealed class DeferPromise : IUniTaskSource
         {
-            Func<UniTask> factory;
-            UniTask task;
-            UniTask.Awaiter awaiter;
+            private Func<UniTask> factory;
+            private UniTask task;
+            private UniTask.Awaiter awaiter;
 
             public DeferPromise(Func<UniTask> factory)
             {
@@ -509,11 +507,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DeferPromise<T> : IUniTaskSource<T>
+        private sealed class DeferPromise<T> : IUniTaskSource<T>
         {
-            Func<UniTask<T>> factory;
-            UniTask<T> task;
-            UniTask<T>.Awaiter awaiter;
+            private Func<UniTask<T>> factory;
+            private UniTask<T> task;
+            private UniTask<T>.Awaiter awaiter;
 
             public DeferPromise(Func<UniTask<T>> factory)
             {
@@ -553,12 +551,12 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DeferPromiseWithState<TState> : IUniTaskSource
+        private sealed class DeferPromiseWithState<TState> : IUniTaskSource
         {
-            Func<TState, UniTask> factory;
-            TState argument;
-            UniTask task;
-            UniTask.Awaiter awaiter;
+            private Func<TState, UniTask> factory;
+            private TState argument;
+            private UniTask task;
+            private UniTask.Awaiter awaiter;
 
             public DeferPromiseWithState(TState argument, Func<TState, UniTask> factory)
             {
@@ -594,12 +592,12 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class DeferPromiseWithState<TState, TResult> : IUniTaskSource<TResult>
+        private sealed class DeferPromiseWithState<TState, TResult> : IUniTaskSource<TResult>
         {
-            Func<TState, UniTask<TResult>> factory;
-            TState argument;
-            UniTask<TResult> task;
-            UniTask<TResult>.Awaiter awaiter;
+            private Func<TState, UniTask<TResult>> factory;
+            private TState argument;
+            private UniTask<TResult> task;
+            private UniTask<TResult>.Awaiter awaiter;
 
             public DeferPromiseWithState(TState argument, Func<TState, UniTask<TResult>> factory)
             {
@@ -640,12 +638,12 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class NeverPromise<T> : IUniTaskSource<T>
+        private sealed class NeverPromise<T> : IUniTaskSource<T>
         {
-            static readonly Action<object> cancellationCallback = CancellationCallback;
+            private static readonly Action<object> cancellationCallback = CancellationCallback;
 
-            CancellationToken cancellationToken;
-            UniTaskCompletionSourceCore<T> core;
+            private CancellationToken cancellationToken;
+            private UniTaskCompletionSourceCore<T> core;
 
             public NeverPromise(CancellationToken cancellationToken)
             {
@@ -656,7 +654,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (NeverPromise<T>)state;
                 self.core.TrySetCanceled(self.cancellationToken);

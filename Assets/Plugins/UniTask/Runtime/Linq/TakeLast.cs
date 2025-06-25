@@ -23,8 +23,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class TakeLast<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly int count;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly int count;
 
         public TakeLast(IUniTaskAsyncEnumerable<TSource> source, int count)
         {
@@ -37,20 +37,20 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _TakeLast(source, count, cancellationToken);
         }
 
-        sealed class _TakeLast : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _TakeLast : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly int count;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly int count;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            Queue<TSource> queue;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private Queue<TSource> queue;
 
-            bool iterateCompleted;
-            bool continueNext;
+            private bool iterateCompleted;
+            private bool continueNext;
 
             public _TakeLast(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
             {
@@ -77,7 +77,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void SourceMoveNext()
+            private void SourceMoveNext()
             {
                 if (iterateCompleted)
                 {
@@ -96,7 +96,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
                 try
                 {
-                    LOOP:
+                LOOP:
                     awaiter = enumerator.MoveNextAsync().GetAwaiter();
                     if (awaiter.IsCompleted)
                     {
@@ -120,7 +120,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
 
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_TakeLast)state;
 

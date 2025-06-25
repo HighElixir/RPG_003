@@ -16,7 +16,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Cast<TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<object> source;
+        private readonly IUniTaskAsyncEnumerable<object> source;
 
         public Cast(IUniTaskAsyncEnumerable<object> source)
         {
@@ -28,7 +28,7 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Cast(source, cancellationToken);
         }
 
-        class _Cast : AsyncEnumeratorBase<object, TResult>
+        private class _Cast : AsyncEnumeratorBase<object, TResult>
         {
             public _Cast(IUniTaskAsyncEnumerable<object> source, CancellationToken cancellationToken)
 

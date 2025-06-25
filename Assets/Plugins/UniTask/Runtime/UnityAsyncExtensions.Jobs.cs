@@ -4,7 +4,6 @@
 using System;
 using System.Threading;
 using Unity.Jobs;
-using UnityEngine;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -43,11 +42,11 @@ namespace Cysharp.Threading.Tasks
             return new UniTask(handler, token);
         }
 
-        sealed class JobHandlePromise : IUniTaskSource, IPlayerLoopItem
+        private sealed class JobHandlePromise : IUniTaskSource, IPlayerLoopItem
         {
-            JobHandle jobHandle;
+            private JobHandle jobHandle;
 
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
             // Cancellation is not supported.
             public static JobHandlePromise Create(JobHandle jobHandle, out short token)

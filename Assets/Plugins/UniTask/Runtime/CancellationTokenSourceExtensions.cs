@@ -1,19 +1,18 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
-using System.Threading;
-using UnityEngine;
 using Cysharp.Threading.Tasks.Triggers;
 using System;
-using Cysharp.Threading.Tasks.Internal;
+using System.Threading;
+using UnityEngine;
 
 namespace Cysharp.Threading.Tasks
 {
 
     public static partial class CancellationTokenSourceExtensions
     {
-        readonly static Action<object> CancelCancellationTokenSourceStateDelegate = new Action<object>(CancelCancellationTokenSourceState);
+        private static readonly Action<object> CancelCancellationTokenSourceStateDelegate = new Action<object>(CancelCancellationTokenSourceState);
 
-        static void CancelCancellationTokenSourceState(object state)
+        private static void CancelCancellationTokenSourceState(object state)
         {
             var cts = (CancellationTokenSource)state;
             cts.Cancel();

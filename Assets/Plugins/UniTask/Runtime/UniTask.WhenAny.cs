@@ -1,9 +1,9 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -42,10 +42,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WhenAnyLRPromise<T> : IUniTaskSource<(bool, T)>
+        private sealed class WhenAnyLRPromise<T> : IUniTaskSource<(bool, T)>
         {
-            int completedCount;
-            UniTaskCompletionSourceCore<(bool, T)> core;
+            private int completedCount;
+            private UniTaskCompletionSourceCore<(bool, T)> core;
 
             public WhenAnyLRPromise(UniTask<T> leftTask, UniTask rightTask)
             {
@@ -78,7 +78,7 @@ namespace Cysharp.Threading.Tasks
                         }, StateTuple.Create(this, awaiter));
                     }
                 }
-                RIGHT:
+            RIGHT:
                 {
                     UniTask.Awaiter awaiter;
                     try
@@ -108,7 +108,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryLeftInvokeContinuation(WhenAnyLRPromise<T> self, in UniTask<T>.Awaiter awaiter)
+            private static void TryLeftInvokeContinuation(WhenAnyLRPromise<T> self, in UniTask<T>.Awaiter awaiter)
             {
                 T result;
                 try
@@ -127,7 +127,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryRightInvokeContinuation(WhenAnyLRPromise<T> self, in UniTask.Awaiter awaiter)
+            private static void TryRightInvokeContinuation(WhenAnyLRPromise<T> self, in UniTask.Awaiter awaiter)
             {
                 try
                 {
@@ -174,10 +174,10 @@ namespace Cysharp.Threading.Tasks
         }
 
 
-        sealed class WhenAnyPromise<T> : IUniTaskSource<(int, T)>
+        private sealed class WhenAnyPromise<T> : IUniTaskSource<(int, T)>
         {
-            int completedCount;
-            UniTaskCompletionSourceCore<(int, T)> core;
+            private int completedCount;
+            private UniTaskCompletionSourceCore<(int, T)> core;
 
             public WhenAnyPromise(UniTask<T>[] tasks, int tasksLength)
             {
@@ -218,7 +218,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryInvokeContinuation(WhenAnyPromise<T> self, in UniTask<T>.Awaiter awaiter, int i)
+            private static void TryInvokeContinuation(WhenAnyPromise<T> self, in UniTask<T>.Awaiter awaiter, int i)
             {
                 T result;
                 try
@@ -265,10 +265,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WhenAnyPromise : IUniTaskSource<int>
+        private sealed class WhenAnyPromise : IUniTaskSource<int>
         {
-            int completedCount;
-            UniTaskCompletionSourceCore<int> core;
+            private int completedCount;
+            private UniTaskCompletionSourceCore<int> core;
 
             public WhenAnyPromise(UniTask[] tasks, int tasksLength)
             {
@@ -309,7 +309,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryInvokeContinuation(WhenAnyPromise self, in UniTask.Awaiter awaiter, int i)
+            private static void TryInvokeContinuation(WhenAnyPromise self, in UniTask.Awaiter awaiter, int i)
             {
                 try
                 {

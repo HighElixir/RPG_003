@@ -65,8 +65,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class DistinctUntilChanged<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly IEqualityComparer<TSource> comparer;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly IEqualityComparer<TSource> comparer;
 
         public DistinctUntilChanged(IUniTaskAsyncEnumerable<TSource> source, IEqualityComparer<TSource> comparer)
         {
@@ -79,16 +79,16 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _DistinctUntilChanged(source, comparer, cancellationToken);
         }
 
-        sealed class _DistinctUntilChanged : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _DistinctUntilChanged : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly IEqualityComparer<TSource> comparer;
-            readonly CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly IEqualityComparer<TSource> comparer;
+            private readonly CancellationToken cancellationToken;
 
-            int state = -1;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            Action moveNextAction;
+            private int state = -1;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private Action moveNextAction;
 
             public _DistinctUntilChanged(IUniTaskAsyncEnumerable<TSource> source, IEqualityComparer<TSource> comparer, CancellationToken cancellationToken)
             {
@@ -109,9 +109,9 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNext()
+            private void MoveNext()
             {
-                REPEAT:
+            REPEAT:
                 try
                 {
                     switch (state)
@@ -182,12 +182,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 state = -2;
                 completionSource.TrySetResult(false);
                 return;
 
-                CONTINUE:
+            CONTINUE:
                 state = 0;
                 completionSource.TrySetResult(true);
                 return;
@@ -202,9 +202,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class DistinctUntilChanged<TSource, TKey> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, TKey> keySelector;
-        readonly IEqualityComparer<TKey> comparer;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, TKey> keySelector;
+        private readonly IEqualityComparer<TKey> comparer;
 
         public DistinctUntilChanged(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
         {
@@ -218,18 +218,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _DistinctUntilChanged(source, keySelector, comparer, cancellationToken);
         }
 
-        sealed class _DistinctUntilChanged : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _DistinctUntilChanged : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly Func<TSource, TKey> keySelector;
-            readonly IEqualityComparer<TKey> comparer;
-            readonly CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly Func<TSource, TKey> keySelector;
+            private readonly IEqualityComparer<TKey> comparer;
+            private readonly CancellationToken cancellationToken;
 
-            int state = -1;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            Action moveNextAction;
-            TKey prev;
+            private int state = -1;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private Action moveNextAction;
+            private TKey prev;
 
             public _DistinctUntilChanged(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer, CancellationToken cancellationToken)
             {
@@ -251,9 +251,9 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNext()
+            private void MoveNext()
             {
-                REPEAT:
+            REPEAT:
                 try
                 {
                     switch (state)
@@ -326,12 +326,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 state = -2;
                 completionSource.TrySetResult(false);
                 return;
 
-                CONTINUE:
+            CONTINUE:
                 state = 0;
                 completionSource.TrySetResult(true);
                 return;
@@ -346,9 +346,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class DistinctUntilChangedAwait<TSource, TKey> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, UniTask<TKey>> keySelector;
-        readonly IEqualityComparer<TKey> comparer;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, UniTask<TKey>> keySelector;
+        private readonly IEqualityComparer<TKey> comparer;
 
         public DistinctUntilChangedAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TKey>> keySelector, IEqualityComparer<TKey> comparer)
         {
@@ -362,20 +362,20 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _DistinctUntilChangedAwait(source, keySelector, comparer, cancellationToken);
         }
 
-        sealed class _DistinctUntilChangedAwait : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _DistinctUntilChangedAwait : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly Func<TSource, UniTask<TKey>> keySelector;
-            readonly IEqualityComparer<TKey> comparer;
-            readonly CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly Func<TSource, UniTask<TKey>> keySelector;
+            private readonly IEqualityComparer<TKey> comparer;
+            private readonly CancellationToken cancellationToken;
 
-            int state = -1;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            UniTask<TKey>.Awaiter awaiter2;
-            Action moveNextAction;
-            TSource enumeratorCurrent;
-            TKey prev;
+            private int state = -1;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private UniTask<TKey>.Awaiter awaiter2;
+            private Action moveNextAction;
+            private TSource enumeratorCurrent;
+            private TKey prev;
 
             public _DistinctUntilChangedAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<TKey>> keySelector, IEqualityComparer<TKey> comparer, CancellationToken cancellationToken)
             {
@@ -397,9 +397,9 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNext()
+            private void MoveNext()
             {
-                REPEAT:
+            REPEAT:
                 try
                 {
                     switch (state)
@@ -484,12 +484,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 state = -2;
                 completionSource.TrySetResult(false);
                 return;
 
-                CONTINUE:
+            CONTINUE:
                 state = 0;
                 completionSource.TrySetResult(true);
                 return;
@@ -504,9 +504,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class DistinctUntilChangedAwaitWithCancellation<TSource, TKey> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, CancellationToken, UniTask<TKey>> keySelector;
-        readonly IEqualityComparer<TKey> comparer;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, CancellationToken, UniTask<TKey>> keySelector;
+        private readonly IEqualityComparer<TKey> comparer;
 
         public DistinctUntilChangedAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<TKey>> keySelector, IEqualityComparer<TKey> comparer)
         {
@@ -520,20 +520,20 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _DistinctUntilChangedAwaitWithCancellation(source, keySelector, comparer, cancellationToken);
         }
 
-        sealed class _DistinctUntilChangedAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _DistinctUntilChangedAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly Func<TSource, CancellationToken, UniTask<TKey>> keySelector;
-            readonly IEqualityComparer<TKey> comparer;
-            readonly CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly Func<TSource, CancellationToken, UniTask<TKey>> keySelector;
+            private readonly IEqualityComparer<TKey> comparer;
+            private readonly CancellationToken cancellationToken;
 
-            int state = -1;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            UniTask<TKey>.Awaiter awaiter2;
-            Action moveNextAction;
-            TSource enumeratorCurrent;
-            TKey prev;
+            private int state = -1;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private UniTask<TKey>.Awaiter awaiter2;
+            private Action moveNextAction;
+            private TSource enumeratorCurrent;
+            private TKey prev;
 
             public _DistinctUntilChangedAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<TKey>> keySelector, IEqualityComparer<TKey> comparer, CancellationToken cancellationToken)
             {
@@ -555,9 +555,9 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNext()
+            private void MoveNext()
             {
-                REPEAT:
+            REPEAT:
                 try
                 {
                     switch (state)
@@ -642,12 +642,12 @@ namespace Cysharp.Threading.Tasks.Linq
                     return;
                 }
 
-                DONE:
+            DONE:
                 state = -2;
                 completionSource.TrySetResult(false);
                 return;
 
-                CONTINUE:
+            CONTINUE:
                 state = 0;
                 completionSource.TrySetResult(true);
                 return;

@@ -20,7 +20,7 @@ namespace Cysharp.Threading.Tasks
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        static void Continuation(object state)
+        private static void Continuation(object state)
         {
             ((Action)state).Invoke();
         }
@@ -33,8 +33,8 @@ namespace Cysharp.Threading.Tasks
     [StructLayout(LayoutKind.Auto)]
     public readonly partial struct UniTask
     {
-        readonly IUniTaskSource source;
-        readonly short token;
+        private readonly IUniTaskSource source;
+        private readonly short token;
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -130,9 +130,9 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<AsyncUnit>(new AsyncUnitSource(this.source), this.token);
         }
 
-        sealed class AsyncUnitSource : IUniTaskSource<AsyncUnit>
+        private sealed class AsyncUnitSource : IUniTaskSource<AsyncUnit>
         {
-            readonly IUniTaskSource source;
+            private readonly IUniTaskSource source;
 
             public AsyncUnitSource(IUniTaskSource source)
             {
@@ -166,9 +166,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class IsCanceledSource : IUniTaskSource<bool>
+        private sealed class IsCanceledSource : IUniTaskSource<bool>
         {
-            readonly IUniTaskSource source;
+            private readonly IUniTaskSource source;
 
             public IsCanceledSource(IUniTaskSource source)
             {
@@ -207,11 +207,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class MemoizeSource : IUniTaskSource
+        private sealed class MemoizeSource : IUniTaskSource
         {
-            IUniTaskSource source;
-            ExceptionDispatchInfo exception;
-            UniTaskStatus status;
+            private IUniTaskSource source;
+            private ExceptionDispatchInfo exception;
+            private UniTaskStatus status;
 
             public MemoizeSource(IUniTaskSource source)
             {
@@ -289,7 +289,7 @@ namespace Cysharp.Threading.Tasks
 
         public readonly struct Awaiter : ICriticalNotifyCompletion
         {
-            readonly UniTask task;
+            private readonly UniTask task;
 
             [DebuggerHidden]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -370,9 +370,9 @@ namespace Cysharp.Threading.Tasks
     [StructLayout(LayoutKind.Auto)]
     public readonly struct UniTask<T>
     {
-        readonly IUniTaskSource<T> source;
-        readonly T result;
-        readonly short token;
+        private readonly IUniTaskSource<T> source;
+        private readonly T result;
+        private readonly short token;
 
         [DebuggerHidden]
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -481,9 +481,9 @@ namespace Cysharp.Threading.Tasks
                  : "(" + this.source.UnsafeGetStatus() + ")";
         }
 
-        sealed class IsCanceledSource : IUniTaskSource<(bool, T)>
+        private sealed class IsCanceledSource : IUniTaskSource<(bool, T)>
         {
-            readonly IUniTaskSource<T> source;
+            private readonly IUniTaskSource<T> source;
 
             [DebuggerHidden]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -534,12 +534,12 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class MemoizeSource : IUniTaskSource<T>
+        private sealed class MemoizeSource : IUniTaskSource<T>
         {
-            IUniTaskSource<T> source;
-            T result;
-            ExceptionDispatchInfo exception;
-            UniTaskStatus status;
+            private IUniTaskSource<T> source;
+            private T result;
+            private ExceptionDispatchInfo exception;
+            private UniTaskStatus status;
 
             public MemoizeSource(IUniTaskSource<T> source)
             {
@@ -624,7 +624,7 @@ namespace Cysharp.Threading.Tasks
 
         public readonly struct Awaiter : ICriticalNotifyCompletion
         {
-            readonly UniTask<T> task;
+            private readonly UniTask<T> task;
 
             [DebuggerHidden]
             [MethodImpl(MethodImplOptions.AggressiveInlining)]

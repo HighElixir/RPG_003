@@ -64,12 +64,12 @@ namespace Cysharp.Threading.Tasks
 
 #if SUPPORT_VALUETASK
 
-        new public UniTaskStatus GetStatus(short token)
+        new UniTaskStatus GetStatus(short token)
         {
             return ((IUniTaskSource)this).GetStatus(token);
         }
 
-        new public void OnCompleted(Action<object> continuation, object state, short token)
+        new void OnCompleted(Action<object> continuation, object state, short token)
         {
             ((IUniTaskSource)this).OnCompleted(continuation, state, token);
         }

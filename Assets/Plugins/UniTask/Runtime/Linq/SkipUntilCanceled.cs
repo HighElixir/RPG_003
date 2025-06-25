@@ -16,8 +16,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipUntilCanceled<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly CancellationToken cancellationToken;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly CancellationToken cancellationToken;
 
         public SkipUntilCanceled(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
         {
@@ -30,22 +30,22 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipUntilCanceled(source, this.cancellationToken, cancellationToken);
         }
 
-        sealed class _SkipUntilCanceled : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _SkipUntilCanceled : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            static readonly Action<object> CancelDelegate1 = OnCanceled1;
-            static readonly Action<object> CancelDelegate2 = OnCanceled2;
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> CancelDelegate1 = OnCanceled1;
+            private static readonly Action<object> CancelDelegate2 = OnCanceled2;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            CancellationToken cancellationToken1;
-            CancellationToken cancellationToken2;
-            CancellationTokenRegistration cancellationTokenRegistration1;
-            CancellationTokenRegistration cancellationTokenRegistration2;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private CancellationToken cancellationToken1;
+            private CancellationToken cancellationToken2;
+            private CancellationTokenRegistration cancellationTokenRegistration1;
+            private CancellationTokenRegistration cancellationTokenRegistration2;
 
-            int isCanceled;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            bool continueNext;
+            private int isCanceled;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private bool continueNext;
 
             public _SkipUntilCanceled(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
             {
@@ -82,11 +82,11 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void SourceMoveNext()
+            private void SourceMoveNext()
             {
                 try
                 {
-                    LOOP:
+                LOOP:
                     awaiter = enumerator.MoveNextAsync().GetAwaiter();
                     if (awaiter.IsCompleted)
                     {
@@ -109,7 +109,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_SkipUntilCanceled)state;
 
@@ -131,7 +131,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void OnCanceled1(object state)
+            private static void OnCanceled1(object state)
             {
                 var self = (_SkipUntilCanceled)state;
                 if (self.isCanceled == 0)
@@ -144,7 +144,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void OnCanceled2(object state)
+            private static void OnCanceled2(object state)
             {
                 var self = (_SkipUntilCanceled)state;
                 if (self.isCanceled == 0)

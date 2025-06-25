@@ -1,11 +1,11 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections;
 using System.Runtime.ExceptionServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -237,13 +237,13 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(new AttachExternalCancellationSource<T>(task, cancellationToken), 0);
         }
 
-        sealed class AttachExternalCancellationSource : IUniTaskSource
+        private sealed class AttachExternalCancellationSource : IUniTaskSource
         {
-            static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
+            private static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
 
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration tokenRegistration;
-            UniTaskCompletionSourceCore<AsyncUnit> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration tokenRegistration;
+            private UniTaskCompletionSourceCore<AsyncUnit> core;
 
             public AttachExternalCancellationSource(UniTask task, CancellationToken cancellationToken)
             {
@@ -252,7 +252,7 @@ namespace Cysharp.Threading.Tasks
                 RunTask(task).Forget();
             }
 
-            async UniTaskVoid RunTask(UniTask task)
+            private async UniTaskVoid RunTask(UniTask task)
             {
                 try
                 {
@@ -269,7 +269,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (AttachExternalCancellationSource)state;
                 self.core.TrySetCanceled(self.cancellationToken);
@@ -296,13 +296,13 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class AttachExternalCancellationSource<T> : IUniTaskSource<T>
+        private sealed class AttachExternalCancellationSource<T> : IUniTaskSource<T>
         {
-            static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
+            private static readonly Action<object> cancellationCallbackDelegate = CancellationCallback;
 
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration tokenRegistration;
-            UniTaskCompletionSourceCore<T> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration tokenRegistration;
+            private UniTaskCompletionSourceCore<T> core;
 
             public AttachExternalCancellationSource(UniTask<T> task, CancellationToken cancellationToken)
             {
@@ -311,7 +311,7 @@ namespace Cysharp.Threading.Tasks
                 RunTask(task).Forget();
             }
 
-            async UniTaskVoid RunTask(UniTask<T> task)
+            private async UniTaskVoid RunTask(UniTask<T> task)
             {
                 try
                 {
@@ -327,7 +327,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (AttachExternalCancellationSource<T>)state;
                 self.core.TrySetCanceled(self.cancellationToken);
@@ -594,7 +594,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        static async UniTaskVoid ForgetCoreWithCatch(UniTask task, Action<Exception> exceptionHandler, bool handleExceptionOnMainThread)
+        private static async UniTaskVoid ForgetCoreWithCatch(UniTask task, Action<Exception> exceptionHandler, bool handleExceptionOnMainThread)
         {
             try
             {
@@ -664,7 +664,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        static async UniTaskVoid ForgetCoreWithCatch<T>(UniTask<T> task, Action<Exception> exceptionHandler, bool handleExceptionOnMainThread)
+        private static async UniTaskVoid ForgetCoreWithCatch<T>(UniTask<T> task, Action<Exception> exceptionHandler, bool handleExceptionOnMainThread)
         {
             try
             {
@@ -785,13 +785,13 @@ namespace Cysharp.Threading.Tasks
 
 #if UNITY_2018_3_OR_NEWER
 
-        sealed class ToCoroutineEnumerator : IEnumerator
+        private sealed class ToCoroutineEnumerator : IEnumerator
         {
-            bool completed;
-            UniTask task;
-            Action<Exception> exceptionHandler = null;
-            bool isStarted = false;
-            ExceptionDispatchInfo exception;
+            private bool completed;
+            private UniTask task;
+            private Action<Exception> exceptionHandler = null;
+            private bool isStarted = false;
+            private ExceptionDispatchInfo exception;
 
             public ToCoroutineEnumerator(UniTask task, Action<Exception> exceptionHandler)
             {
@@ -800,7 +800,7 @@ namespace Cysharp.Threading.Tasks
                 this.task = task;
             }
 
-            async UniTaskVoid RunTask(UniTask task)
+            private async UniTaskVoid RunTask(UniTask task)
             {
                 try
                 {
@@ -847,15 +847,15 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class ToCoroutineEnumerator<T> : IEnumerator
+        private sealed class ToCoroutineEnumerator<T> : IEnumerator
         {
-            bool completed;
-            Action<T> resultHandler = null;
-            Action<Exception> exceptionHandler = null;
-            bool isStarted = false;
-            UniTask<T> task;
-            object current = null;
-            ExceptionDispatchInfo exception;
+            private bool completed;
+            private Action<T> resultHandler = null;
+            private Action<Exception> exceptionHandler = null;
+            private bool isStarted = false;
+            private UniTask<T> task;
+            private object current = null;
+            private ExceptionDispatchInfo exception;
 
             public ToCoroutineEnumerator(UniTask<T> task, Action<T> resultHandler, Action<Exception> exceptionHandler)
             {
@@ -865,7 +865,7 @@ namespace Cysharp.Threading.Tasks
                 this.exceptionHandler = exceptionHandler;
             }
 
-            async UniTaskVoid RunTask(UniTask<T> task)
+            private async UniTaskVoid RunTask(UniTask<T> task)
             {
                 try
                 {

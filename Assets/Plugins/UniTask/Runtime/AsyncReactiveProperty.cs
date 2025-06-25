@@ -18,10 +18,11 @@ namespace Cysharp.Threading.Tasks
     [Serializable]
     public class AsyncReactiveProperty<T> : IAsyncReactiveProperty<T>, IDisposable
     {
-        TriggerEvent<T> triggerEvent;
+        private TriggerEvent<T> triggerEvent;
 
 #if UNITY_2018_3_OR_NEWER
         [UnityEngine.SerializeField]
+        private
 #endif
         T latestValue;
 
@@ -75,19 +76,19 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(WaitAsyncSource.Create(this, cancellationToken, out var token), token);
         }
 
-        static bool isValueType;
+        private static bool isValueType;
 
         static AsyncReactiveProperty()
         {
             isValueType = typeof(T).IsValueType;
         }
 
-        sealed class WaitAsyncSource : IUniTaskSource<T>, ITriggerHandler<T>, ITaskPoolNode<WaitAsyncSource>
+        private sealed class WaitAsyncSource : IUniTaskSource<T>, ITriggerHandler<T>, ITaskPoolNode<WaitAsyncSource>
         {
-            static Action<object> cancellationCallback = CancellationCallback;
+            private static Action<object> cancellationCallback = CancellationCallback;
 
-            static TaskPool<WaitAsyncSource> pool;
-            WaitAsyncSource nextNode;
+            private static TaskPool<WaitAsyncSource> pool;
+            private WaitAsyncSource nextNode;
             ref WaitAsyncSource ITaskPoolNode<WaitAsyncSource>.NextNode => ref nextNode;
 
             static WaitAsyncSource()
@@ -95,12 +96,12 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitAsyncSource), () => pool.Size);
             }
 
-            AsyncReactiveProperty<T> parent;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            UniTaskCompletionSourceCore<T> core;
+            private AsyncReactiveProperty<T> parent;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private UniTaskCompletionSourceCore<T> core;
 
-            WaitAsyncSource()
+            private WaitAsyncSource()
             {
             }
 
@@ -132,7 +133,7 @@ namespace Cysharp.Threading.Tasks
                 return result;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -144,7 +145,7 @@ namespace Cysharp.Threading.Tasks
                 return pool.TryPush(this);
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (WaitAsyncSource)state;
                 self.OnCanceled(self.cancellationToken);
@@ -211,9 +212,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WithoutCurrentEnumerable : IUniTaskAsyncEnumerable<T>
+        private sealed class WithoutCurrentEnumerable : IUniTaskAsyncEnumerable<T>
         {
-            readonly AsyncReactiveProperty<T> parent;
+            private readonly AsyncReactiveProperty<T> parent;
 
             public WithoutCurrentEnumerable(AsyncReactiveProperty<T> parent)
             {
@@ -226,16 +227,16 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class Enumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
+        private sealed class Enumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
         {
-            static Action<object> cancellationCallback = CancellationCallback;
+            private static Action<object> cancellationCallback = CancellationCallback;
 
-            readonly AsyncReactiveProperty<T> parent;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
-            T value;
-            bool isDisposed;
-            bool firstCall;
+            private readonly AsyncReactiveProperty<T> parent;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private T value;
+            private bool isDisposed;
+            private bool firstCall;
 
             public Enumerator(AsyncReactiveProperty<T> parent, CancellationToken cancellationToken, bool publishCurrentValue)
             {
@@ -304,7 +305,7 @@ namespace Cysharp.Threading.Tasks
                 completionSource.TrySetException(ex);
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (Enumerator)state;
                 self.DisposeAsync().Forget();
@@ -314,10 +315,10 @@ namespace Cysharp.Threading.Tasks
 
     public class ReadOnlyAsyncReactiveProperty<T> : IReadOnlyAsyncReactiveProperty<T>, IDisposable
     {
-        TriggerEvent<T> triggerEvent;
+        private TriggerEvent<T> triggerEvent;
 
-        T latestValue;
-        IUniTaskAsyncEnumerator<T> enumerator;
+        private T latestValue;
+        private IUniTaskAsyncEnumerator<T> enumerator;
 
         public T Value
         {
@@ -338,7 +339,7 @@ namespace Cysharp.Threading.Tasks
             ConsumeEnumerator(source, cancellationToken).Forget();
         }
 
-        async UniTaskVoid ConsumeEnumerator(IUniTaskAsyncEnumerable<T> source, CancellationToken cancellationToken)
+        private async UniTaskVoid ConsumeEnumerator(IUniTaskAsyncEnumerable<T> source, CancellationToken cancellationToken)
         {
             enumerator = source.GetAsyncEnumerator(cancellationToken);
             try
@@ -393,19 +394,19 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(WaitAsyncSource.Create(this, cancellationToken, out var token), token);
         }
 
-        static bool isValueType;
+        private static bool isValueType;
 
         static ReadOnlyAsyncReactiveProperty()
         {
             isValueType = typeof(T).IsValueType;
         }
 
-        sealed class WaitAsyncSource : IUniTaskSource<T>, ITriggerHandler<T>, ITaskPoolNode<WaitAsyncSource>
+        private sealed class WaitAsyncSource : IUniTaskSource<T>, ITriggerHandler<T>, ITaskPoolNode<WaitAsyncSource>
         {
-            static Action<object> cancellationCallback = CancellationCallback;
+            private static Action<object> cancellationCallback = CancellationCallback;
 
-            static TaskPool<WaitAsyncSource> pool;
-            WaitAsyncSource nextNode;
+            private static TaskPool<WaitAsyncSource> pool;
+            private WaitAsyncSource nextNode;
             ref WaitAsyncSource ITaskPoolNode<WaitAsyncSource>.NextNode => ref nextNode;
 
             static WaitAsyncSource()
@@ -413,12 +414,12 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitAsyncSource), () => pool.Size);
             }
 
-            ReadOnlyAsyncReactiveProperty<T> parent;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            UniTaskCompletionSourceCore<T> core;
+            private ReadOnlyAsyncReactiveProperty<T> parent;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private UniTaskCompletionSourceCore<T> core;
 
-            WaitAsyncSource()
+            private WaitAsyncSource()
             {
             }
 
@@ -450,7 +451,7 @@ namespace Cysharp.Threading.Tasks
                 return result;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -462,7 +463,7 @@ namespace Cysharp.Threading.Tasks
                 return pool.TryPush(this);
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (WaitAsyncSource)state;
                 self.OnCanceled(self.cancellationToken);
@@ -529,9 +530,9 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WithoutCurrentEnumerable : IUniTaskAsyncEnumerable<T>
+        private sealed class WithoutCurrentEnumerable : IUniTaskAsyncEnumerable<T>
         {
-            readonly ReadOnlyAsyncReactiveProperty<T> parent;
+            private readonly ReadOnlyAsyncReactiveProperty<T> parent;
 
             public WithoutCurrentEnumerable(ReadOnlyAsyncReactiveProperty<T> parent)
             {
@@ -544,16 +545,16 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class Enumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
+        private sealed class Enumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>, ITriggerHandler<T>
         {
-            static Action<object> cancellationCallback = CancellationCallback;
+            private static Action<object> cancellationCallback = CancellationCallback;
 
-            readonly ReadOnlyAsyncReactiveProperty<T> parent;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
-            T value;
-            bool isDisposed;
-            bool firstCall;
+            private readonly ReadOnlyAsyncReactiveProperty<T> parent;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private T value;
+            private bool isDisposed;
+            private bool firstCall;
 
             public Enumerator(ReadOnlyAsyncReactiveProperty<T> parent, CancellationToken cancellationToken, bool publishCurrentValue)
             {
@@ -621,7 +622,7 @@ namespace Cysharp.Threading.Tasks
                 completionSource.TrySetException(ex);
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (Enumerator)state;
                 self.DisposeAsync().Forget();

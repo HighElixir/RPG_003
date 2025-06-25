@@ -42,7 +42,7 @@ namespace Cysharp.Threading.Tasks
             return ReadAsyncCore(cancellationToken);
         }
 
-        async UniTask<T> ReadAsyncCore(CancellationToken cancellationToken = default(CancellationToken))
+        private async UniTask<T> ReadAsyncCore(CancellationToken cancellationToken = default(CancellationToken))
         {
             if (await WaitToReadAsync(cancellationToken))
             {
@@ -89,13 +89,13 @@ namespace Cysharp.Threading.Tasks
 
     internal class SingleConsumerUnboundedChannel<T> : Channel<T>
     {
-        readonly Queue<T> items;
-        readonly SingleConsumerUnboundedChannelReader readerSource;
-        UniTaskCompletionSource completedTaskSource;
-        UniTask completedTask;
+        private readonly Queue<T> items;
+        private readonly SingleConsumerUnboundedChannelReader readerSource;
+        private UniTaskCompletionSource completedTaskSource;
+        private UniTask completedTask;
 
-        Exception completionError;
-        bool closed;
+        private Exception completionError;
+        private bool closed;
 
         public SingleConsumerUnboundedChannel()
         {
@@ -105,9 +105,9 @@ namespace Cysharp.Threading.Tasks
             Reader = readerSource;
         }
 
-        sealed class SingleConsumerUnboundedChannelWriter : ChannelWriter<T>
+        private sealed class SingleConsumerUnboundedChannelWriter : ChannelWriter<T>
         {
-            readonly SingleConsumerUnboundedChannel<T> parent;
+            private readonly SingleConsumerUnboundedChannel<T> parent;
 
             public SingleConsumerUnboundedChannelWriter(SingleConsumerUnboundedChannel<T> parent)
             {
@@ -180,14 +180,14 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class SingleConsumerUnboundedChannelReader : ChannelReader<T>, IUniTaskSource<bool>
+        private sealed class SingleConsumerUnboundedChannelReader : ChannelReader<T>, IUniTaskSource<bool>
         {
-            readonly Action<object> CancellationCallbackDelegate = CancellationCallback;
-            readonly SingleConsumerUnboundedChannel<T> parent;
+            private readonly Action<object> CancellationCallbackDelegate = CancellationCallback;
+            private readonly SingleConsumerUnboundedChannel<T> parent;
 
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            UniTaskCompletionSourceCore<bool> core;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private UniTaskCompletionSourceCore<bool> core;
             internal bool isWaiting;
 
             public SingleConsumerUnboundedChannelReader(SingleConsumerUnboundedChannel<T> parent)
@@ -354,26 +354,26 @@ namespace Cysharp.Threading.Tasks
                 return core.UnsafeGetStatus();
             }
 
-            static void CancellationCallback(object state)
+            private static void CancellationCallback(object state)
             {
                 var self = (SingleConsumerUnboundedChannelReader)state;
                 self.SingalCancellation(self.cancellationToken);
             }
 
-            sealed class ReadAllAsyncEnumerable : IUniTaskAsyncEnumerable<T>, IUniTaskAsyncEnumerator<T>
+            private sealed class ReadAllAsyncEnumerable : IUniTaskAsyncEnumerable<T>, IUniTaskAsyncEnumerator<T>
             {
-                readonly Action<object> CancellationCallback1Delegate = CancellationCallback1;
-                readonly Action<object> CancellationCallback2Delegate = CancellationCallback2;
+                private readonly Action<object> CancellationCallback1Delegate = CancellationCallback1;
+                private readonly Action<object> CancellationCallback2Delegate = CancellationCallback2;
 
-                readonly SingleConsumerUnboundedChannelReader parent;
-                CancellationToken cancellationToken1;
-                CancellationToken cancellationToken2;
-                CancellationTokenRegistration cancellationTokenRegistration1;
-                CancellationTokenRegistration cancellationTokenRegistration2;
+                private readonly SingleConsumerUnboundedChannelReader parent;
+                private CancellationToken cancellationToken1;
+                private CancellationToken cancellationToken2;
+                private CancellationTokenRegistration cancellationTokenRegistration1;
+                private CancellationTokenRegistration cancellationTokenRegistration2;
 
-                T current;
-                bool cacheValue;
-                bool running;
+                private T current;
+                private bool cacheValue;
+                private bool running;
 
                 public ReadAllAsyncEnumerable(SingleConsumerUnboundedChannelReader parent, CancellationToken cancellationToken)
                 {
@@ -395,7 +395,7 @@ namespace Cysharp.Threading.Tasks
 
                     if (this.cancellationToken1.CanBeCanceled)
                     {
-                        this.cancellationTokenRegistration1 =  this.cancellationToken1.RegisterWithoutCaptureExecutionContext(CancellationCallback1Delegate, this);
+                        this.cancellationTokenRegistration1 = this.cancellationToken1.RegisterWithoutCaptureExecutionContext(CancellationCallback1Delegate, this);
                     }
 
                     if (this.cancellationToken2.CanBeCanceled)
@@ -433,13 +433,13 @@ namespace Cysharp.Threading.Tasks
                     return default;
                 }
 
-                static void CancellationCallback1(object state)
+                private static void CancellationCallback1(object state)
                 {
                     var self = (ReadAllAsyncEnumerable)state;
                     self.parent.SingalCancellation(self.cancellationToken1);
                 }
 
-                static void CancellationCallback2(object state)
+                private static void CancellationCallback2(object state)
                 {
                     var self = (ReadAllAsyncEnumerable)state;
                     self.parent.SingalCancellation(self.cancellationToken2);

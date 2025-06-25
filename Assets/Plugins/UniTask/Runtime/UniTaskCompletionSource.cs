@@ -7,7 +7,6 @@ using System.Runtime.CompilerServices;
 using System.Runtime.ExceptionServices;
 using System.Runtime.InteropServices;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -41,8 +40,8 @@ namespace Cysharp.Threading.Tasks
 
     internal class ExceptionHolder
     {
-        ExceptionDispatchInfo exception;
-        bool calledGet = false;
+        private ExceptionDispatchInfo exception;
+        private bool calledGet = false;
 
         public ExceptionHolder(ExceptionDispatchInfo exception)
         {
@@ -73,13 +72,13 @@ namespace Cysharp.Threading.Tasks
     {
         // Struct Size: TResult + (8 + 2 + 1 + 1 + 8 + 8)
 
-        TResult result;
-        object error; // ExceptionHolder or OperationCanceledException
-        short version;
-        bool hasUnhandledError;
-        int completedCount; // 0: completed == false
-        Action<object> continuation;
-        object continuationState;
+        private TResult result;
+        private object error; // ExceptionHolder or OperationCanceledException
+        private short version;
+        private bool hasUnhandledError;
+        private int completedCount; // 0: completed == false
+        private Action<object> continuation;
+        private object continuationState;
 
         [DebuggerHidden]
         public void Reset()
@@ -98,7 +97,7 @@ namespace Cysharp.Threading.Tasks
             continuationState = null;
         }
 
-        void ReportUnhandledError()
+        private void ReportUnhandledError()
         {
             if (hasUnhandledError)
             {
@@ -318,8 +317,8 @@ namespace Cysharp.Threading.Tasks
 
     public class AutoResetUniTaskCompletionSource : IUniTaskSource, ITaskPoolNode<AutoResetUniTaskCompletionSource>, IPromise
     {
-        static TaskPool<AutoResetUniTaskCompletionSource> pool;
-        AutoResetUniTaskCompletionSource nextNode;
+        private static TaskPool<AutoResetUniTaskCompletionSource> pool;
+        private AutoResetUniTaskCompletionSource nextNode;
         public ref AutoResetUniTaskCompletionSource NextNode => ref nextNode;
 
         static AutoResetUniTaskCompletionSource()
@@ -327,10 +326,10 @@ namespace Cysharp.Threading.Tasks
             TaskPool.RegisterSizeGetter(typeof(AutoResetUniTaskCompletionSource), () => pool.Size);
         }
 
-        UniTaskCompletionSourceCore<AsyncUnit> core;
-        short version;
+        private UniTaskCompletionSourceCore<AsyncUnit> core;
+        private short version;
 
-        AutoResetUniTaskCompletionSource()
+        private AutoResetUniTaskCompletionSource()
         {
         }
 
@@ -432,7 +431,7 @@ namespace Cysharp.Threading.Tasks
         }
 
         [DebuggerHidden]
-        bool TryReturn()
+        private bool TryReturn()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -442,8 +441,8 @@ namespace Cysharp.Threading.Tasks
 
     public class AutoResetUniTaskCompletionSource<T> : IUniTaskSource<T>, ITaskPoolNode<AutoResetUniTaskCompletionSource<T>>, IPromise<T>
     {
-        static TaskPool<AutoResetUniTaskCompletionSource<T>> pool;
-        AutoResetUniTaskCompletionSource<T> nextNode;
+        private static TaskPool<AutoResetUniTaskCompletionSource<T>> pool;
+        private AutoResetUniTaskCompletionSource<T> nextNode;
         public ref AutoResetUniTaskCompletionSource<T> NextNode => ref nextNode;
 
         static AutoResetUniTaskCompletionSource()
@@ -451,10 +450,10 @@ namespace Cysharp.Threading.Tasks
             TaskPool.RegisterSizeGetter(typeof(AutoResetUniTaskCompletionSource<T>), () => pool.Size);
         }
 
-        UniTaskCompletionSourceCore<T> core;
-        short version;
+        private UniTaskCompletionSourceCore<T> core;
+        private short version;
 
-        AutoResetUniTaskCompletionSource()
+        private AutoResetUniTaskCompletionSource()
         {
         }
 
@@ -562,7 +561,7 @@ namespace Cysharp.Threading.Tasks
         }
 
         [DebuggerHidden]
-        bool TryReturn()
+        private bool TryReturn()
         {
             TaskTracker.RemoveTracking(this);
             core.Reset();
@@ -572,15 +571,15 @@ namespace Cysharp.Threading.Tasks
 
     public class UniTaskCompletionSource : IUniTaskSource, IPromise
     {
-        CancellationToken cancellationToken;
-        ExceptionHolder exception;
-        object gate;
-        Action<object> singleContinuation;
-        object singleState;
-        List<(Action<object>, object)> secondaryContinuationList;
+        private CancellationToken cancellationToken;
+        private ExceptionHolder exception;
+        private object gate;
+        private Action<object> singleContinuation;
+        private object singleState;
+        private List<(Action<object>, object)> secondaryContinuationList;
 
-        int intStatus; // UniTaskStatus
-        bool handled = false;
+        private int intStatus; // UniTaskStatus
+        private bool handled = false;
 
         public UniTaskCompletionSource()
         {
@@ -702,7 +701,7 @@ namespace Cysharp.Threading.Tasks
         }
 
         [DebuggerHidden]
-        bool TrySignalCompletion(UniTaskStatus status)
+        private bool TrySignalCompletion(UniTaskStatus status)
         {
             if (Interlocked.CompareExchange(ref intStatus, (int)status, (int)UniTaskStatus.Pending) == (int)UniTaskStatus.Pending)
             {
@@ -753,16 +752,16 @@ namespace Cysharp.Threading.Tasks
 
     public class UniTaskCompletionSource<T> : IUniTaskSource<T>, IPromise<T>
     {
-        CancellationToken cancellationToken;
-        T result;
-        ExceptionHolder exception;
-        object gate;
-        Action<object> singleContinuation;
-        object singleState;
-        List<(Action<object>, object)> secondaryContinuationList;
+        private CancellationToken cancellationToken;
+        private T result;
+        private ExceptionHolder exception;
+        private object gate;
+        private Action<object> singleContinuation;
+        private object singleState;
+        private List<(Action<object>, object)> secondaryContinuationList;
 
-        int intStatus; // UniTaskStatus
-        bool handled = false;
+        private int intStatus; // UniTaskStatus
+        private bool handled = false;
 
         public UniTaskCompletionSource()
         {
@@ -893,7 +892,7 @@ namespace Cysharp.Threading.Tasks
         }
 
         [DebuggerHidden]
-        bool TrySignalCompletion(UniTaskStatus status)
+        private bool TrySignalCompletion(UniTaskStatus status)
         {
             if (Interlocked.CompareExchange(ref intStatus, (int)status, (int)UniTaskStatus.Pending) == (int)UniTaskStatus.Pending)
             {
@@ -940,5 +939,5 @@ namespace Cysharp.Threading.Tasks
             }
             return false;
         }
-   }
+    }
 }

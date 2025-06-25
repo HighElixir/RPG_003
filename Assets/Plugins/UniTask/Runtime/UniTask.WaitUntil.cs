@@ -1,10 +1,9 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Tracing;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -46,10 +45,10 @@ namespace Cysharp.Threading.Tasks
                 : WaitUntilValueChangedStandardObjectPromise<T, U>.Create(target, monitorFunction, equalityComparer, monitorTiming, cancellationToken, cancelImmediately, out token), token);
         }
 
-        sealed class WaitUntilPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilPromise>
+        private sealed class WaitUntilPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilPromise>
         {
-            static TaskPool<WaitUntilPromise> pool;
-            WaitUntilPromise nextNode;
+            private static TaskPool<WaitUntilPromise> pool;
+            private WaitUntilPromise nextNode;
             public ref WaitUntilPromise NextNode => ref nextNode;
 
             static WaitUntilPromise()
@@ -57,14 +56,14 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitUntilPromise), () => pool.Size);
             }
 
-            Func<bool> predicate;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private Func<bool> predicate;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            WaitUntilPromise()
+            private WaitUntilPromise()
             {
             }
 
@@ -160,7 +159,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -172,10 +171,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitUntilPromise<T> : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilPromise<T>>
+        private sealed class WaitUntilPromise<T> : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilPromise<T>>
         {
-            static TaskPool<WaitUntilPromise<T>> pool;
-            WaitUntilPromise<T> nextNode;
+            private static TaskPool<WaitUntilPromise<T>> pool;
+            private WaitUntilPromise<T> nextNode;
             public ref WaitUntilPromise<T> NextNode => ref nextNode;
 
             static WaitUntilPromise()
@@ -183,15 +182,15 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitUntilPromise<T>), () => pool.Size);
             }
 
-            Func<T, bool> predicate;
-            T argument;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private Func<T, bool> predicate;
+            private T argument;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            WaitUntilPromise()
+            private WaitUntilPromise()
             {
             }
 
@@ -288,7 +287,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -301,10 +300,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitWhilePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitWhilePromise>
+        private sealed class WaitWhilePromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitWhilePromise>
         {
-            static TaskPool<WaitWhilePromise> pool;
-            WaitWhilePromise nextNode;
+            private static TaskPool<WaitWhilePromise> pool;
+            private WaitWhilePromise nextNode;
             public ref WaitWhilePromise NextNode => ref nextNode;
 
             static WaitWhilePromise()
@@ -312,14 +311,14 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitWhilePromise), () => pool.Size);
             }
 
-            Func<bool> predicate;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private Func<bool> predicate;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            WaitWhilePromise()
+            private WaitWhilePromise()
             {
             }
 
@@ -415,7 +414,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -427,10 +426,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitWhilePromise<T> : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitWhilePromise<T>>
+        private sealed class WaitWhilePromise<T> : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitWhilePromise<T>>
         {
-            static TaskPool<WaitWhilePromise<T>> pool;
-            WaitWhilePromise<T> nextNode;
+            private static TaskPool<WaitWhilePromise<T>> pool;
+            private WaitWhilePromise<T> nextNode;
             public ref WaitWhilePromise<T> NextNode => ref nextNode;
 
             static WaitWhilePromise()
@@ -438,15 +437,15 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitWhilePromise<T>), () => pool.Size);
             }
 
-            Func<T, bool> predicate;
-            T argument;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private Func<T, bool> predicate;
+            private T argument;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            WaitWhilePromise()
+            private WaitWhilePromise()
             {
             }
 
@@ -543,7 +542,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -556,10 +555,10 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitUntilCanceledPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilCanceledPromise>
+        private sealed class WaitUntilCanceledPromise : IUniTaskSource, IPlayerLoopItem, ITaskPoolNode<WaitUntilCanceledPromise>
         {
-            static TaskPool<WaitUntilCanceledPromise> pool;
-            WaitUntilCanceledPromise nextNode;
+            private static TaskPool<WaitUntilCanceledPromise> pool;
+            private WaitUntilCanceledPromise nextNode;
             public ref WaitUntilCanceledPromise NextNode => ref nextNode;
 
             static WaitUntilCanceledPromise()
@@ -567,13 +566,13 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitUntilCanceledPromise), () => pool.Size);
             }
 
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<object> core;
+            private UniTaskCompletionSourceCore<object> core;
 
-            WaitUntilCanceledPromise()
+            private WaitUntilCanceledPromise()
             {
             }
 
@@ -654,7 +653,7 @@ namespace Cysharp.Threading.Tasks
                 return true;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -666,10 +665,10 @@ namespace Cysharp.Threading.Tasks
         }
 
         // where T : UnityEngine.Object, can not add constraint
-        sealed class WaitUntilValueChangedUnityObjectPromise<T, U> : IUniTaskSource<U>, IPlayerLoopItem, ITaskPoolNode<WaitUntilValueChangedUnityObjectPromise<T, U>>
+        private sealed class WaitUntilValueChangedUnityObjectPromise<T, U> : IUniTaskSource<U>, IPlayerLoopItem, ITaskPoolNode<WaitUntilValueChangedUnityObjectPromise<T, U>>
         {
-            static TaskPool<WaitUntilValueChangedUnityObjectPromise<T, U>> pool;
-            WaitUntilValueChangedUnityObjectPromise<T, U> nextNode;
+            private static TaskPool<WaitUntilValueChangedUnityObjectPromise<T, U>> pool;
+            private WaitUntilValueChangedUnityObjectPromise<T, U> nextNode;
             public ref WaitUntilValueChangedUnityObjectPromise<T, U> NextNode => ref nextNode;
 
             static WaitUntilValueChangedUnityObjectPromise()
@@ -677,18 +676,18 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitUntilValueChangedUnityObjectPromise<T, U>), () => pool.Size);
             }
 
-            T target;
-            UnityEngine.Object targetAsUnityObject;
-            U currentValue;
-            Func<T, U> monitorFunction;
-            IEqualityComparer<U> equalityComparer;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private T target;
+            private UnityEngine.Object targetAsUnityObject;
+            private U currentValue;
+            private Func<T, U> monitorFunction;
+            private IEqualityComparer<U> equalityComparer;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<U> core;
+            private UniTaskCompletionSourceCore<U> core;
 
-            WaitUntilValueChangedUnityObjectPromise()
+            private WaitUntilValueChangedUnityObjectPromise()
             {
             }
 
@@ -795,7 +794,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();
@@ -810,11 +809,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WaitUntilValueChangedStandardObjectPromise<T, U> : IUniTaskSource<U>, IPlayerLoopItem, ITaskPoolNode<WaitUntilValueChangedStandardObjectPromise<T, U>>
+        private sealed class WaitUntilValueChangedStandardObjectPromise<T, U> : IUniTaskSource<U>, IPlayerLoopItem, ITaskPoolNode<WaitUntilValueChangedStandardObjectPromise<T, U>>
             where T : class
         {
-            static TaskPool<WaitUntilValueChangedStandardObjectPromise<T, U>> pool;
-            WaitUntilValueChangedStandardObjectPromise<T, U> nextNode;
+            private static TaskPool<WaitUntilValueChangedStandardObjectPromise<T, U>> pool;
+            private WaitUntilValueChangedStandardObjectPromise<T, U> nextNode;
             public ref WaitUntilValueChangedStandardObjectPromise<T, U> NextNode => ref nextNode;
 
             static WaitUntilValueChangedStandardObjectPromise()
@@ -822,17 +821,17 @@ namespace Cysharp.Threading.Tasks
                 TaskPool.RegisterSizeGetter(typeof(WaitUntilValueChangedStandardObjectPromise<T, U>), () => pool.Size);
             }
 
-            WeakReference<T> target;
-            U currentValue;
-            Func<T, U> monitorFunction;
-            IEqualityComparer<U> equalityComparer;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool cancelImmediately;
+            private WeakReference<T> target;
+            private U currentValue;
+            private Func<T, U> monitorFunction;
+            private IEqualityComparer<U> equalityComparer;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool cancelImmediately;
 
-            UniTaskCompletionSourceCore<U> core;
+            private UniTaskCompletionSourceCore<U> core;
 
-            WaitUntilValueChangedStandardObjectPromise()
+            private WaitUntilValueChangedStandardObjectPromise()
             {
             }
 
@@ -938,7 +937,7 @@ namespace Cysharp.Threading.Tasks
                 return false;
             }
 
-            bool TryReturn()
+            private bool TryReturn()
             {
                 TaskTracker.RemoveTracking(this);
                 core.Reset();

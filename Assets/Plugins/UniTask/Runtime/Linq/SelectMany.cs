@@ -106,10 +106,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SelectMany<TSource, TCollection, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector1;
-        readonly Func<TSource, int, IUniTaskAsyncEnumerable<TCollection>> selector2;
-        readonly Func<TSource, TCollection, TResult> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector1;
+        private readonly Func<TSource, int, IUniTaskAsyncEnumerable<TCollection>> selector2;
+        private readonly Func<TSource, TCollection, TResult> resultSelector;
 
         public SelectMany(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector, Func<TSource, TCollection, TResult> resultSelector)
         {
@@ -132,26 +132,26 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SelectMany(source, selector1, selector2, resultSelector, cancellationToken);
         }
 
-        sealed class _SelectMany : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _SelectMany : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
-            static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
-            static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
+            private static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
+            private static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
+            private static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
 
-            readonly Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector1;
-            readonly Func<TSource, int, IUniTaskAsyncEnumerable<TCollection>> selector2;
-            readonly Func<TSource, TCollection, TResult> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector1;
+            private readonly Func<TSource, int, IUniTaskAsyncEnumerable<TCollection>> selector2;
+            private readonly Func<TSource, TCollection, TResult> resultSelector;
+            private CancellationToken cancellationToken;
 
-            TSource sourceCurrent;
-            int sourceIndex;
-            IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
-            IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
-            UniTask<bool>.Awaiter sourceAwaiter;
-            UniTask<bool>.Awaiter selectedAwaiter;
-            UniTask.Awaiter selectedDisposeAsyncAwaiter;
+            private TSource sourceCurrent;
+            private int sourceIndex;
+            private IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
+            private IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
+            private UniTask<bool>.Awaiter sourceAwaiter;
+            private UniTask<bool>.Awaiter selectedAwaiter;
+            private UniTask.Awaiter selectedDisposeAsyncAwaiter;
 
             public _SelectMany(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, IUniTaskAsyncEnumerable<TCollection>> selector1, Func<TSource, int, IUniTaskAsyncEnumerable<TCollection>> selector2, Func<TSource, TCollection, TResult> resultSelector, CancellationToken cancellationToken)
             {
@@ -187,7 +187,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNextSource()
+            private void MoveNextSource()
             {
                 try
                 {
@@ -209,7 +209,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            void MoveNextSelected()
+            private void MoveNextSelected()
             {
                 try
                 {
@@ -231,7 +231,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SourceMoveNextCore(object state)
+            private static void SourceMoveNextCore(object state)
             {
                 var self = (_SelectMany)state;
 
@@ -266,7 +266,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SeletedSourceMoveNextCore(object state)
+            private static void SeletedSourceMoveNextCore(object state)
             {
                 var self = (_SelectMany)state;
 
@@ -310,7 +310,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SelectedEnumeratorDisposeAsyncCore(object state)
+            private static void SelectedEnumeratorDisposeAsyncCore(object state)
             {
                 var self = (_SelectMany)state;
 
@@ -340,10 +340,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SelectManyAwait<TSource, TCollection, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
-        readonly Func<TSource, int, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
-        readonly Func<TSource, TCollection, UniTask<TResult>> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
+        private readonly Func<TSource, int, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
+        private readonly Func<TSource, TCollection, UniTask<TResult>> resultSelector;
 
         public SelectManyAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector, Func<TSource, TCollection, UniTask<TResult>> resultSelector)
         {
@@ -366,32 +366,32 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SelectManyAwait(source, selector1, selector2, resultSelector, cancellationToken);
         }
 
-        sealed class _SelectManyAwait : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _SelectManyAwait : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
-            static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
-            static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
-            static readonly Action<object> selectorAwaitCoreDelegate = SelectorAwaitCore;
-            static readonly Action<object> resultSelectorAwaitCoreDelegate = ResultSelectorAwaitCore;
+            private static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
+            private static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
+            private static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
+            private static readonly Action<object> selectorAwaitCoreDelegate = SelectorAwaitCore;
+            private static readonly Action<object> resultSelectorAwaitCoreDelegate = ResultSelectorAwaitCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
 
-            readonly Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
-            readonly Func<TSource, int, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
-            readonly Func<TSource, TCollection, UniTask<TResult>> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
+            private readonly Func<TSource, int, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
+            private readonly Func<TSource, TCollection, UniTask<TResult>> resultSelector;
+            private CancellationToken cancellationToken;
 
-            TSource sourceCurrent;
-            int sourceIndex;
-            IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
-            IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
-            UniTask<bool>.Awaiter sourceAwaiter;
-            UniTask<bool>.Awaiter selectedAwaiter;
-            UniTask.Awaiter selectedDisposeAsyncAwaiter;
+            private TSource sourceCurrent;
+            private int sourceIndex;
+            private IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
+            private IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
+            private UniTask<bool>.Awaiter sourceAwaiter;
+            private UniTask<bool>.Awaiter selectedAwaiter;
+            private UniTask.Awaiter selectedDisposeAsyncAwaiter;
 
             // await additional
-            UniTask<IUniTaskAsyncEnumerable<TCollection>>.Awaiter collectionSelectorAwaiter;
-            UniTask<TResult>.Awaiter resultSelectorAwaiter;
+            private UniTask<IUniTaskAsyncEnumerable<TCollection>>.Awaiter collectionSelectorAwaiter;
+            private UniTask<TResult>.Awaiter resultSelectorAwaiter;
 
             public _SelectManyAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1, Func<TSource, int, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2, Func<TSource, TCollection, UniTask<TResult>> resultSelector, CancellationToken cancellationToken)
             {
@@ -427,7 +427,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNextSource()
+            private void MoveNextSource()
             {
                 try
                 {
@@ -449,7 +449,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            void MoveNextSelected()
+            private void MoveNextSelected()
             {
                 try
                 {
@@ -471,7 +471,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SourceMoveNextCore(object state)
+            private static void SourceMoveNextCore(object state)
             {
                 var self = (_SelectManyAwait)state;
 
@@ -514,7 +514,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SeletedSourceMoveNextCore(object state)
+            private static void SeletedSourceMoveNextCore(object state)
             {
                 var self = (_SelectManyAwait)state;
 
@@ -564,7 +564,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SelectedEnumeratorDisposeAsyncCore(object state)
+            private static void SelectedEnumeratorDisposeAsyncCore(object state)
             {
                 var self = (_SelectManyAwait)state;
 
@@ -577,7 +577,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SelectorAwaitCore(object state)
+            private static void SelectorAwaitCore(object state)
             {
                 var self = (_SelectManyAwait)state;
 
@@ -588,7 +588,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void ResultSelectorAwaitCore(object state)
+            private static void ResultSelectorAwaitCore(object state)
             {
                 var self = (_SelectManyAwait)state;
 
@@ -616,10 +616,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SelectManyAwaitWithCancellation<TSource, TCollection, TResult> : IUniTaskAsyncEnumerable<TResult>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
-        readonly Func<TSource, int, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
-        readonly Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
+        private readonly Func<TSource, int, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
+        private readonly Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector;
 
         public SelectManyAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector, Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector)
         {
@@ -642,32 +642,32 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SelectManyAwaitWithCancellation(source, selector1, selector2, resultSelector, cancellationToken);
         }
 
-        sealed class _SelectManyAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
+        private sealed class _SelectManyAwaitWithCancellation : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
         {
-            static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
-            static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
-            static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
-            static readonly Action<object> selectorAwaitCoreDelegate = SelectorAwaitCore;
-            static readonly Action<object> resultSelectorAwaitCoreDelegate = ResultSelectorAwaitCore;
+            private static readonly Action<object> sourceMoveNextCoreDelegate = SourceMoveNextCore;
+            private static readonly Action<object> selectedSourceMoveNextCoreDelegate = SeletedSourceMoveNextCore;
+            private static readonly Action<object> selectedEnumeratorDisposeAsyncCoreDelegate = SelectedEnumeratorDisposeAsyncCore;
+            private static readonly Action<object> selectorAwaitCoreDelegate = SelectorAwaitCore;
+            private static readonly Action<object> resultSelectorAwaitCoreDelegate = ResultSelectorAwaitCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
 
-            readonly Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
-            readonly Func<TSource, int, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
-            readonly Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector;
-            CancellationToken cancellationToken;
+            private readonly Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1;
+            private readonly Func<TSource, int, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2;
+            private readonly Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector;
+            private CancellationToken cancellationToken;
 
-            TSource sourceCurrent;
-            int sourceIndex;
-            IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
-            IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
-            UniTask<bool>.Awaiter sourceAwaiter;
-            UniTask<bool>.Awaiter selectedAwaiter;
-            UniTask.Awaiter selectedDisposeAsyncAwaiter;
+            private TSource sourceCurrent;
+            private int sourceIndex;
+            private IUniTaskAsyncEnumerator<TSource> sourceEnumerator;
+            private IUniTaskAsyncEnumerator<TCollection> selectedEnumerator;
+            private UniTask<bool>.Awaiter sourceAwaiter;
+            private UniTask<bool>.Awaiter selectedAwaiter;
+            private UniTask.Awaiter selectedDisposeAsyncAwaiter;
 
             // await additional
-            UniTask<IUniTaskAsyncEnumerable<TCollection>>.Awaiter collectionSelectorAwaiter;
-            UniTask<TResult>.Awaiter resultSelectorAwaiter;
+            private UniTask<IUniTaskAsyncEnumerable<TCollection>>.Awaiter collectionSelectorAwaiter;
+            private UniTask<TResult>.Awaiter resultSelectorAwaiter;
 
             public _SelectManyAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector1, Func<TSource, int, CancellationToken, UniTask<IUniTaskAsyncEnumerable<TCollection>>> selector2, Func<TSource, TCollection, CancellationToken, UniTask<TResult>> resultSelector, CancellationToken cancellationToken)
             {
@@ -703,7 +703,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void MoveNextSource()
+            private void MoveNextSource()
             {
                 try
                 {
@@ -725,7 +725,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            void MoveNextSelected()
+            private void MoveNextSelected()
             {
                 try
                 {
@@ -747,7 +747,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SourceMoveNextCore(object state)
+            private static void SourceMoveNextCore(object state)
             {
                 var self = (_SelectManyAwaitWithCancellation)state;
 
@@ -790,7 +790,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SeletedSourceMoveNextCore(object state)
+            private static void SeletedSourceMoveNextCore(object state)
             {
                 var self = (_SelectManyAwaitWithCancellation)state;
 
@@ -840,7 +840,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SelectedEnumeratorDisposeAsyncCore(object state)
+            private static void SelectedEnumeratorDisposeAsyncCore(object state)
             {
                 var self = (_SelectManyAwaitWithCancellation)state;
 
@@ -853,7 +853,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void SelectorAwaitCore(object state)
+            private static void SelectorAwaitCore(object state)
             {
                 var self = (_SelectManyAwaitWithCancellation)state;
 
@@ -864,7 +864,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void ResultSelectorAwaitCore(object state)
+            private static void ResultSelectorAwaitCore(object state)
             {
                 var self = (_SelectManyAwaitWithCancellation)state;
 

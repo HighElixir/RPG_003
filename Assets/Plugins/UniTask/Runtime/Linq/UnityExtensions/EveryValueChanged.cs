@@ -26,11 +26,11 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class EveryValueChangedUnityObject<TTarget, TProperty> : IUniTaskAsyncEnumerable<TProperty>
     {
-        readonly TTarget target;
-        readonly Func<TTarget, TProperty> propertySelector;
-        readonly IEqualityComparer<TProperty> equalityComparer;
-        readonly PlayerLoopTiming monitorTiming;
-        readonly bool cancelImmediately;
+        private readonly TTarget target;
+        private readonly Func<TTarget, TProperty> propertySelector;
+        private readonly IEqualityComparer<TProperty> equalityComparer;
+        private readonly PlayerLoopTiming monitorTiming;
+        private readonly bool cancelImmediately;
 
         public EveryValueChangedUnityObject(TTarget target, Func<TTarget, TProperty> propertySelector, IEqualityComparer<TProperty> equalityComparer, PlayerLoopTiming monitorTiming, bool cancelImmediately)
         {
@@ -46,18 +46,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _EveryValueChanged(target, propertySelector, equalityComparer, monitorTiming, cancellationToken, cancelImmediately);
         }
 
-        sealed class _EveryValueChanged : MoveNextSource, IUniTaskAsyncEnumerator<TProperty>, IPlayerLoopItem
+        private sealed class _EveryValueChanged : MoveNextSource, IUniTaskAsyncEnumerator<TProperty>, IPlayerLoopItem
         {
-            readonly TTarget target;
-            readonly UnityEngine.Object targetAsUnityObject;
-            readonly IEqualityComparer<TProperty> equalityComparer;
-            readonly Func<TTarget, TProperty> propertySelector;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly TTarget target;
+            private readonly UnityEngine.Object targetAsUnityObject;
+            private readonly IEqualityComparer<TProperty> equalityComparer;
+            private readonly Func<TTarget, TProperty> propertySelector;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-            bool first;
-            TProperty currentValue;
-            bool disposed;
+            private bool first;
+            private TProperty currentValue;
+            private bool disposed;
 
             public _EveryValueChanged(TTarget target, Func<TTarget, TProperty> propertySelector, IEqualityComparer<TProperty> equalityComparer, PlayerLoopTiming monitorTiming, CancellationToken cancellationToken, bool cancelImmediately)
             {
@@ -67,7 +67,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.equalityComparer = equalityComparer;
                 this.cancellationToken = cancellationToken;
                 this.first = true;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -76,7 +76,7 @@ namespace Cysharp.Threading.Tasks.Linq
                         source.completionSource.TrySetCanceled(source.cancellationToken);
                     }, this);
                 }
-                
+
                 TaskTracker.TrackActiveTask(this, 2);
                 PlayerLoopHelper.AddAction(monitorTiming, this);
             }
@@ -88,7 +88,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 if (disposed) return CompletedTasks.False;
 
                 completionSource.Reset();
-                
+
                 if (cancellationToken.IsCancellationRequested)
                 {
                     completionSource.TrySetCanceled(cancellationToken);
@@ -122,13 +122,13 @@ namespace Cysharp.Threading.Tasks.Linq
 
             public bool MoveNext()
             {
-                if (disposed || targetAsUnityObject == null) 
+                if (disposed || targetAsUnityObject == null)
                 {
                     completionSource.TrySetResult(false);
                     DisposeAsync().Forget();
                     return false;
                 }
-                
+
                 if (cancellationToken.IsCancellationRequested)
                 {
                     completionSource.TrySetCanceled(cancellationToken);
@@ -160,11 +160,11 @@ namespace Cysharp.Threading.Tasks.Linq
     internal sealed class EveryValueChangedStandardObject<TTarget, TProperty> : IUniTaskAsyncEnumerable<TProperty>
         where TTarget : class
     {
-        readonly WeakReference<TTarget> target;
-        readonly Func<TTarget, TProperty> propertySelector;
-        readonly IEqualityComparer<TProperty> equalityComparer;
-        readonly PlayerLoopTiming monitorTiming;
-        readonly bool cancelImmediately;
+        private readonly WeakReference<TTarget> target;
+        private readonly Func<TTarget, TProperty> propertySelector;
+        private readonly IEqualityComparer<TProperty> equalityComparer;
+        private readonly PlayerLoopTiming monitorTiming;
+        private readonly bool cancelImmediately;
 
         public EveryValueChangedStandardObject(TTarget target, Func<TTarget, TProperty> propertySelector, IEqualityComparer<TProperty> equalityComparer, PlayerLoopTiming monitorTiming, bool cancelImmediately)
         {
@@ -180,17 +180,17 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _EveryValueChanged(target, propertySelector, equalityComparer, monitorTiming, cancellationToken, cancelImmediately);
         }
 
-        sealed class _EveryValueChanged : MoveNextSource, IUniTaskAsyncEnumerator<TProperty>, IPlayerLoopItem
+        private sealed class _EveryValueChanged : MoveNextSource, IUniTaskAsyncEnumerator<TProperty>, IPlayerLoopItem
         {
-            readonly WeakReference<TTarget> target;
-            readonly IEqualityComparer<TProperty> equalityComparer;
-            readonly Func<TTarget, TProperty> propertySelector;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly WeakReference<TTarget> target;
+            private readonly IEqualityComparer<TProperty> equalityComparer;
+            private readonly Func<TTarget, TProperty> propertySelector;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-            bool first;
-            TProperty currentValue;
-            bool disposed;
+            private bool first;
+            private TProperty currentValue;
+            private bool disposed;
 
             public _EveryValueChanged(WeakReference<TTarget> target, Func<TTarget, TProperty> propertySelector, IEqualityComparer<TProperty> equalityComparer, PlayerLoopTiming monitorTiming, CancellationToken cancellationToken, bool cancelImmediately)
             {
@@ -199,7 +199,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.equalityComparer = equalityComparer;
                 this.cancellationToken = cancellationToken;
                 this.first = true;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -208,7 +208,7 @@ namespace Cysharp.Threading.Tasks.Linq
                         source.completionSource.TrySetCanceled(source.cancellationToken);
                     }, this);
                 }
-                
+
                 TaskTracker.TrackActiveTask(this, 2);
                 PlayerLoopHelper.AddAction(monitorTiming, this);
             }
@@ -220,13 +220,13 @@ namespace Cysharp.Threading.Tasks.Linq
                 if (disposed) return CompletedTasks.False;
 
                 completionSource.Reset();
-                
+
                 if (cancellationToken.IsCancellationRequested)
                 {
                     completionSource.TrySetCanceled(cancellationToken);
                     return new UniTask<bool>(this, completionSource.Version);
                 }
-                
+
                 if (first)
                 {
                     first = false;

@@ -23,8 +23,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class DefaultIfEmpty<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly TSource defaultValue;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly TSource defaultValue;
 
         public DefaultIfEmpty(IUniTaskAsyncEnumerable<TSource> source, TSource defaultValue)
         {
@@ -37,24 +37,24 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _DefaultIfEmpty(source, defaultValue, cancellationToken);
         }
 
-        sealed class _DefaultIfEmpty : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _DefaultIfEmpty : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            enum IteratingState : byte
+            private enum IteratingState : byte
             {
                 Empty,
                 Iterating,
                 Completed
             }
 
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly TSource defaultValue;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly TSource defaultValue;
+            private CancellationToken cancellationToken;
 
-            IteratingState iteratingState;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
+            private IteratingState iteratingState;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
 
             public _DefaultIfEmpty(IUniTaskAsyncEnumerable<TSource> source, TSource defaultValue, CancellationToken cancellationToken)
             {
@@ -98,7 +98,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_DefaultIfEmpty)state;
 

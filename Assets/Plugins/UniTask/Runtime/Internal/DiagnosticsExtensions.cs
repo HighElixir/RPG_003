@@ -12,17 +12,16 @@ using System.Security;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using UnityEngine;
 
 namespace Cysharp.Threading.Tasks.Internal
 {
     internal static class DiagnosticsExtensions
     {
-        static bool displayFilenames = true;
+        private static bool displayFilenames = true;
 
-        static readonly Regex typeBeautifyRegex = new Regex("`.+$", RegexOptions.Compiled);
+        private static readonly Regex typeBeautifyRegex = new Regex("`.+$", RegexOptions.Compiled);
 
-        static readonly Dictionary<Type, string> builtInTypeNames = new Dictionary<Type, string>
+        private static readonly Dictionary<Type, string> builtInTypeNames = new Dictionary<Type, string>
         {
             { typeof(void), "void" },
             { typeof(bool), "bool" },
@@ -123,14 +122,14 @@ namespace Cysharp.Threading.Tasks.Internal
         }
 
 
-        static bool IsAsync(MethodBase methodInfo)
+        private static bool IsAsync(MethodBase methodInfo)
         {
             var declareType = methodInfo.DeclaringType;
             return typeof(IAsyncStateMachine).IsAssignableFrom(declareType);
         }
 
         // code from Ben.Demystifier/EnhancedStackTrace.Frame.cs
-        static bool TryResolveStateMachineMethod(ref MethodBase method, out Type declaringType)
+        private static bool TryResolveStateMachineMethod(ref MethodBase method, out Type declaringType)
         {
             declaringType = method.DeclaringType;
 
@@ -170,7 +169,7 @@ namespace Cysharp.Threading.Tasks.Internal
             return false;
         }
 
-        static string BeautifyType(Type t, bool shortName)
+        private static string BeautifyType(Type t, bool shortName)
         {
             if (builtInTypeNames.TryGetValue(t, out var builtin))
             {
@@ -195,7 +194,7 @@ namespace Cysharp.Threading.Tasks.Internal
             return typeBeautifyRegex.Replace(genericType, "").Replace("Cysharp.Threading.Tasks.Triggers.", "").Replace("Cysharp.Threading.Tasks.Internal.", "").Replace("Cysharp.Threading.Tasks.", "") + "<" + innerFormat + ">";
         }
 
-        static bool IgnoreLine(MethodBase methodInfo)
+        private static bool IgnoreLine(MethodBase methodInfo)
         {
             var declareType = methodInfo.DeclaringType.FullName;
             if (declareType == "System.Threading.ExecutionContext")
@@ -230,7 +229,7 @@ namespace Cysharp.Threading.Tasks.Internal
             return false;
         }
 
-        static string AppendHyperLink(string path, string line)
+        private static string AppendHyperLink(string path, string line)
         {
             var fi = new FileInfo(path);
             if (fi.Directory == null)

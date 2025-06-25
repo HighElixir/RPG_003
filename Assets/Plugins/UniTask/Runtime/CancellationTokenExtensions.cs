@@ -8,8 +8,8 @@ namespace Cysharp.Threading.Tasks
 {
     public static class CancellationTokenExtensions
     {
-        static readonly Action<object> cancellationTokenCallback = Callback;
-        static readonly Action<object> disposeCallback = DisposeCallback;
+        private static readonly Action<object> cancellationTokenCallback = Callback;
+        private static readonly Action<object> disposeCallback = DisposeCallback;
 
         public static CancellationToken ToCancellationToken(this UniTask task)
         {
@@ -46,7 +46,7 @@ namespace Cysharp.Threading.Tasks
             return ToCancellationToken(task.AsUniTask(), linkToken);
         }
 
-        static async UniTaskVoid ToCancellationTokenCore(UniTask task, CancellationTokenSource cts)
+        private static async UniTaskVoid ToCancellationTokenCore(UniTask task, CancellationTokenSource cts)
         {
             try
             {
@@ -71,7 +71,7 @@ namespace Cysharp.Threading.Tasks
             return (promise.Task, cancellationToken.RegisterWithoutCaptureExecutionContext(cancellationTokenCallback, promise));
         }
 
-        static void Callback(object state)
+        private static void Callback(object state)
         {
             var promise = (UniTaskCompletionSource)state;
             promise.TrySetResult();
@@ -131,7 +131,7 @@ namespace Cysharp.Threading.Tasks
             return cancellationToken.RegisterWithoutCaptureExecutionContext(disposeCallback, disposable);
         }
 
-        static void DisposeCallback(object state)
+        private static void DisposeCallback(object state)
         {
             var d = (IDisposable)state;
             d.Dispose();
@@ -140,7 +140,7 @@ namespace Cysharp.Threading.Tasks
 
     public struct CancellationTokenAwaitable
     {
-        CancellationToken cancellationToken;
+        private CancellationToken cancellationToken;
 
         public CancellationTokenAwaitable(CancellationToken cancellationToken)
         {
@@ -154,7 +154,7 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            CancellationToken cancellationToken;
+            private CancellationToken cancellationToken;
 
             public Awaiter(CancellationToken cancellationToken)
             {

@@ -12,8 +12,8 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     [StructLayout(LayoutKind.Auto)]
     public struct AsyncUniTaskMethodBuilder
     {
-        IStateMachineRunnerPromise runnerPromise;
-        Exception ex;
+        private IStateMachineRunnerPromise runnerPromise;
+        private Exception ex;
 
         // 1. Static Create method.
         [DebuggerHidden]
@@ -120,7 +120,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
 #if DEBUG || !UNITY_2018_3_OR_NEWER
         // Important for IDE debugger.
-        object debuggingId;
+        private object debuggingId;
         private object ObjectIdForDebugger
         {
             get
@@ -138,9 +138,9 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     [StructLayout(LayoutKind.Auto)]
     public struct AsyncUniTaskMethodBuilder<T>
     {
-        IStateMachineRunnerPromise<T> runnerPromise;
-        Exception ex;
-        T result;
+        private IStateMachineRunnerPromise<T> runnerPromise;
+        private Exception ex;
+        private T result;
 
         // 1. Static Create method.
         [DebuggerHidden]
@@ -251,7 +251,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
 #if DEBUG || !UNITY_2018_3_OR_NEWER
         // Important for IDE debugger.
-        object debuggingId;
+        private object debuggingId;
         private object ObjectIdForDebugger
         {
             get

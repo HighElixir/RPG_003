@@ -1,11 +1,11 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Text;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -15,7 +15,7 @@ namespace Cysharp.Threading.Tasks
     {
 #if UNITY_EDITOR
 
-        static int trackingId = 0;
+        private static int trackingId = 0;
 
         public const string EnableAutoReloadKey = "UniTaskTrackerWindow_EnableAutoReloadKey";
         public const string EnableTrackingKey = "UniTaskTrackerWindow_EnableTrackingKey";
@@ -23,7 +23,7 @@ namespace Cysharp.Threading.Tasks
 
         public static class EditorEnableState
         {
-            static bool enableAutoReload;
+            private static bool enableAutoReload;
             public static bool EnableAutoReload
             {
                 get { return enableAutoReload; }
@@ -34,7 +34,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static bool enableTracking;
+            private static bool enableTracking;
             public static bool EnableTracking
             {
                 get { return enableTracking; }
@@ -45,7 +45,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static bool enableStackTrace;
+            private static bool enableStackTrace;
             public static bool EnableStackTrace
             {
                 get { return enableStackTrace; }
@@ -60,9 +60,9 @@ namespace Cysharp.Threading.Tasks
 #endif
 
 
-        static List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>> listPool = new List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>>();
+        private static List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>> listPool = new List<KeyValuePair<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>>();
 
-        static readonly WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)> tracking = new WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>();
+        private static readonly WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)> tracking = new WeakDictionary<IUniTaskSource, (string formattedType, int trackingId, DateTime addTime, string stackTrace)>();
 
         [Conditional("UNITY_EDITOR")]
         public static void TrackActiveTask(IUniTaskSource task, int skipFrame)
@@ -97,7 +97,7 @@ namespace Cysharp.Threading.Tasks
 #endif
         }
 
-        static bool dirty;
+        private static bool dirty;
 
         public static bool CheckAndResetDirty()
         {
@@ -128,7 +128,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        static void TypeBeautify(Type type, StringBuilder sb)
+        private static void TypeBeautify(Type type, StringBuilder sb)
         {
             if (type.IsNested)
             {

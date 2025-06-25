@@ -325,8 +325,8 @@ namespace Cysharp.Threading.Tasks
 
     internal class TextSelectionEventConverter : UnityEvent<(string, int, int)>, IDisposable
     {
-        readonly UnityEvent<string, int, int> innerEvent;
-        readonly UnityAction<string, int, int> invokeDelegate;
+        private readonly UnityEvent<string, int, int> innerEvent;
+        private readonly UnityAction<string, int, int> invokeDelegate;
 
 
         public TextSelectionEventConverter(UnityEvent<string, int, int> unityEvent)
@@ -337,7 +337,7 @@ namespace Cysharp.Threading.Tasks
             innerEvent.AddListener(invokeDelegate);
         }
 
-        void InvokeCore(string item1, int item2, int item3)
+        private void InvokeCore(string item1, int item2, int item3)
         {
             Invoke((item1, item2, item3));
         }
@@ -350,17 +350,17 @@ namespace Cysharp.Threading.Tasks
 
     public class AsyncUnityEventHandler : IUniTaskSource, IDisposable, IAsyncClickEventHandler
     {
-        static Action<object> cancellationCallback = CancellationCallback;
+        private static Action<object> cancellationCallback = CancellationCallback;
 
-        readonly UnityAction action;
-        readonly UnityEvent unityEvent;
+        private readonly UnityAction action;
+        private readonly UnityEvent unityEvent;
 
-        CancellationToken cancellationToken;
-        CancellationTokenRegistration registration;
-        bool isDisposed;
-        bool callOnce;
+        private CancellationToken cancellationToken;
+        private CancellationTokenRegistration registration;
+        private bool isDisposed;
+        private bool callOnce;
 
-        UniTaskCompletionSourceCore<AsyncUnit> core;
+        private UniTaskCompletionSourceCore<AsyncUnit> core;
 
         public AsyncUnityEventHandler(UnityEvent unityEvent, CancellationToken cancellationToken, bool callOnce)
         {
@@ -395,12 +395,12 @@ namespace Cysharp.Threading.Tasks
             return new UniTask(this, core.Version);
         }
 
-        void Invoke()
+        private void Invoke()
         {
             core.TrySetResult(AsyncUnit.Default);
         }
 
-        static void CancellationCallback(object state)
+        private static void CancellationCallback(object state)
         {
             var self = (AsyncUnityEventHandler)state;
             self.Dispose();
@@ -460,17 +460,17 @@ namespace Cysharp.Threading.Tasks
     public class AsyncUnityEventHandler<T> : IUniTaskSource<T>, IDisposable, IAsyncValueChangedEventHandler<T>, IAsyncEndEditEventHandler<T>
         , IAsyncEndTextSelectionEventHandler<T>, IAsyncTextSelectionEventHandler<T>, IAsyncDeselectEventHandler<T>, IAsyncSelectEventHandler<T>, IAsyncSubmitEventHandler<T>
     {
-        static Action<object> cancellationCallback = CancellationCallback;
+        private static Action<object> cancellationCallback = CancellationCallback;
 
-        readonly UnityAction<T> action;
-        readonly UnityEvent<T> unityEvent;
+        private readonly UnityAction<T> action;
+        private readonly UnityEvent<T> unityEvent;
 
-        CancellationToken cancellationToken;
-        CancellationTokenRegistration registration;
-        bool isDisposed;
-        bool callOnce;
+        private CancellationToken cancellationToken;
+        private CancellationTokenRegistration registration;
+        private bool isDisposed;
+        private bool callOnce;
 
-        UniTaskCompletionSourceCore<T> core;
+        private UniTaskCompletionSourceCore<T> core;
 
         public AsyncUnityEventHandler(UnityEvent<T> unityEvent, CancellationToken cancellationToken, bool callOnce)
         {
@@ -505,12 +505,12 @@ namespace Cysharp.Threading.Tasks
             return new UniTask<T>(this, core.Version);
         }
 
-        void Invoke(T result)
+        private void Invoke(T result)
         {
             core.TrySetResult(result);
         }
 
-        static void CancellationCallback(object state)
+        private static void CancellationCallback(object state)
         {
             var self = (AsyncUnityEventHandler<T>)state;
             self.Dispose();
@@ -611,8 +611,8 @@ namespace Cysharp.Threading.Tasks
 
     public class UnityEventHandlerAsyncEnumerable : IUniTaskAsyncEnumerable<AsyncUnit>
     {
-        readonly UnityEvent unityEvent;
-        readonly CancellationToken cancellationToken1;
+        private readonly UnityEvent unityEvent;
+        private readonly CancellationToken cancellationToken1;
 
         public UnityEventHandlerAsyncEnumerable(UnityEvent unityEvent, CancellationToken cancellationToken)
         {
@@ -632,19 +632,19 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        class UnityEventHandlerAsyncEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>
+        private class UnityEventHandlerAsyncEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>
         {
-            static readonly Action<object> cancel1 = OnCanceled1;
-            static readonly Action<object> cancel2 = OnCanceled2;
+            private static readonly Action<object> cancel1 = OnCanceled1;
+            private static readonly Action<object> cancel2 = OnCanceled2;
 
-            readonly UnityEvent unityEvent;
-            CancellationToken cancellationToken1;
-            CancellationToken cancellationToken2;
+            private readonly UnityEvent unityEvent;
+            private CancellationToken cancellationToken1;
+            private CancellationToken cancellationToken2;
 
-            UnityAction unityAction;
-            CancellationTokenRegistration registration1;
-            CancellationTokenRegistration registration2;
-            bool isDisposed;
+            private UnityAction unityAction;
+            private CancellationTokenRegistration registration1;
+            private CancellationTokenRegistration registration2;
+            private bool isDisposed;
 
             public UnityEventHandlerAsyncEnumerator(UnityEvent unityEvent, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
             {
@@ -680,12 +680,12 @@ namespace Cysharp.Threading.Tasks
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void Invoke()
+            private void Invoke()
             {
                 completionSource.TrySetResult(true);
             }
 
-            static void OnCanceled1(object state)
+            private static void OnCanceled1(object state)
             {
                 var self = (UnityEventHandlerAsyncEnumerator)state;
                 try
@@ -698,7 +698,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void OnCanceled2(object state)
+            private static void OnCanceled2(object state)
             {
                 var self = (UnityEventHandlerAsyncEnumerator)state;
                 try
@@ -731,8 +731,8 @@ namespace Cysharp.Threading.Tasks
 
     public class UnityEventHandlerAsyncEnumerable<T> : IUniTaskAsyncEnumerable<T>
     {
-        readonly UnityEvent<T> unityEvent;
-        readonly CancellationToken cancellationToken1;
+        private readonly UnityEvent<T> unityEvent;
+        private readonly CancellationToken cancellationToken1;
 
         public UnityEventHandlerAsyncEnumerable(UnityEvent<T> unityEvent, CancellationToken cancellationToken)
         {
@@ -752,19 +752,19 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        class UnityEventHandlerAsyncEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>
+        private class UnityEventHandlerAsyncEnumerator : MoveNextSource, IUniTaskAsyncEnumerator<T>
         {
-            static readonly Action<object> cancel1 = OnCanceled1;
-            static readonly Action<object> cancel2 = OnCanceled2;
+            private static readonly Action<object> cancel1 = OnCanceled1;
+            private static readonly Action<object> cancel2 = OnCanceled2;
 
-            readonly UnityEvent<T> unityEvent;
-            CancellationToken cancellationToken1;
-            CancellationToken cancellationToken2;
+            private readonly UnityEvent<T> unityEvent;
+            private CancellationToken cancellationToken1;
+            private CancellationToken cancellationToken2;
 
-            UnityAction<T> unityAction;
-            CancellationTokenRegistration registration1;
-            CancellationTokenRegistration registration2;
-            bool isDisposed;
+            private UnityAction<T> unityAction;
+            private CancellationTokenRegistration registration1;
+            private CancellationTokenRegistration registration2;
+            private bool isDisposed;
 
             public UnityEventHandlerAsyncEnumerator(UnityEvent<T> unityEvent, CancellationToken cancellationToken1, CancellationToken cancellationToken2)
             {
@@ -800,13 +800,13 @@ namespace Cysharp.Threading.Tasks
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void Invoke(T value)
+            private void Invoke(T value)
             {
                 Current = value;
                 completionSource.TrySetResult(true);
             }
 
-            static void OnCanceled1(object state)
+            private static void OnCanceled1(object state)
             {
                 var self = (UnityEventHandlerAsyncEnumerator)state;
                 try
@@ -819,7 +819,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void OnCanceled2(object state)
+            private static void OnCanceled2(object state)
             {
                 var self = (UnityEventHandlerAsyncEnumerator)state;
                 try

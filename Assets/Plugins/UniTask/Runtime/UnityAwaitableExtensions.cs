@@ -1,4 +1,4 @@
-#if UNITY_2023_1_OR_NEWER
+﻿#if UNITY_2023_1_OR_NEWER
 namespace Cysharp.Threading.Tasks
 {
     public static class UnityAwaitableExtensions
@@ -7,7 +7,7 @@ namespace Cysharp.Threading.Tasks
         {
             await awaitable;
         }
-        
+
         public static async UniTask<T> AsUniTask<T>(this UnityEngine.Awaitable<T> awaitable)
         {
             return await awaitable;

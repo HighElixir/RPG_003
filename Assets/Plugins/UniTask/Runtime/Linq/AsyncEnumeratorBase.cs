@@ -7,13 +7,13 @@ namespace Cysharp.Threading.Tasks.Linq
     // see Select and Where.
     internal abstract class AsyncEnumeratorBase<TSource, TResult> : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
     {
-        static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
+        private static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
 
-        readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
         protected CancellationToken cancellationToken;
 
-        IUniTaskAsyncEnumerator<TSource> enumerator;
-        UniTask<bool>.Awaiter sourceMoveNext;
+        private IUniTaskAsyncEnumerator<TSource> enumerator;
+        private UniTask<bool>.Awaiter sourceMoveNext;
 
         public AsyncEnumeratorBase(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
         {
@@ -58,7 +58,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         protected void SourceMoveNext()
         {
-            CONTINUE:
+        CONTINUE:
             sourceMoveNext = enumerator.MoveNextAsync().GetAwaiter();
             if (sourceMoveNext.IsCompleted)
             {
@@ -91,7 +91,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        static void MoveNextCallBack(object state)
+        private static void MoveNextCallBack(object state)
         {
             var self = (AsyncEnumeratorBase<TSource, TResult>)state;
             bool result;
@@ -133,17 +133,17 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal abstract class AsyncEnumeratorAwaitSelectorBase<TSource, TResult, TAwait> : MoveNextSource, IUniTaskAsyncEnumerator<TResult>
     {
-        static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
-        static readonly Action<object> setCurrentCallbackDelegate = SetCurrentCallBack;
+        private static readonly Action<object> moveNextCallbackDelegate = MoveNextCallBack;
+        private static readonly Action<object> setCurrentCallbackDelegate = SetCurrentCallBack;
 
 
-        readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
         protected CancellationToken cancellationToken;
 
-        IUniTaskAsyncEnumerator<TSource> enumerator;
-        UniTask<bool>.Awaiter sourceMoveNext;
+        private IUniTaskAsyncEnumerator<TSource> enumerator;
+        private UniTask<bool>.Awaiter sourceMoveNext;
 
-        UniTask<TAwait>.Awaiter resultAwaiter;
+        private UniTask<TAwait>.Awaiter resultAwaiter;
 
         public AsyncEnumeratorAwaitSelectorBase(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
         {
@@ -194,7 +194,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         protected void SourceMoveNext()
         {
-            CONTINUE:
+        CONTINUE:
             sourceMoveNext = enumerator.MoveNextAsync().GetAwaiter();
             if (sourceMoveNext.IsCompleted)
             {
@@ -229,7 +229,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        (bool waitCallback, bool requireNextIteration) TryMoveNextCore(bool sourceHasCurrent, out bool result)
+        private (bool waitCallback, bool requireNextIteration) TryMoveNextCore(bool sourceHasCurrent, out bool result)
         {
             if (sourceHasCurrent)
             {
@@ -271,7 +271,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        static void MoveNextCallBack(object state)
+        private static void MoveNextCallBack(object state)
         {
             var self = (AsyncEnumeratorAwaitSelectorBase<TSource, TResult, TAwait>)state;
             bool result = false;
@@ -301,7 +301,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        static void SetCurrentCallBack(object state)
+        private static void SetCurrentCallBack(object state)
         {
             var self = (AsyncEnumeratorAwaitSelectorBase<TSource, TResult, TAwait>)state;
 

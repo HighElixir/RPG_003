@@ -18,11 +18,11 @@ namespace Cysharp.Threading.Tasks
     // be careful to use, itself is struct.
     public struct TriggerEvent<T>
     {
-        ITriggerHandler<T> head; // head.prev is last
-        ITriggerHandler<T> iteratingHead;
-        ITriggerHandler<T> iteratingNode;
+        private ITriggerHandler<T> head; // head.prev is last
+        private ITriggerHandler<T> iteratingHead;
+        private ITriggerHandler<T> iteratingNode;
 
-        void LogError(Exception ex)
+        private void LogError(Exception ex)
         {
 #if UNITY_2018_3_OR_NEWER
             UnityEngine.Debug.LogException(ex);

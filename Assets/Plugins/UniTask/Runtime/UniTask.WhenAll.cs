@@ -1,9 +1,9 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Collections.Generic;
 using System.Threading;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -47,11 +47,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WhenAllPromise<T> : IUniTaskSource<T[]>
+        private sealed class WhenAllPromise<T> : IUniTaskSource<T[]>
         {
-            T[] result;
-            int completeCount;
-            UniTaskCompletionSourceCore<T[]> core; // don't reset(called after GetResult, will invoke TrySetException.)
+            private T[] result;
+            private int completeCount;
+            private UniTaskCompletionSourceCore<T[]> core; // don't reset(called after GetResult, will invoke TrySetException.)
 
             public WhenAllPromise(UniTask<T>[] tasks, int tasksLength)
             {
@@ -98,7 +98,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryInvokeContinuation(WhenAllPromise<T> self, in UniTask<T>.Awaiter awaiter, int i)
+            private static void TryInvokeContinuation(WhenAllPromise<T> self, in UniTask<T>.Awaiter awaiter, int i)
             {
                 try
                 {
@@ -144,11 +144,11 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        sealed class WhenAllPromise : IUniTaskSource
+        private sealed class WhenAllPromise : IUniTaskSource
         {
-            int completeCount;
-            int tasksLength;
-            UniTaskCompletionSourceCore<AsyncUnit> core; // don't reset(called after GetResult, will invoke TrySetException.)
+            private int completeCount;
+            private int tasksLength;
+            private UniTaskCompletionSourceCore<AsyncUnit> core; // don't reset(called after GetResult, will invoke TrySetException.)
 
             public WhenAllPromise(UniTask[] tasks, int tasksLength)
             {
@@ -193,7 +193,7 @@ namespace Cysharp.Threading.Tasks
                 }
             }
 
-            static void TryInvokeContinuation(WhenAllPromise self, in UniTask.Awaiter awaiter)
+            private static void TryInvokeContinuation(WhenAllPromise self, in UniTask.Awaiter awaiter)
             {
                 try
                 {

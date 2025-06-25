@@ -7,19 +7,19 @@ namespace Cysharp.Threading.Tasks.Internal
 {
     internal sealed class ContinuationQueue
     {
-        const int MaxArrayLength = 0X7FEFFFFF;
-        const int InitialSize = 16;
+        private const int MaxArrayLength = 0X7FEFFFFF;
+        private const int InitialSize = 16;
 
-        readonly PlayerLoopTiming timing;
+        private readonly PlayerLoopTiming timing;
 
-        SpinLock gate = new SpinLock(false);
-        bool dequing = false;
+        private SpinLock gate = new SpinLock(false);
+        private bool dequing = false;
 
-        int actionListCount = 0;
-        Action[] actionList = new Action[InitialSize];
+        private int actionListCount = 0;
+        private Action[] actionList = new Action[InitialSize];
 
-        int waitingListCount = 0;
-        Action[] waitingList = new Action[InitialSize];
+        private int waitingListCount = 0;
+        private Action[] waitingList = new Action[InitialSize];
 
         public ContinuationQueue(PlayerLoopTiming timing)
         {
@@ -148,27 +148,27 @@ namespace Cysharp.Threading.Tasks.Internal
 #endif
         }
 
-        void Initialization() => RunCore();
-        void LastInitialization() => RunCore();
-        void EarlyUpdate() => RunCore();
-        void LastEarlyUpdate() => RunCore();
-        void FixedUpdate() => RunCore();
-        void LastFixedUpdate() => RunCore();
-        void PreUpdate() => RunCore();
-        void LastPreUpdate() => RunCore();
-        void Update() => RunCore();
-        void LastUpdate() => RunCore();
-        void PreLateUpdate() => RunCore();
-        void LastPreLateUpdate() => RunCore();
-        void PostLateUpdate() => RunCore();
-        void LastPostLateUpdate() => RunCore();
+        private void Initialization() => RunCore();
+        private void LastInitialization() => RunCore();
+        private void EarlyUpdate() => RunCore();
+        private void LastEarlyUpdate() => RunCore();
+        private void FixedUpdate() => RunCore();
+        private void LastFixedUpdate() => RunCore();
+        private void PreUpdate() => RunCore();
+        private void LastPreUpdate() => RunCore();
+        private void Update() => RunCore();
+        private void LastUpdate() => RunCore();
+        private void PreLateUpdate() => RunCore();
+        private void LastPreLateUpdate() => RunCore();
+        private void PostLateUpdate() => RunCore();
+        private void LastPostLateUpdate() => RunCore();
 #if UNITY_2020_2_OR_NEWER
-        void TimeUpdate() => RunCore();
-        void LastTimeUpdate() => RunCore();
+        private void TimeUpdate() => RunCore();
+        private void LastTimeUpdate() => RunCore();
 #endif
 
         [System.Diagnostics.DebuggerHidden]
-        void RunCore()
+        private void RunCore()
         {
             {
                 bool lockTaken = false;

@@ -178,8 +178,8 @@ namespace Cysharp.Threading.Tasks
 
     public static class PlayerLoopHelper
     {
-        static readonly ContinuationQueue ThrowMarkerContinuationQueue = new ContinuationQueue(PlayerLoopTiming.Initialization);
-        static readonly PlayerLoopRunner ThrowMarkerPlayerLoopRunner = new PlayerLoopRunner(PlayerLoopTiming.Initialization);
+        private static readonly ContinuationQueue ThrowMarkerContinuationQueue = new ContinuationQueue(PlayerLoopTiming.Initialization);
+        private static readonly PlayerLoopRunner ThrowMarkerPlayerLoopRunner = new PlayerLoopRunner(PlayerLoopTiming.Initialization);
 
         public static SynchronizationContext UnitySynchronizationContext => unitySynchronizationContext;
         public static int MainThreadId => mainThreadId;
@@ -187,13 +187,13 @@ namespace Cysharp.Threading.Tasks
 
         public static bool IsMainThread => Thread.CurrentThread.ManagedThreadId == mainThreadId;
 
-        static int mainThreadId;
-        static string applicationDataPath;
-        static SynchronizationContext unitySynchronizationContext;
-        static ContinuationQueue[] yielders;
-        static PlayerLoopRunner[] runners;
+        private static int mainThreadId;
+        private static string applicationDataPath;
+        private static SynchronizationContext unitySynchronizationContext;
+        private static ContinuationQueue[] yielders;
+        private static PlayerLoopRunner[] runners;
         internal static bool IsEditorApplicationQuitting { get; private set; }
-        static PlayerLoopSystem[] InsertRunner(PlayerLoopSystem loopSystem,
+        private static PlayerLoopSystem[] InsertRunner(PlayerLoopSystem loopSystem,
             bool injectOnFirst,
             Type loopRunnerYieldType, ContinuationQueue cq,
             Type loopRunnerType, PlayerLoopRunner runner)
@@ -252,14 +252,14 @@ namespace Cysharp.Threading.Tasks
             return dest;
         }
 
-        static PlayerLoopSystem[] RemoveRunner(PlayerLoopSystem loopSystem, Type loopRunnerYieldType, Type loopRunnerType)
+        private static PlayerLoopSystem[] RemoveRunner(PlayerLoopSystem loopSystem, Type loopRunnerYieldType, Type loopRunnerType)
         {
             return loopSystem.subSystemList
                 .Where(ls => ls.type != loopRunnerYieldType && ls.type != loopRunnerType)
                 .ToArray();
         }
 
-        static PlayerLoopSystem[] InsertUniTaskSynchronizationContext(PlayerLoopSystem loopSystem)
+        private static PlayerLoopSystem[] InsertUniTaskSynchronizationContext(PlayerLoopSystem loopSystem)
         {
             var loop = new PlayerLoopSystem
             {
@@ -286,7 +286,8 @@ namespace Cysharp.Threading.Tasks
         }
 
 #if UNITY_2020_1_OR_NEWER
-		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterAssembliesLoaded)]
+        private
 #else
 		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 #endif
@@ -325,7 +326,7 @@ namespace Cysharp.Threading.Tasks
 #if UNITY_EDITOR
 
         [InitializeOnLoadMethod]
-        static void InitOnEditor()
+        private static void InitOnEditor()
         {
             // Execute the play mode init method
             Init();
@@ -379,7 +380,7 @@ namespace Cysharp.Threading.Tasks
             throw new Exception("Target PlayerLoopSystem does not found. Type:" + systemType.FullName);
         }
 
-        static void InsertLoop(PlayerLoopSystem[] copyList, InjectPlayerLoopTimings injectTimings, Type loopType, InjectPlayerLoopTimings targetTimings,
+        private static void InsertLoop(PlayerLoopSystem[] copyList, InjectPlayerLoopTimings injectTimings, Type loopType, InjectPlayerLoopTimings targetTimings,
             int index, bool injectOnFirst, Type loopRunnerYieldType, Type loopRunnerType, PlayerLoopTiming playerLoopTiming)
         {
             var i = FindLoopSystemIndex(copyList, loopType);
@@ -499,7 +500,7 @@ namespace Cysharp.Threading.Tasks
             runner.AddAction(action);
         }
 
-        static void ThrowInvalidLoopTiming(PlayerLoopTiming playerLoopTiming)
+        private static void ThrowInvalidLoopTiming(PlayerLoopTiming playerLoopTiming)
         {
             throw new InvalidOperationException("Target playerLoopTiming is not injected. Please check PlayerLoopHelper.Initialize. PlayerLoopTiming:" + playerLoopTiming);
         }
@@ -528,8 +529,8 @@ namespace Cysharp.Threading.Tasks
             {
                 sb.AppendFormat("------{0}------", header.type.Name);
                 sb.AppendLine();
-                
-                if (header.subSystemList is null) 
+
+                if (header.subSystemList is null)
                 {
                     sb.AppendFormat("{0} has no subsystems!", header.ToString());
                     sb.AppendLine();
@@ -557,11 +558,11 @@ namespace Cysharp.Threading.Tasks
 
             foreach (var header in playerLoop.subSystemList)
             {
-                if (header.subSystemList is null) 
-                { 
+                if (header.subSystemList is null)
+                {
                     continue;
                 }
-                
+
                 foreach (var subSystem in header.subSystemList)
                 {
                     if (subSystem.type == typeof(UniTaskLoopRunners.UniTaskLoopRunnerInitialization))

@@ -7,14 +7,14 @@ namespace Cysharp.Threading.Tasks
 {
     public class AsyncLazy
     {
-        static Action<object> continuation = SetCompletionSource;
+        private static Action<object> continuation = SetCompletionSource;
 
-        Func<UniTask> taskFactory;
-        UniTaskCompletionSource completionSource;
-        UniTask.Awaiter awaiter;
+        private Func<UniTask> taskFactory;
+        private UniTaskCompletionSource completionSource;
+        private UniTask.Awaiter awaiter;
 
-        object syncLock;
-        bool initialized;
+        private object syncLock;
+        private bool initialized;
 
         public AsyncLazy(Func<UniTask> taskFactory)
         {
@@ -55,7 +55,7 @@ namespace Cysharp.Threading.Tasks
 
         public UniTask.Awaiter GetAwaiter() => Task.GetAwaiter();
 
-        void EnsureInitialized()
+        private void EnsureInitialized()
         {
             if (Volatile.Read(ref initialized))
             {
@@ -65,7 +65,7 @@ namespace Cysharp.Threading.Tasks
             EnsureInitializedCore();
         }
 
-        void EnsureInitializedCore()
+        private void EnsureInitializedCore()
         {
             lock (syncLock)
             {
@@ -92,7 +92,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        void SetCompletionSource(in UniTask.Awaiter awaiter)
+        private void SetCompletionSource(in UniTask.Awaiter awaiter)
         {
             try
             {
@@ -105,7 +105,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        static void SetCompletionSource(object state)
+        private static void SetCompletionSource(object state)
         {
             var self = (AsyncLazy)state;
             try
@@ -126,14 +126,14 @@ namespace Cysharp.Threading.Tasks
 
     public class AsyncLazy<T>
     {
-        static Action<object> continuation = SetCompletionSource;
+        private static Action<object> continuation = SetCompletionSource;
 
-        Func<UniTask<T>> taskFactory;
-        UniTaskCompletionSource<T> completionSource;
-        UniTask<T>.Awaiter awaiter;
+        private Func<UniTask<T>> taskFactory;
+        private UniTaskCompletionSource<T> completionSource;
+        private UniTask<T>.Awaiter awaiter;
 
-        object syncLock;
-        bool initialized;
+        private object syncLock;
+        private bool initialized;
 
         public AsyncLazy(Func<UniTask<T>> taskFactory)
         {
@@ -174,7 +174,7 @@ namespace Cysharp.Threading.Tasks
 
         public UniTask<T>.Awaiter GetAwaiter() => Task.GetAwaiter();
 
-        void EnsureInitialized()
+        private void EnsureInitialized()
         {
             if (Volatile.Read(ref initialized))
             {
@@ -184,7 +184,7 @@ namespace Cysharp.Threading.Tasks
             EnsureInitializedCore();
         }
 
-        void EnsureInitializedCore()
+        private void EnsureInitializedCore()
         {
             lock (syncLock)
             {
@@ -211,7 +211,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        void SetCompletionSource(in UniTask<T>.Awaiter awaiter)
+        private void SetCompletionSource(in UniTask<T>.Awaiter awaiter)
         {
             try
             {
@@ -224,7 +224,7 @@ namespace Cysharp.Threading.Tasks
             }
         }
 
-        static void SetCompletionSource(object state)
+        private static void SetCompletionSource(object state)
         {
             var self = (AsyncLazy<T>)state;
             try

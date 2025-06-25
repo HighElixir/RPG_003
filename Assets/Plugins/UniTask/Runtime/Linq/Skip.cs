@@ -16,8 +16,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Skip<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly int count;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly int count;
 
         public Skip(IUniTaskAsyncEnumerable<TSource> source, int count)
         {
@@ -30,11 +30,11 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Skip(source, count, cancellationToken);
         }
 
-        sealed class _Skip : AsyncEnumeratorBase<TSource, TSource>
+        private sealed class _Skip : AsyncEnumeratorBase<TSource, TSource>
         {
-            readonly int count;
+            private readonly int count;
 
-            int index;
+            private int index;
 
             public _Skip(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
                 : base(source, cancellationToken)

@@ -16,8 +16,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Take<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly int count;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly int count;
 
         public Take(IUniTaskAsyncEnumerable<TSource> source, int count)
         {
@@ -30,17 +30,17 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Take(source, count, cancellationToken);
         }
 
-        sealed class _Take : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _Take : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly int count;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly int count;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
-            int index;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
+            private int index;
 
             public _Take(IUniTaskAsyncEnumerable<TSource> source, int count, CancellationToken cancellationToken)
             {
@@ -71,7 +71,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void SourceMoveNext()
+            private void SourceMoveNext()
             {
                 try
                 {
@@ -91,7 +91,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_Take)state;
 

@@ -57,11 +57,11 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class Timer : IUniTaskAsyncEnumerable<AsyncUnit>
     {
-        readonly PlayerLoopTiming updateTiming;
-        readonly TimeSpan dueTime;
-        readonly TimeSpan? period;
-        readonly bool ignoreTimeScale;
-        readonly bool cancelImmediately;
+        private readonly PlayerLoopTiming updateTiming;
+        private readonly TimeSpan dueTime;
+        private readonly TimeSpan? period;
+        private readonly bool ignoreTimeScale;
+        private readonly bool cancelImmediately;
 
         public Timer(TimeSpan dueTime, TimeSpan? period, PlayerLoopTiming updateTiming, bool ignoreTimeScale, bool cancelImmediately)
         {
@@ -77,20 +77,20 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Timer(dueTime, period, updateTiming, ignoreTimeScale, cancellationToken, cancelImmediately);
         }
 
-        class _Timer : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
+        private class _Timer : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
         {
-            readonly float dueTime;
-            readonly float? period;
-            readonly PlayerLoopTiming updateTiming;
-            readonly bool ignoreTimeScale;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly float dueTime;
+            private readonly float? period;
+            private readonly PlayerLoopTiming updateTiming;
+            private readonly bool ignoreTimeScale;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-            int initialFrame;
-            float elapsed;
-            bool dueTimePhase;
-            bool completed;
-            bool disposed;
+            private int initialFrame;
+            private float elapsed;
+            private bool dueTimePhase;
+            private bool completed;
+            private bool disposed;
 
             public _Timer(TimeSpan dueTime, TimeSpan? period, PlayerLoopTiming updateTiming, bool ignoreTimeScale, CancellationToken cancellationToken, bool cancelImmediately)
             {
@@ -108,7 +108,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.updateTiming = updateTiming;
                 this.ignoreTimeScale = ignoreTimeScale;
                 this.cancellationToken = cancellationToken;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>
@@ -117,7 +117,7 @@ namespace Cysharp.Threading.Tasks.Linq
                         source.completionSource.TrySetCanceled(source.cancellationToken);
                     }, this);
                 }
-                
+
                 TaskTracker.TrackActiveTask(this, 2);
                 PlayerLoopHelper.AddAction(updateTiming, this);
             }
@@ -162,7 +162,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     completionSource.TrySetCanceled(cancellationToken);
                     return false;
-                }                
+                }
 
                 if (dueTimePhase)
                 {
@@ -207,10 +207,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class TimerFrame : IUniTaskAsyncEnumerable<AsyncUnit>
     {
-        readonly PlayerLoopTiming updateTiming;
-        readonly int dueTimeFrameCount;
-        readonly int? periodFrameCount;
-        readonly bool cancelImmediately;
+        private readonly PlayerLoopTiming updateTiming;
+        private readonly int dueTimeFrameCount;
+        private readonly int? periodFrameCount;
+        private readonly bool cancelImmediately;
 
         public TimerFrame(int dueTimeFrameCount, int? periodFrameCount, PlayerLoopTiming updateTiming, bool cancelImmediately)
         {
@@ -225,18 +225,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _TimerFrame(dueTimeFrameCount, periodFrameCount, updateTiming, cancellationToken, cancelImmediately);
         }
 
-        class _TimerFrame : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
+        private class _TimerFrame : MoveNextSource, IUniTaskAsyncEnumerator<AsyncUnit>, IPlayerLoopItem
         {
-            readonly int dueTimeFrameCount;
-            readonly int? periodFrameCount;
-            readonly CancellationToken cancellationToken;
-            readonly CancellationTokenRegistration cancellationTokenRegistration;
+            private readonly int dueTimeFrameCount;
+            private readonly int? periodFrameCount;
+            private readonly CancellationToken cancellationToken;
+            private readonly CancellationTokenRegistration cancellationTokenRegistration;
 
-            int initialFrame;
-            int currentFrame;
-            bool dueTimePhase;
-            bool completed;
-            bool disposed;
+            private int initialFrame;
+            private int currentFrame;
+            private bool dueTimePhase;
+            private bool completed;
+            private bool disposed;
 
             public _TimerFrame(int dueTimeFrameCount, int? periodFrameCount, PlayerLoopTiming updateTiming, CancellationToken cancellationToken, bool cancelImmediately)
             {
@@ -251,7 +251,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 this.dueTimeFrameCount = dueTimeFrameCount;
                 this.periodFrameCount = periodFrameCount;
                 this.cancellationToken = cancellationToken;
-                
+
                 if (cancelImmediately && cancellationToken.CanBeCanceled)
                 {
                     cancellationTokenRegistration = cancellationToken.RegisterWithoutCaptureExecutionContext(state =>

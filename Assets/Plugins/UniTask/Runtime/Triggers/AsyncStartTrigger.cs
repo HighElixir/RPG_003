@@ -20,9 +20,9 @@ namespace Cysharp.Threading.Tasks.Triggers
     [DisallowMultipleComponent]
     public sealed class AsyncStartTrigger : AsyncTriggerBase<AsyncUnit>
     {
-        bool called;
+        private bool called;
 
-        void Start()
+        private void Start()
         {
             called = true;
             RaiseEvent(AsyncUnit.Default);

@@ -16,7 +16,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Pairwise<TSource> : IUniTaskAsyncEnumerable<(TSource, TSource)>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
 
         public Pairwise(IUniTaskAsyncEnumerable<TSource> source)
         {
@@ -28,18 +28,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Pairwise(source, cancellationToken);
         }
 
-        sealed class _Pairwise : MoveNextSource, IUniTaskAsyncEnumerator<(TSource, TSource)>
+        private sealed class _Pairwise : MoveNextSource, IUniTaskAsyncEnumerator<(TSource, TSource)>
         {
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
 
-            TSource prev;
-            bool isFirst;
+            private TSource prev;
+            private bool isFirst;
 
             public _Pairwise(IUniTaskAsyncEnumerable<TSource> source, CancellationToken cancellationToken)
             {
@@ -65,7 +65,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void SourceMoveNext()
+            private void SourceMoveNext()
             {
                 try
                 {
@@ -85,7 +85,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 }
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_Pairwise)state;
 

@@ -15,8 +15,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class Repeat<TElement> : IUniTaskAsyncEnumerable<TElement>
     {
-        readonly TElement element;
-        readonly int count;
+        private readonly TElement element;
+        private readonly int count;
 
         public Repeat(TElement element, int count)
         {
@@ -29,12 +29,12 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Repeat(element, count, cancellationToken);
         }
 
-        class _Repeat : IUniTaskAsyncEnumerator<TElement>
+        private class _Repeat : IUniTaskAsyncEnumerator<TElement>
         {
-            readonly TElement element;
-            readonly int count;
-            int remaining;
-            CancellationToken cancellationToken;
+            private readonly TElement element;
+            private readonly int count;
+            private int remaining;
+            private CancellationToken cancellationToken;
 
             public _Repeat(TElement element, int count, CancellationToken cancellationToken)
             {

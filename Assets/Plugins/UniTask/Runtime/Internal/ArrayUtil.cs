@@ -19,7 +19,7 @@ namespace Cysharp.Threading.Tasks.Internal
 
         // rare case, no inlining.
         [MethodImpl(MethodImplOptions.NoInlining)]
-        static void EnsureCore<T>(ref T[] array, int index)
+        private static void EnsureCore<T>(ref T[] array, int index)
         {
             var newSize = array.Length * 2;
             var newArray = new T[(index < newSize) ? newSize : (index * 2)];

@@ -23,9 +23,9 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class AppendPrepend<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly TSource element;
-        readonly bool append; // or prepend
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly TSource element;
+        private readonly bool append; // or prepend
 
         public AppendPrepend(IUniTaskAsyncEnumerable<TSource> source, TSource element, bool append)
         {
@@ -39,9 +39,9 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _AppendPrepend(source, element, append, cancellationToken);
         }
 
-        sealed class _AppendPrepend : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _AppendPrepend : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            enum State : byte
+            private enum State : byte
             {
                 None,
                 RequirePrepend,
@@ -49,15 +49,15 @@ namespace Cysharp.Threading.Tasks.Linq
                 Completed
             }
 
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly TSource element;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly TSource element;
+            private CancellationToken cancellationToken;
 
-            State state;
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
+            private State state;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
 
             public _AppendPrepend(IUniTaskAsyncEnumerable<TSource> source, TSource element, bool append, CancellationToken cancellationToken)
             {
@@ -108,7 +108,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_AppendPrepend)state;
 

@@ -57,8 +57,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhile<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, bool> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, bool> predicate;
 
         public SkipWhile(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, bool> predicate)
         {
@@ -71,9 +71,9 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhile(source, predicate, cancellationToken);
         }
 
-        class _SkipWhile : AsyncEnumeratorBase<TSource, TSource>
+        private class _SkipWhile : AsyncEnumeratorBase<TSource, TSource>
         {
-            Func<TSource, bool> predicate;
+            private Func<TSource, bool> predicate;
 
             public _SkipWhile(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, bool> predicate, CancellationToken cancellationToken)
 
@@ -108,8 +108,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhileInt<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, int, bool> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, int, bool> predicate;
 
         public SkipWhileInt(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, bool> predicate)
         {
@@ -122,10 +122,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhileInt(source, predicate, cancellationToken);
         }
 
-        class _SkipWhileInt : AsyncEnumeratorBase<TSource, TSource>
+        private class _SkipWhileInt : AsyncEnumeratorBase<TSource, TSource>
         {
-            Func<TSource, int, bool> predicate;
-            int index;
+            private Func<TSource, int, bool> predicate;
+            private int index;
 
             public _SkipWhileInt(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, bool> predicate, CancellationToken cancellationToken)
 
@@ -160,8 +160,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhileAwait<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, UniTask<bool>> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, UniTask<bool>> predicate;
 
         public SkipWhileAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate)
         {
@@ -174,9 +174,9 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhileAwait(source, predicate, cancellationToken);
         }
 
-        class _SkipWhileAwait : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        private class _SkipWhileAwait : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
-            Func<TSource, UniTask<bool>> predicate;
+            private Func<TSource, UniTask<bool>> predicate;
 
             public _SkipWhileAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, UniTask<bool>> predicate, CancellationToken cancellationToken)
 
@@ -201,12 +201,12 @@ namespace Cysharp.Threading.Tasks.Linq
                 {
                     predicate = null;
                     Current = SourceCurrent;
-                    terminateIteration= false;
+                    terminateIteration = false;
                     return true;
                 }
                 else
                 {
-                    terminateIteration= false;
+                    terminateIteration = false;
                     return false;
                 }
             }
@@ -215,8 +215,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhileIntAwait<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, int, UniTask<bool>> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, int, UniTask<bool>> predicate;
 
         public SkipWhileIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate)
         {
@@ -229,10 +229,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhileIntAwait(source, predicate, cancellationToken);
         }
 
-        class _SkipWhileIntAwait : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        private class _SkipWhileIntAwait : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
-            Func<TSource, int, UniTask<bool>> predicate;
-            int index;
+            private Func<TSource, int, UniTask<bool>> predicate;
+            private int index;
 
             public _SkipWhileIntAwait(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, UniTask<bool>> predicate, CancellationToken cancellationToken)
 
@@ -253,7 +253,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
             protected override bool TrySetCurrentCore(bool awaitResult, out bool terminateIteration)
             {
-                terminateIteration= false;
+                terminateIteration = false;
                 if (!awaitResult)
                 {
                     predicate = null;
@@ -270,8 +270,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhileAwaitWithCancellation<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, CancellationToken, UniTask<bool>> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, CancellationToken, UniTask<bool>> predicate;
 
         public SkipWhileAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate)
         {
@@ -284,9 +284,9 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhileAwaitWithCancellation(source, predicate, cancellationToken);
         }
 
-        class _SkipWhileAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        private class _SkipWhileAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
-            Func<TSource, CancellationToken, UniTask<bool>> predicate;
+            private Func<TSource, CancellationToken, UniTask<bool>> predicate;
 
             public _SkipWhileAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
 
@@ -307,7 +307,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
             protected override bool TrySetCurrentCore(bool awaitResult, out bool terminateIteration)
             {
-                terminateIteration= false;
+                terminateIteration = false;
                 if (!awaitResult)
                 {
                     predicate = null;
@@ -324,8 +324,8 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class SkipWhileIntAwaitWithCancellation<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
 
         public SkipWhileIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate)
         {
@@ -338,10 +338,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _SkipWhileIntAwaitWithCancellation(source, predicate, cancellationToken);
         }
 
-        class _SkipWhileIntAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
+        private class _SkipWhileIntAwaitWithCancellation : AsyncEnumeratorAwaitSelectorBase<TSource, TSource, bool>
         {
-            Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
-            int index;
+            private Func<TSource, int, CancellationToken, UniTask<bool>> predicate;
+            private int index;
 
             public _SkipWhileIntAwaitWithCancellation(IUniTaskAsyncEnumerable<TSource> source, Func<TSource, int, CancellationToken, UniTask<bool>> predicate, CancellationToken cancellationToken)
 
@@ -362,7 +362,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
             protected override bool TrySetCurrentCore(bool awaitResult, out bool terminateIteration)
             {
-                terminateIteration= false;
+                terminateIteration = false;
                 if (!awaitResult)
                 {
                     predicate = null;

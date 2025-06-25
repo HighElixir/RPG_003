@@ -1,9 +1,6 @@
-﻿using Cysharp.Threading.Tasks;
-using Cysharp.Threading.Tasks.Internal;
-using Cysharp.Threading.Tasks.Linq;
+﻿using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Threading;
-using System.Threading.Tasks;
 
 namespace Cysharp.Threading.Tasks.Linq
 {
@@ -86,10 +83,10 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Do<TSource> : IUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly Action<TSource> onNext;
-        readonly Action<Exception> onError;
-        readonly Action onCompleted;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly Action<TSource> onNext;
+        private readonly Action<Exception> onError;
+        private readonly Action onCompleted;
 
         public Do(IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, Action onCompleted)
         {
@@ -104,18 +101,18 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Do(source, onNext, onError, onCompleted, cancellationToken);
         }
 
-        sealed class _Do : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
+        private sealed class _Do : MoveNextSource, IUniTaskAsyncEnumerator<TSource>
         {
-            static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
+            private static readonly Action<object> MoveNextCoreDelegate = MoveNextCore;
 
-            readonly IUniTaskAsyncEnumerable<TSource> source;
-            readonly Action<TSource> onNext;
-            readonly Action<Exception> onError;
-            readonly Action onCompleted;
-            CancellationToken cancellationToken;
+            private readonly IUniTaskAsyncEnumerable<TSource> source;
+            private readonly Action<TSource> onNext;
+            private readonly Action<Exception> onError;
+            private readonly Action onCompleted;
+            private CancellationToken cancellationToken;
 
-            IUniTaskAsyncEnumerator<TSource> enumerator;
-            UniTask<bool>.Awaiter awaiter;
+            private IUniTaskAsyncEnumerator<TSource> enumerator;
+            private UniTask<bool>.Awaiter awaiter;
 
             public _Do(IUniTaskAsyncEnumerable<TSource> source, Action<TSource> onNext, Action<Exception> onError, Action onCompleted, CancellationToken cancellationToken)
             {
@@ -164,7 +161,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            void CallTrySetExceptionAfterNotification(Exception ex)
+            private void CallTrySetExceptionAfterNotification(Exception ex)
             {
                 if (onError != null)
                 {
@@ -182,7 +179,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 completionSource.TrySetException(ex);
             }
 
-            bool TryGetResultWithNotification<T>(UniTask<T>.Awaiter awaiter, out T result)
+            private bool TryGetResultWithNotification<T>(UniTask<T>.Awaiter awaiter, out T result)
             {
                 try
                 {
@@ -198,7 +195,7 @@ namespace Cysharp.Threading.Tasks.Linq
             }
 
 
-            static void MoveNextCore(object state)
+            private static void MoveNextCore(object state)
             {
                 var self = (_Do)state;
 

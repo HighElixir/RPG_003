@@ -12,7 +12,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
     [StructLayout(LayoutKind.Auto)]
     public struct AsyncUniTaskVoidMethodBuilder
     {
-        IStateMachineRunner runner;
+        private IStateMachineRunner runner;
 
         // 1. Static Create method.
         [DebuggerHidden]
@@ -119,7 +119,7 @@ namespace Cysharp.Threading.Tasks.CompilerServices
 
 #if DEBUG || !UNITY_2018_3_OR_NEWER
         // Important for IDE debugger.
-        object debuggingId;
+        private object debuggingId;
         private object ObjectIdForDebugger
         {
             get

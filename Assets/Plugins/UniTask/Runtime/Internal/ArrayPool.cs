@@ -10,16 +10,16 @@ namespace Cysharp.Threading.Tasks.Internal
     internal sealed class ArrayPool<T>
     {
         // Same size as System.Buffers.DefaultArrayPool<T>
-        const int DefaultMaxNumberOfArraysPerBucket = 50;
+        private const int DefaultMaxNumberOfArraysPerBucket = 50;
 
-        static readonly T[] EmptyArray = new T[0];
+        private static readonly T[] EmptyArray = new T[0];
 
         public static readonly ArrayPool<T> Shared = new ArrayPool<T>();
 
-        readonly MinimumQueue<T[]>[] buckets;
-        readonly SpinLock[] locks;
+        private readonly MinimumQueue<T[]>[] buckets;
+        private readonly SpinLock[] locks;
 
-        ArrayPool()
+        private ArrayPool()
         {
             // see: GetQueueIndex
             buckets = new MinimumQueue<T[]>[18];
@@ -102,7 +102,7 @@ namespace Cysharp.Threading.Tasks.Internal
             }
         }
 
-        static int CalculateSize(int size)
+        private static int CalculateSize(int size)
         {
             size--;
             size |= size >> 1;
@@ -120,7 +120,7 @@ namespace Cysharp.Threading.Tasks.Internal
             return size;
         }
 
-        static int GetQueueIndex(int size)
+        private static int GetQueueIndex(int size)
         {
             switch (size)
             {

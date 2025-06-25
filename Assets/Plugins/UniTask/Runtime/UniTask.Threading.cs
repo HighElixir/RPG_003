@@ -1,10 +1,10 @@
 ﻿#pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
 
+using Cysharp.Threading.Tasks.Internal;
 using System;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
-using Cysharp.Threading.Tasks.Internal;
 
 namespace Cysharp.Threading.Tasks
 {
@@ -88,8 +88,8 @@ namespace Cysharp.Threading.Tasks
 
     public struct SwitchToMainThreadAwaitable
     {
-        readonly PlayerLoopTiming playerLoopTiming;
-        readonly CancellationToken cancellationToken;
+        private readonly PlayerLoopTiming playerLoopTiming;
+        private readonly CancellationToken cancellationToken;
 
         public SwitchToMainThreadAwaitable(PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken)
         {
@@ -101,8 +101,8 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            readonly PlayerLoopTiming playerLoopTiming;
-            readonly CancellationToken cancellationToken;
+            private readonly PlayerLoopTiming playerLoopTiming;
+            private readonly CancellationToken cancellationToken;
 
             public Awaiter(PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken)
             {
@@ -142,8 +142,8 @@ namespace Cysharp.Threading.Tasks
 
     public struct ReturnToMainThread
     {
-        readonly PlayerLoopTiming playerLoopTiming;
-        readonly CancellationToken cancellationToken;
+        private readonly PlayerLoopTiming playerLoopTiming;
+        private readonly CancellationToken cancellationToken;
 
         public ReturnToMainThread(PlayerLoopTiming playerLoopTiming, CancellationToken cancellationToken)
         {
@@ -158,8 +158,8 @@ namespace Cysharp.Threading.Tasks
 
         public readonly struct Awaiter : ICriticalNotifyCompletion
         {
-            readonly PlayerLoopTiming timing;
-            readonly CancellationToken cancellationToken;
+            private readonly PlayerLoopTiming timing;
+            private readonly CancellationToken cancellationToken;
 
             public Awaiter(PlayerLoopTiming timing, CancellationToken cancellationToken)
             {
@@ -193,7 +193,7 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            static readonly WaitCallback switchToCallback = Callback;
+            private static readonly WaitCallback switchToCallback = Callback;
 
             public bool IsCompleted => false;
             public void GetResult() { }
@@ -212,7 +212,7 @@ namespace Cysharp.Threading.Tasks
 #endif
             }
 
-            static void Callback(object state)
+            private static void Callback(object state)
             {
                 var continuation = (Action)state;
                 continuation();
@@ -268,7 +268,7 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            static readonly Action<object> switchToCallback = Callback;
+            private static readonly Action<object> switchToCallback = Callback;
 
             public bool IsCompleted => false;
             public void GetResult() { }
@@ -283,7 +283,7 @@ namespace Cysharp.Threading.Tasks
                 Task.Factory.StartNew(switchToCallback, continuation, CancellationToken.None, TaskCreationOptions.DenyChildAttach, TaskScheduler.Default);
             }
 
-            static void Callback(object state)
+            private static void Callback(object state)
             {
                 var continuation = (Action)state;
                 continuation();
@@ -293,8 +293,8 @@ namespace Cysharp.Threading.Tasks
 
     public struct SwitchToSynchronizationContextAwaitable
     {
-        readonly SynchronizationContext synchronizationContext;
-        readonly CancellationToken cancellationToken;
+        private readonly SynchronizationContext synchronizationContext;
+        private readonly CancellationToken cancellationToken;
 
         public SwitchToSynchronizationContextAwaitable(SynchronizationContext synchronizationContext, CancellationToken cancellationToken)
         {
@@ -306,9 +306,9 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            static readonly SendOrPostCallback switchToCallback = Callback;
-            readonly SynchronizationContext synchronizationContext;
-            readonly CancellationToken cancellationToken;
+            private static readonly SendOrPostCallback switchToCallback = Callback;
+            private readonly SynchronizationContext synchronizationContext;
+            private readonly CancellationToken cancellationToken;
 
             public Awaiter(SynchronizationContext synchronizationContext, CancellationToken cancellationToken)
             {
@@ -329,7 +329,7 @@ namespace Cysharp.Threading.Tasks
                 synchronizationContext.Post(switchToCallback, continuation);
             }
 
-            static void Callback(object state)
+            private static void Callback(object state)
             {
                 var continuation = (Action)state;
                 continuation();
@@ -339,9 +339,9 @@ namespace Cysharp.Threading.Tasks
 
     public struct ReturnToSynchronizationContext
     {
-        readonly SynchronizationContext syncContext;
-        readonly bool dontPostWhenSameContext;
-        readonly CancellationToken cancellationToken;
+        private readonly SynchronizationContext syncContext;
+        private readonly bool dontPostWhenSameContext;
+        private readonly CancellationToken cancellationToken;
 
         public ReturnToSynchronizationContext(SynchronizationContext syncContext, bool dontPostWhenSameContext, CancellationToken cancellationToken)
         {
@@ -357,11 +357,11 @@ namespace Cysharp.Threading.Tasks
 
         public struct Awaiter : ICriticalNotifyCompletion
         {
-            static readonly SendOrPostCallback switchToCallback = Callback;
+            private static readonly SendOrPostCallback switchToCallback = Callback;
 
-            readonly SynchronizationContext synchronizationContext;
-            readonly bool dontPostWhenSameContext;
-            readonly CancellationToken cancellationToken;
+            private readonly SynchronizationContext synchronizationContext;
+            private readonly bool dontPostWhenSameContext;
+            private readonly CancellationToken cancellationToken;
 
             public Awaiter(SynchronizationContext synchronizationContext, bool dontPostWhenSameContext, CancellationToken cancellationToken)
             {
@@ -402,7 +402,7 @@ namespace Cysharp.Threading.Tasks
                 synchronizationContext.Post(switchToCallback, continuation);
             }
 
-            static void Callback(object state)
+            private static void Callback(object state)
             {
                 var continuation = (Action)state;
                 continuation();

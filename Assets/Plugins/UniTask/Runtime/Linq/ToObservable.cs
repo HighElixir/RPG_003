@@ -16,7 +16,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class ToObservable<T> : IObservable<T>
     {
-        readonly IUniTaskAsyncEnumerable<T> source;
+        private readonly IUniTaskAsyncEnumerable<T> source;
 
         public ToObservable(IUniTaskAsyncEnumerable<T> source)
         {
@@ -32,7 +32,7 @@ namespace Cysharp.Threading.Tasks.Linq
             return ctd;
         }
 
-        static async UniTaskVoid RunAsync(IUniTaskAsyncEnumerable<T> src, IObserver<T> observer, CancellationToken cancellationToken)
+        private static async UniTaskVoid RunAsync(IUniTaskAsyncEnumerable<T> src, IObserver<T> observer, CancellationToken cancellationToken)
         {
             // cancellationToken.IsCancellationRequested is called when Rx's Disposed.
             // when disposed, finish silently.
@@ -81,7 +81,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
         internal sealed class CancellationTokenDisposable : IDisposable
         {
-            readonly CancellationTokenSource cts = new CancellationTokenSource();
+            private readonly CancellationTokenSource cts = new CancellationTokenSource();
 
             public CancellationToken Token => cts.Token;
 

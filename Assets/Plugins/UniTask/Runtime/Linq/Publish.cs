@@ -16,13 +16,13 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal sealed class Publish<TSource> : IConnectableUniTaskAsyncEnumerable<TSource>
     {
-        readonly IUniTaskAsyncEnumerable<TSource> source;
-        readonly CancellationTokenSource cancellationTokenSource;
+        private readonly IUniTaskAsyncEnumerable<TSource> source;
+        private readonly CancellationTokenSource cancellationTokenSource;
 
-        TriggerEvent<TSource> trigger;
-        IUniTaskAsyncEnumerator<TSource> enumerator;
-        IDisposable connectedDisposable;
-        bool isCompleted;
+        private TriggerEvent<TSource> trigger;
+        private IUniTaskAsyncEnumerator<TSource> enumerator;
+        private IDisposable connectedDisposable;
+        private bool isCompleted;
 
         public Publish(IUniTaskAsyncEnumerable<TSource> source)
         {
@@ -45,7 +45,7 @@ namespace Cysharp.Threading.Tasks.Linq
             return connectedDisposable;
         }
 
-        async UniTaskVoid ConsumeEnumerator()
+        private async UniTaskVoid ConsumeEnumerator()
         {
             try
             {
@@ -74,9 +74,9 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Publish(this, cancellationToken);
         }
 
-        sealed class ConnectDisposable : IDisposable
+        private sealed class ConnectDisposable : IDisposable
         {
-            readonly CancellationTokenSource cancellationTokenSource;
+            private readonly CancellationTokenSource cancellationTokenSource;
 
             public ConnectDisposable(CancellationTokenSource cancellationTokenSource)
             {
@@ -89,14 +89,14 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        sealed class _Publish : MoveNextSource, IUniTaskAsyncEnumerator<TSource>, ITriggerHandler<TSource>
+        private sealed class _Publish : MoveNextSource, IUniTaskAsyncEnumerator<TSource>, ITriggerHandler<TSource>
         {
-            static readonly Action<object> CancelDelegate = OnCanceled;
+            private static readonly Action<object> CancelDelegate = OnCanceled;
 
-            readonly Publish<TSource> parent;
-            CancellationToken cancellationToken;
-            CancellationTokenRegistration cancellationTokenRegistration;
-            bool isDisposed;
+            private readonly Publish<TSource> parent;
+            private CancellationToken cancellationToken;
+            private CancellationTokenRegistration cancellationTokenRegistration;
+            private bool isDisposed;
 
             public _Publish(Publish<TSource> parent, CancellationToken cancellationToken)
             {
@@ -128,7 +128,7 @@ namespace Cysharp.Threading.Tasks.Linq
                 return new UniTask<bool>(this, completionSource.Version);
             }
 
-            static void OnCanceled(object state)
+            private static void OnCanceled(object state)
             {
                 var self = (_Publish)state;
                 self.completionSource.TrySetCanceled(self.cancellationToken);

@@ -1,5 +1,4 @@
-﻿using Cysharp.Threading.Tasks.Internal;
-using System;
+﻿using System;
 using System.Threading;
 
 namespace Cysharp.Threading.Tasks.Linq
@@ -14,7 +13,7 @@ namespace Cysharp.Threading.Tasks.Linq
 
     internal class Throw<TValue> : IUniTaskAsyncEnumerable<TValue>
     {
-        readonly Exception exception;
+        private readonly Exception exception;
 
         public Throw(Exception exception)
         {
@@ -26,10 +25,10 @@ namespace Cysharp.Threading.Tasks.Linq
             return new _Throw(exception, cancellationToken);
         }
 
-        class _Throw : IUniTaskAsyncEnumerator<TValue>
+        private class _Throw : IUniTaskAsyncEnumerator<TValue>
         {
-            readonly Exception exception;
-            CancellationToken cancellationToken;
+            private readonly Exception exception;
+            private CancellationToken cancellationToken;
 
             public _Throw(Exception exception, CancellationToken cancellationToken)
             {

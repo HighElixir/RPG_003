@@ -342,14 +342,14 @@ namespace Cysharp.Threading.Tasks.Linq
 
         // Lookup
 
-        class Lookup<TKey, TElement> : ILookup<TKey, TElement>
+        private class Lookup<TKey, TElement> : ILookup<TKey, TElement>
         {
-            static readonly Lookup<TKey, TElement> empty = new Lookup<TKey, TElement>(new Dictionary<TKey, Grouping<TKey, TElement>>());
+            private static readonly Lookup<TKey, TElement> empty = new Lookup<TKey, TElement>(new Dictionary<TKey, Grouping<TKey, TElement>>());
 
             // original lookup keeps order but this impl does not(dictionary not guarantee)
-            readonly Dictionary<TKey, Grouping<TKey, TElement>> dict;
+            private readonly Dictionary<TKey, Grouping<TKey, TElement>> dict;
 
-            Lookup(Dictionary<TKey, Grouping<TKey, TElement>> dict)
+            private Lookup(Dictionary<TKey, Grouping<TKey, TElement>> dict)
             {
                 this.dict = dict;
             }
@@ -514,9 +514,9 @@ namespace Cysharp.Threading.Tasks.Linq
             }
         }
 
-        class Grouping<TKey, TElement> : IGrouping<TKey, TElement> // , IUniTaskAsyncGrouping<TKey, TElement>
+        private class Grouping<TKey, TElement> : IGrouping<TKey, TElement> // , IUniTaskAsyncGrouping<TKey, TElement>
         {
-            readonly List<TElement> elements;
+            private readonly List<TElement> elements;
 
             public TKey Key { get; private set; }
 
