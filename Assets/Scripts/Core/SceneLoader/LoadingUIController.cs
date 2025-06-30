@@ -1,10 +1,10 @@
 ﻿// LoadingUIController.cs
-using UnityEngine;
-using UnityEngine.UI;
-using TMPro;
+using Cysharp.Threading.Tasks;
 using System;
 using System.Threading;
-using Cysharp.Threading.Tasks;
+using TMPro;
+using UnityEngine;
+using UnityEngine.UI;
 
 namespace RPG_003.Core
 {

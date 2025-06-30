@@ -1,11 +1,24 @@
-﻿using System;
+﻿using RPG_003.Status;
+using System;
+using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG_003.Battle.Characters
+namespace RPG_003.Battle
 {
     [Serializable]
     public struct CharacterData
     {
+        [Serializable]
+        public struct ElementDamageScale
+        {
+            public Elements element;
+            public float scale;
+            public ElementDamageScale(Elements element, float scale = 1f)
+            {
+                this.element = element;
+                this.scale = scale;
+            }
+        }
         [SerializeField] private string _name;
         [SerializeField] private float _hp;
         [SerializeField] private float _mp;
@@ -14,8 +27,11 @@ namespace RPG_003.Battle.Characters
         [SerializeField] private float _spd; // defalt : 100
         [SerializeField] private float _def;
         [SerializeField] private float _mdef;
-        [SerializeField] private float _luk;
-
+        [SerializeField] private float _luk; // defalt : 100
+        [SerializeField] private float _criticalRate; // クリティカル率
+        [SerializeField] private float _criticalDamage; // クリティカルダメージ倍率
+        [SerializeField] private float _takeDamageScale; // 受けるダメージ倍率
+        [SerializeField] private List<ElementDamageScale> _takeElementDamageScale; // 受ける属性ダメージ倍率
         public string Name { get => _name; set => _name = value; }
         public float HP => _hp;
         public float MP => _mp;
@@ -25,27 +41,11 @@ namespace RPG_003.Battle.Characters
         public float DEF => _def;
         public float MDEF => _mdef;
         public float LUK => _luk;
-
-        public CharacterData(
-            string name,
-            float hp,
-            float mp,
-            float str,
-            float @int,
-            float spd,
-            float def,
-            float mdef,
-            float luk)
-        {
-            _name = name;
-            _hp = hp;
-            _mp = mp;
-            _str = str;
-            _int = @int;
-            _spd = spd;
-            _def = def;
-            _mdef = mdef;
-            _luk = luk;
-        }
+        public float CR => _criticalRate;
+        public float CRDamage => _criticalDamage;
+        public float LUKToCR => _luk / 2000f;
+        public float LUKToCRDamage => _luk / 200f;
+        public float TakeDamageScale => _takeDamageScale;
+        public IReadOnlyList<ElementDamageScale> TakeElementDamageScale => _takeElementDamageScale.AsReadOnly();
     }
 }

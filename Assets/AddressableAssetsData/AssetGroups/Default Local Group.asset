@@ -15,11 +15,6 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 4ecb60d74dcdc3149ac93c5ef4493ff5
   m_SerializeEntries:
-  - m_GUID: 13a74c7cd92d07b438d8683f74e5c3d3
-    m_Address: Assets/Prefab/SkillButton.prefab
-    m_ReadOnly: 0
-    m_SerializedLabels: []
-    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1b9a015eabedb144381a7ba9f5f588a7
     m_Address: Assets/Data/Enemy/EnemyDatas/Little Lizard.asset
     m_ReadOnly: 0
@@ -30,30 +25,45 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4852ac9fcc9fe7848a7158822047ecd3
+    m_Address: Assets/Data/Enemy/Skills/Sp_1/Brunt.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - EnemySkill
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4955f02a78025cb4d9c4887bbd3628ef
     m_Address: Assets/Data/Equipments/RightHand/SmallAxe.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: 61f872344731bbc4c978b06bd503e916
-    m_Address: Assets/Data/Enemy/Skills/Sp_1/Punch.asset
+  - m_GUID: 55dc49bdfe8819e4a996246ce9c624a3
+    m_Address: Assets/Data/Enemy/Skills/Sp_1/DarkSlash.asset
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - EnemySkill
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6901d00c7a672e24bb9024eed88a0c51
     m_Address: Assets/Data/Enemy/SpawnTable/Wave1.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
-  - m_GUID: ad4c38764b445fd4abca8713d6326bfa
+  - m_GUID: 6c2c55c9f2f04b24a9e79e65dbfd5c76
     m_Address: Assets/Data/Enemy/Skills/Sp_1/FireBress.asset
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - EnemySkill
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f492f91120501404fa2dc00232527969
+    m_Address: Assets/Data/SoundEffectData/Phisics/Punch.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SoundVFX
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f592905c1d75b2b419fb9c88c398cf4c
     m_Address: Assets/Data/SoundEffectData/Fire/fire.asset
     m_ReadOnly: 0
-    m_SerializedLabels: []
+    m_SerializedLabels:
+    - SoundVFX
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b91b0758a04e71e43a4917449c0cff90, type: 2}

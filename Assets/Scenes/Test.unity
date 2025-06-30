@@ -119,6 +119,11 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!224 &479341157 stripped
+RectTransform:
+  m_CorrespondingSourceObject: {fileID: 1161564010013206776, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
+  m_PrefabInstance: {fileID: 1202186062345533785}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &519420028
 GameObject:
   m_ObjectHideFlags: 0
@@ -523,10 +528,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _execute: {fileID: 992407886}
-  _basicData: {fileID: 11400000, guid: 794fe46f67b8ef44f982154801faa3fc, type: 2}
-  _skillName: Burn
-  _icon: {fileID: 21300000, guid: 3434169aea05eeb4185f2fa72c80bf31, type: 3}
-  _soundVFXData: {fileID: 11400000, guid: f592905c1d75b2b419fb9c88c398cf4c, type: 2}
+  _basicData: {fileID: 11400000, guid: 8b94307027b70a344b6a5dc921b87fdb, type: 2}
+  _skillName: "\u304A\u5B9D\u30E9\u30C3\u30B7\u30E5"
+  _icon: {fileID: 21300000, guid: c8303e833b0ef184e99c1bc8940fff84, type: 3}
+  _soundVFXData: {fileID: 11400000, guid: f492f91120501404fa2dc00232527969, type: 2}
 --- !u!114 &992407886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -542,7 +547,7 @@ MonoBehaviour:
   _sceneLoader: {fileID: 813125196}
   _players:
   - _characterData:
-      _name: IZAWA
+      _name: Seyana
       _hp: 5000
       _mp: 3000
       _str: 1700
@@ -551,18 +556,28 @@ MonoBehaviour:
       _def: 1700
       _mdef: 1700
       _luk: 100
-  - _characterData:
-      _name: Seyana
-      _hp: 5000
-      _mp: 3000
-      _str: 1700
-      _int: 1700
-      _spd: 170
-      _def: 1700
-      _mdef: 1700
-      _luk: 100
+      _criticalRate: 0.05
+      _criticalDamage: 0.5
+      _takeDamageScale: 1
+      _takeElementDamageScale:
+      - element: 0
+        scale: 1
+      - element: 1
+        scale: 1
+      - element: 2
+        scale: 1
+      - element: 3
+        scale: 1
+      - element: 4
+        scale: 1
+      - element: 5
+        scale: 1
+      - element: 6
+        scale: 1
+      - element: 7
+        scale: 1
   _addData:
-    _name: Seyana
+    _name: Zawa
     _hp: 5000
     _mp: 3000
     _str: 1700
@@ -571,8 +586,28 @@ MonoBehaviour:
     _def: 1700
     _mdef: 1700
     _luk: 100
+    _criticalRate: 0.05
+    _criticalDamage: 0.5
+    _takeDamageScale: 1
+    _takeElementDamageScale:
+    - element: 0
+      scale: 1
+    - element: 1
+      scale: 1
+    - element: 2
+      scale: 1
+    - element: 3
+      scale: 1
+    - element: 4
+      scale: 1
+    - element: 5
+      scale: 1
+    - element: 6
+      scale: 1
+    - element: 7
+      scale: 1
   _skillAddTarget: 0
-  _name: IZAWA
+  _name: Seyana
 --- !u!4 &992407887
 Transform:
   m_ObjectHideFlags: 0
@@ -755,6 +790,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 1164055927}
     m_Modifications:
+    - target: {fileID: 935309893139564161, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
+      propertyPath: m_margin.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1161564010013206776, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
+      propertyPath: m_AnchoredPosition.x
+      value: -0.000023842
+      objectReference: {fileID: 0}
+    - target: {fileID: 1161564010013206776, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
+      propertyPath: m_AnchoredPosition.y
+      value: -147.29
+      objectReference: {fileID: 0}
     - target: {fileID: 1692203293781906661, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
       propertyPath: m_AnchorMax.x
       value: 0
@@ -763,6 +810,10 @@ PrefabInstance:
       propertyPath: m_AnchorMax.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 6499940185542115353, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
+      propertyPath: _goalPos
+      value: 
+      objectReference: {fileID: 479341157}
     - target: {fileID: 6499940185542115353, guid: 8b6b462d0ca124b40ab25652a6c1564f, type: 3}
       propertyPath: tips.Array.size
       value: 1

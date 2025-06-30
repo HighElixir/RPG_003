@@ -20,8 +20,8 @@ namespace RPG_003.Core
 
         [SerializeField] private TMP_Text tipText;
         [SerializeField] private Transform startViewPos;
+        [SerializeField] private Transform _goalPos;
         [SerializeField] private List<Tip> tips;
-
         private CancellationTokenSource _cts;
         private StringBuilder _sb = new StringBuilder();
 
@@ -37,6 +37,8 @@ namespace RPG_003.Core
 
         public void StartTips()
         {
+            tipText.color = new Color(tipText.color.r, tipText.color.g, tipText.color.b, 0);
+            tipText.transform.position = startViewPos.position;
             _cts?.Cancel();
             _cts = new CancellationTokenSource();
             ShowTipsLoop(_cts.Token).Forget();
@@ -57,10 +59,8 @@ namespace RPG_003.Core
 
                 // DOTween Sequence
                 var seq = DOTween.Sequence();
-                tipText.color = new Color(tipText.color.r, tipText.color.g, tipText.color.b, 0);
-                tipText.transform.position = startViewPos.position;
 
-                seq.Append(tipText.transform.DOMove(startViewPos.position, animTime))
+                seq.Append(tipText.transform.DOMove(_goalPos.position, animTime))
                    .Join(tipText.DOFade(1f, animTime))
                    .AppendInterval(2f)
                    .Append(tipText.DOFade(0f, animTime));

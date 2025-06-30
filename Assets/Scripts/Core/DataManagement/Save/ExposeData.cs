@@ -1,5 +1,4 @@
-﻿using SaveIsEasy;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace RPG_003.Core
 {

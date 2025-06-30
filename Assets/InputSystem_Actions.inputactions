@@ -81,15 +81,24 @@
                     "name": "Sprint",
                     "type": "Button",
                     "id": "641cd816-40e6-41b4-8c3d-04687c349290",
-                    "expectedControlType": "Button",
+                    "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
                 },
                 {
+                    "name": "Point",
+                    "type": "Value",
+                    "id": "007ab581-717a-408f-a56c-2c4b49e5de96",
+                    "expectedControlType": "Vector2",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": true
+                },
+                {
                     "name": "Click",
                     "type": "Button",
-                    "id": "007ab581-717a-408f-a56c-2c4b49e5de96",
+                    "id": "278c1b1e-cd71-4398-a91d-31498fa21ab9",
                     "expectedControlType": "",
                     "processors": "",
                     "interactions": "",
@@ -485,10 +494,21 @@
                 {
                     "name": "",
                     "id": "218d5956-ea9a-4e6c-bf37-7644233df0d6",
-                    "path": "<Mouse>/leftButton",
+                    "path": "<Pointer>/position",
                     "interactions": "",
                     "processors": "",
-                    "groups": "",
+                    "groups": ";Keyboard&Mouse;Touch",
+                    "action": "Point",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "7c336b1c-9302-455d-8d2c-e92f0bfaadfb",
+                    "path": "<Mouse>/leftButton",
+                    "interactions": "Press",
+                    "processors": "",
+                    "groups": ";Keyboard&Mouse",
                     "action": "Click",
                     "isComposite": false,
                     "isPartOfComposite": false

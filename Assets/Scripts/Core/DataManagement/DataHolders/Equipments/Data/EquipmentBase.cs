@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace RPG_003.Equipments
 {
-    [CreateAssetMenu(fileName ="new Equipment", menuName = "RPG_003/Equipments")]
+    [CreateAssetMenu(fileName = "new Equipment", menuName = "RPG_003/Equipments")]
     public class EquipmentBase : ScriptableObject
     {
         [Serializable]
@@ -21,7 +21,7 @@ namespace RPG_003.Equipments
         [SerializeField] private Sprite _icon;
         [SerializeField] private float _amount; // 購入金額
         [SerializeField] private float _dropChance;
-        [SerializeField] List<EquipmentState> _equipmentStates;
+        [SerializeField] private List<EquipmentState> _equipmentStates;
 
         public string Name => _name;
         public string Description => _description;

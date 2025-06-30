@@ -12,12 +12,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f70f9dd68a17dd4d883b62bcf4ff18d, type: 3}
   m_Name: Target
   m_EditorClassIdentifier: 
-  _id: 
-  _name: 
-  _description: 
-  _defaultIcon: {fileID: 0}
+  _id: t_oneEnemy
+  _name: "\u65751\u4F53"
+  _description: "\u6575\uFF11\u4F53\u3092\u5BFE\u8C61\u3068\u3059\u308B"
+  _defaultIcon: {fileID: 21300028, guid: 7ab74e659e1f0a34d9cfec21c478fc12, type: 3}
   _load: 0
+  _power: 0
   _target:
     _isSelf: 0
-    _faction: 0
-    _count: 0
+    _faction: 2
+    _count: 1
+    _isRandom: 0
+    _canSelectSameTarget: 0

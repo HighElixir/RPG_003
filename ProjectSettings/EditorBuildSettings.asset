@@ -11,6 +11,9 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/Test.unity
     guid: f0c00c777c353234a82476a159bbab46
+  - enabled: 1
+    path: Assets/Scenes/MakeSkill.unity
+    guid: 318d415f9e18f8740b5d820114bc6558
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: fd0c23803abc0fb4183db683f4460da3, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

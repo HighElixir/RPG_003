@@ -14,13 +14,17 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _id: b_fire
   _name: fire
-  _description: 
+  _description: "\u71C3\u3084\u3057\u307E\u3059"
+  _defaultIcon: {fileID: 21300000, guid: 5834c9fbe449d4346b017dcbb7954c94, type: 3}
   _damage:
   - amount: 1.7
     fixedAmount: 200
     type: 4
     element: 1
     amountAttribute: 2
+    criticalRate: 0
+    criticalRateBonus: 0
+    variance: 0
   _consDatas:
   - amount: 120
     isHP: 0
@@ -29,3 +33,5 @@ MonoBehaviour:
     _isSelf: 0
     _faction: 2
     _count: 1
+    _isRandom: 0
+    _canSelectSameTarget: 0

@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Characters;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -16,12 +15,12 @@ namespace RPG_003.Battle
         private BattleManager _parent;
 
         // === Data ===
-        private List<CharacterBase> _turnActors = new List<CharacterBase>();
+        private List<CharacterObject> _turnActors = new List<CharacterObject>();
 
         // === Action & Callback ===
-        public Action<CharacterBase> OnExecuteTurn;
+        public Action<CharacterObject> OnExecuteTurn;
 
-        private Dictionary<CharacterBase, Coroutine> _coroutines = new();
+        private Dictionary<CharacterObject, Coroutine> _coroutines = new();
         private MonoBehaviour _coroutineRunner;
 
         // === Constructor ===
@@ -59,14 +58,12 @@ namespace RPG_003.Battle
                     Debug.Log($"[TurnManager] Character {c.Data.Name}'s new intervalCount is: {c.BehaviorIntervalCount.CurrentAmount}.");
                 }
             }
-
-            var ready = all.Where(c => c.BehaviorIntervalCount.IsReady)
-                           .OrderByDescending(c => c.BehaviorIntervalCount.Speed);
+            _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
+            var ready = all.Where(c => c.BehaviorIntervalCount.IsReady).OrderByDescending(c => c.BehaviorIntervalCount.Speed);
             _turnActors.AddRange(ready);
 #if UNITY_EDITOR       
             if (_turnActors.Count != 0)
             {
-
                 var sb = new StringBuilder("[TurnManager] _turnActors:");
                 foreach (var turnActor in _turnActors)
                 {
@@ -93,7 +90,7 @@ namespace RPG_003.Battle
                 ProcessTurn();
             }
         }
-        public void RemoveCharacter(CharacterBase character)
+        public void RemoveCharacter(CharacterObject character)
         {
             _turnActors.Remove(character);
             if (_coroutines.ContainsKey(character))
@@ -110,13 +107,18 @@ namespace RPG_003.Battle
             _turnActors.Clear();
         }
         // === Private ===
-        private void ExecuteTurn(CharacterBase actor, bool instantStart = false)
+        private void ExecuteTurn(CharacterObject actor, bool instantStart = false)
         {
             if (actor == null) return;
-            _turnActors.Remove(actor);
-            actor.BehaviorIntervalCount.Reset();
+            if (!instantStart) Remove(actor);
             OnExecuteTurn?.Invoke(actor);
             _coroutines[actor] = _coroutineRunner.StartCoroutine(actor.TurnBehaviour());
+        }
+        private void Remove(CharacterObject character)
+        {
+            _turnActors.Remove(character);
+            character.BehaviorIntervalCount.Reset();
+            _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
         }
     }
 }

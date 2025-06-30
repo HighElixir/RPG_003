@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 4ecb60d74dcdc3149ac93c5ef4493ff5
   m_currentHash:
     serializedVersion: 2
-    Hash: f9bf51a2c0bc080650159411f0a46219
+    Hash: 693ab6b130c200cf9287a4d846d27c33
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -97,7 +97,9 @@ MonoBehaviour:
       m_InlineUsage: 0
     m_ProfileVersion: 1
   m_LabelTable:
-    m_LabelNames: []
+    m_LabelNames:
+    - SoundVFX
+    - EnemySkill
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 14863e83e00196a43876b3e132a56a22, type: 2}

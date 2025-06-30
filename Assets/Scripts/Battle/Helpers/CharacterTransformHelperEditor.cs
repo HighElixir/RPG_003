@@ -1,8 +1,8 @@
 ﻿#if UNITY_EDITOR
+using Sirenix.OdinInspector.Editor;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
-using System.Linq;
-using Sirenix.OdinInspector.Editor;
 
 namespace RPG_003.Battle
 {

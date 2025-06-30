@@ -1,9 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
-using RPG_003.Battle.Skills;
 
-namespace RPG_003.Battle.Characters.Player
+namespace RPG_003.Battle
 {
     [Serializable]
     public class PlayerData
@@ -13,6 +12,12 @@ namespace RPG_003.Battle.Characters.Player
         public CharacterData CharacterData => _characterData;
         public List<SkillDataInBattle> Skills => _SkillDataInBattles;
 
+        public PlayerData() { }
+        public PlayerData(CharacterData data, List<SkillDataInBattle> skills)
+        {
+            _characterData = data;
+            _SkillDataInBattles.AddRange(skills);
+        }
         public void SetCharcter(CharacterData characterData)
         {
             _characterData = characterData;

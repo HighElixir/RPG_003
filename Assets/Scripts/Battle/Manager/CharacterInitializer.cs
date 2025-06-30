@@ -1,6 +1,4 @@
 ﻿using RPG_003.Battle.Behaviour;
-using RPG_003.Battle.Characters;
-using RPG_003.Battle.Characters.Player;
 using RPG_003.Status;
 
 namespace RPG_003.Battle
@@ -8,26 +6,19 @@ namespace RPG_003.Battle
     /// <summary>
     /// キャラクターをシーンに生成して初期化する処理をまとめたクラス
     /// </summary>
-    public class CharacterInitializer
+    public static class CharacterInitializer
     {
-        private BattleManager _battleManager;
-
-        public CharacterInitializer(BattleManager battleManager)
-        {
-            _battleManager = battleManager;
-        }
-
-        public void InitCharacter(CharacterBase c, CharacterData data, ICharacterBehaviour behaviour)
+        public static void InitCharacter(this BattleManager manage, CharacterObject c, CharacterData data, ICharacterBehaviour behaviour)
         {
             c.gameObject.name = data.Name;
             var statusMgr = new StatusManager(c, data);
-            c.Initialize(data, statusMgr, behaviour, _battleManager);
+            c.Initialize(data, statusMgr, behaviour, manage);
         }
 
-        public void InitPlayer(Player c, PlayerData playerData, CharacterData characterData, ICharacterBehaviour behaviour)
+        public static void InitPlayer(this BattleManager manage, Player c, PlayerData playerData, CharacterData characterData, ICharacterBehaviour behaviour)
         {
             c.SetPlayerData(playerData);
-            InitCharacter(c, characterData, behaviour);
+            InitCharacter(manage, c, characterData, behaviour);
         }
     }
 }

@@ -34,4 +34,24 @@ MonoBehaviour:
     _def: 20
     _mdef: 20
     _luk: 10
+    _criticalRate: 0
+    _criticalDamage: 0
+    _takeDamageScale: 1
+    _takeElementDamageScale:
+    - element: 0
+      scale: 1
+    - element: 1
+      scale: 1
+    - element: 2
+      scale: 1
+    - element: 3
+      scale: 1
+    - element: 4
+      scale: 1
+    - element: 5
+      scale: 1
+    - element: 6
+      scale: 1
+    - element: 7
+      scale: 1
   enemyBehaviorData: {fileID: 11400000, guid: 213671e97d2a60844be0364510bb0229, type: 2}

@@ -4,7 +4,7 @@ namespace RPG_003.Status
 {
     public class StatusAmount
     {
-        public readonly float defaultAmount;
+        private float _defaultAmount;
         /// <summary>
         /// HPやMPなどの頻繁に変動するステータスで使用
         /// </summary>
@@ -21,10 +21,16 @@ namespace RPG_003.Status
                 if (dirty)
                 {
                     dirty = false;
-                    _changedMax = (defaultAmount + temporaryChanged) * Math.Max(0, temporaryRatio); // デフォルト値に一時的な変更を加え、倍率を掛ける
+                    _changedMax = (_defaultAmount + temporaryChanged) * Math.Max(0, temporaryRatio); // デフォルト値に一時的な変更を加え、倍率を掛ける
                 }
                 return _changedMax;
             }
+        }
+        public float DefaultAmount => _defaultAmount;
+        public StatusAmount(float defaultAmount)
+        {
+            this._defaultAmount = defaultAmount;
+            currentAmount = defaultAmount;
         }
 
         public void AddChanged(float amount)
@@ -57,11 +63,15 @@ namespace RPG_003.Status
             temporaryRatio = 1f;
             dirty = true;
         }
-        public StatusAmount(float defaultAmount)
+#if UNITY_EDITOR
+        public void Debug(float @new, bool isCurrent)
         {
-            this.defaultAmount = defaultAmount;
-            currentAmount = defaultAmount;
+            if (!isCurrent)
+                _defaultAmount = @new;
+            else
+                currentAmount = @new;
         }
+#endif
     }
 }
 // unicode形式で保存済み

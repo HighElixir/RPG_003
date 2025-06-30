@@ -1,11 +1,8 @@
 ﻿using HighElixir.PauseManage;
 using RPG_003.Battle.Behaviour;
-using RPG_003.Battle.Characters;
-using RPG_003.Battle.Characters.Enemy;
-using RPG_003.Battle.Characters.Player;
 using RPG_003.Battle.Factions;
-using RPG_003.Status;
 using RPG_003.Core;
+using RPG_003.Status;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
@@ -20,19 +17,18 @@ namespace RPG_003.Battle
         //=== Reference ===
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
         [BoxGroup("Reference"), SerializeField] private SkillSelector _skillButtonManager;
-        [BoxGroup("Reference"), SerializeField] private CharacterBase _characterBase;
-        [BoxGroup("Reference"), SerializeField] private SelectTarget _selectTarget;
+        [BoxGroup("Reference"), SerializeField] private CharacterObject _characterObject;
+        [BoxGroup("Reference"), SerializeField] private TargetSelector _targetSelector;
+        [BoxGroup("Reference"), SerializeField] private IndicatorUIBuilder _indicatorUI;
         [BoxGroup("Reference"), SerializeField] private Player _player;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
-        [BoxGroup("Reference"), SerializeField] private IndicatorFactory _indicatorFactory;
         [BoxGroup("Reference"), SerializeField] private SceneLoaderAsync _sceneLoaderAsync;
 
         private PositionManager _posManager;
-        private CharacterInitializer _charInitializer;
         private TurnManager _turnManager;
 
         // === Debug ===
-        [SerializeField, ReadOnly] private IReadOnlyDictionary<CharacterPosition, CharacterBase> _characterPositions;
+        [SerializeField, ReadOnly] private IReadOnlyDictionary<CharacterPosition, CharacterObject> _characterPositions;
 
         //=== Non-Serialized Fields ===
         private Transform _charactersContainer;
@@ -47,27 +43,29 @@ namespace RPG_003.Battle
 #endif
 
         //=== Properties ===
-        public Action<CharacterBase> OnCharacterRemoved { get; set; }
-        public SelectTarget SelectTarget => _selectTarget;
+        public Action<CharacterObject> OnCharacterRemoved { get; set; }
+        public TargetSelector TargetSelector => _targetSelector;
         public SkillSelector SkillSelector => _skillButtonManager;
         public bool IsBattleContinue => _isBattleContinue;
+        public IndicatorUIBuilder IndicatorUIBuilder => _indicatorUI;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
         {
+            _isBattleContinue = true;
             Initialize();
 
             for (int i = 0; i < players.Count && i < 4; i++)
             {
                 var c = Instantiate(_player, Vector3.zero, Quaternion.identity);
-                _charInitializer.InitPlayer(c, players[i], players[i].CharacterData, new PlayerBehaviour());
+                this.InitPlayer(c, players[i], players[i].CharacterData, new PlayerBehaviour());
                 RegisterCharacter((CharacterPosition)i, c);
             }
 
             for (int i = 0; i < 5; i++)
                 SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
 
-            _isBattleContinue = true;
+            _indicatorUI.UpdateUI(_posManager.GetCharacters());
             ProcessTurn(); // BattleManager のラッパー
         }
         public void StartBattle(List<Player> players, SpawningTable table)
@@ -90,7 +88,7 @@ namespace RPG_003.Battle
         {
             Debug.Log("Battle ended.");
             _isBattleContinue = false;
-            foreach(var c in _posManager.GetCharacters())c.Release();
+            foreach (var c in _posManager.GetCharacters()) c.Release();
         }
         public void EndBattle_Won()
         {
@@ -103,7 +101,7 @@ namespace RPG_003.Battle
             EndBattle();
         }
 
-        public void FinishTurn(CharacterBase actor)
+        public void FinishTurn(CharacterObject actor)
         {
             if (_isBattleContinue)
             {
@@ -122,8 +120,8 @@ namespace RPG_003.Battle
         // デフォルトの場合、空いてる場所にスポーンさせる
         public void SummonEnemy(EnemyData enemyData, CharacterPosition characterPosition = CharacterPosition.None)
         {
-            var c = Instantiate(_characterBase, Vector3.zero, Quaternion.identity);
-            _charInitializer.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
+            var c = Instantiate(_characterObject, Vector3.zero, Quaternion.identity);
+            this.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
             if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition, Faction.Enemy))
             {
                 Debug.Log("モンスターをスポーンさせるために必要なスペースがありません");
@@ -134,17 +132,16 @@ namespace RPG_003.Battle
             RegisterCharacter(characterPosition, c);
         }
         // 各派生クラスにキャラクターを登録する
-        public void RegisterCharacter(CharacterPosition position, CharacterBase character)
+        public void RegisterCharacter(CharacterPosition position, CharacterObject character)
         {
-            var indicator = _indicatorFactory.Create(_characterTransformHelper.GetPosition(position));
-            character.BehaviorIntervalCount.SetIndicator(indicator);
+            //var indicator = _indicatorFactory.Create(_characterTransformHelper.GetPosition(position));
             _posManager.RegisterCharacter(position, character);
             character.transform.SetParent(_charactersContainer);
             _characterTransformHelper.SetPosition(character, position);
             Debug.Log($"Starting battle with player: {character.Data.Name} at position: {position}");
         }
 
-        public void RemoveCharacter(CharacterBase character)
+        public void RemoveCharacter(CharacterObject character)
         {
             // PositionManager で位置削除
             _posManager.RemoveCharacter(character);
@@ -164,12 +161,12 @@ namespace RPG_003.Battle
             return _posManager.TryGetUsablePosition(out position, faction);
         }
 
-        public List<CharacterBase> GetCharacters()
+        public List<CharacterObject> GetCharacters()
         {
             return _posManager.GetCharacters();
         }
 
-        public IReadOnlyDictionary<CharacterPosition, CharacterBase> GetCharacterMap()
+        public IReadOnlyDictionary<CharacterPosition, CharacterObject> GetCharacterMap()
         {
             return _posManager.GetCharacterMap();
         }
@@ -181,16 +178,17 @@ namespace RPG_003.Battle
 
         public void ApplyDamage(DamageInfo info)
         {
+            Debug.Log(info.ToString());
             Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
             Color c = info.Elements == Elements.None ? Color.red : info.Elements.GetColorElement();
-            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterBase).transform.position, 1.5f), $"{info.Damage}", c);
+            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterObject).transform.position, 1.5f), $"{info.Damage}", c);
             info.Target.TakeDamage(info);
         }
 
         public void ApplyHeal(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking heal: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterBase).transform.position, 1.5f), $"{info.Damage}", Color.green);
+            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterObject).transform.position, 1.5f), $"{info.Damage}", Color.green);
             info.Target.TakeHeal(info);
         }
 
@@ -207,7 +205,7 @@ namespace RPG_003.Battle
         }
 
         // === Notify ===
-        public void OnDeath(ICharacter character)
+        public void OnDeath(CharacterObject character)
         {
             Debug.Log(character.Data.Name + "が死亡した！");
             character.OnDeath?.Invoke(character);
@@ -256,7 +254,6 @@ namespace RPG_003.Battle
             BattleSceneManager.instance.SetBattleManageer(this);
             // 分割クラスの初期化
             _posManager = new PositionManager(out _characterPositions);
-            _charInitializer = new CharacterInitializer(this);
             _turnManager = new TurnManager(this, this);
         }
         //=== Unity Lifecycle ===

@@ -1,179 +1,173 @@
 ﻿using HighElixir.Pool;
-using RPG_003.Battle.Skills;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.UI;
 
 namespace RPG_003.Battle
 {
+    [RequireComponent(typeof(PlayerInput))]
     public class SkillSelector : MonoBehaviour
     {
-        // === Settings And References ===
-        [BoxGroup("Reference"), SerializeField] private SkillButton skillButtonPrefab;
-        [PropertyTooltip("シーンビュー上にて配置されている想定")]
-        [BoxGroup("Reference"), SerializeField] private Button _confirm;
-        [PropertyTooltip("シーンビュー上にて配置されている想定")]
-        [BoxGroup("Reference"), SerializeField] private Button _cancel;
-        [BoxGroup("Reference"), SerializeField] private Transform _container;
+        public class ButtonContainer
+        {
+            public Button Button { get; set; }
+            public Skill Skill { get; set; }
+            public bool IsSelected { get; set; }
 
-        // === InputAction ===
-        [BoxGroup("InputActionAsset"), SerializeField] private InputActionAsset _asset;
-        [BoxGroup("InputActionAsset"), SerializeField] private string _mapName = "UI";
-        [BoxGroup("InputActionAsset"), SerializeField] private string _actionName = "Navigate";
-        private InputActionMap _onUI;
-        private InputAction _navigate;
+            public ButtonContainer() { }
+            public ButtonContainer(Button button, Skill skill, bool isSelected)
+            {
+                Button = button;
+                Skill = skill;
+                IsSelected = isSelected;
+            }
+        }
+        // === References ===
+        [BoxGroup("Reference"), SerializeField] private SkillSelectorUI _ui;
+        [BoxGroup("Pool"), SerializeField] private Button _skillButtonPrefab;
+        [BoxGroup("Pool"), SerializeField] private Transform _container;
+
+        [PropertyTooltip("シーンビュー上にて配置されている想定")]
+        [BoxGroup("UI"), SerializeField] private Button _confirm;
+        [PropertyTooltip("シーンビュー上にて配置されている想定")]
+        [BoxGroup("UI"), SerializeField] private Button _cancel;
 
         // === Date ===
-        private SkillButton _chosen;
+        private ButtonContainer _chosen;
         private Action<Skill> _onConfirmCallback;
-        private Pool<SkillButton> _skillButtonPool;
-        private List<SkillButton> _skillButtons = new List<SkillButton>();
+        private Pool<Button> _skillButtonPool;
+        private List<ButtonContainer> _skillButtons = new();
         private int _idx = 0;
 
         // === Public Methodes ===
-        public void CreateButtons(List<Skill> skills, Action<Skill> onConfirmCallback)
+        public void InvokeSelector(List<Skill> skills, Action<Skill> onConfirmCallback)
         {
             _onConfirmCallback = onConfirmCallback;
             ResetSkill();
+            CreateButtons(skills);
+            _confirm.gameObject.SetActive(true);
+            _cancel.gameObject.SetActive(true);
+        }
+        public void Exit()
+        {
+            ReleaseButtons();
+            ResetSkill();
+            _confirm.gameObject.SetActive(false);
+            _cancel.gameObject.SetActive(false);
+        }
+        public void CreateButtons(List<Skill> skills)
+        {
             ReleaseButtons();
             foreach (var skill in skills)
             {
-                CreateSkillButton(skill);
+                var button = _skillButtonPool?.Get();
+                ButtonContainer container = new(button, skill, false);
+                _skillButtons.Add(container);
+                button.OnClickAsObservable().Subscribe(_ =>
+                {
+                    if (_chosen != null)
+                    {
+                        var before = _chosen;
+                        before.IsSelected = false;
+                    }
+                    _chosen = container;
+                    _chosen.IsSelected = true;
+                    _ui.UpdateUI(_skillButtons);
+                }).AddTo(this);
+                Debug.Log(skill.ToString());
             }
-            Debug.Log(_skillButtons.Count);
-            SetSkill(_skillButtons[0]);
             _idx = 0;
-            ShowButtons();
-            EnableAction();
-        }
-        public void CreateSkillButton(Skill SkillDataInBattle)
-        {
-            var skillButton = _skillButtonPool?.Get();
-            if (skillButton == null)
+            SetButtonsVisible(true);
+            _ui.UpdateUI(_skillButtons);
+            foreach (var item in _skillButtons)
             {
-                Debug.LogError("SkillDataInBattle is null");
+                if (item.Skill.IsActive) return;
             }
-            _skillButtons.Add(skillButton.Setup(SkillDataInBattle, SetSkill) as SkillButton);
+            Notify();
         }
 
         public void ReleaseButtons()
         {
-            if (_container.childCount == 0) return;
-            foreach (Transform child in _container)
+            foreach (var button in _skillButtons)
             {
-                if (child.TryGetComponent<SkillButton>(out var b))
-                    _skillButtonPool?.Release(b);
+                _skillButtonPool.Release(button.Button);
             }
-            HideButtons();
-            DisableAction();
             _skillButtons.Clear();
         }
 
-        public void EnableAction()
-        {
-            if (!_onUI.enabled) _onUI.Enable();
-            _navigate.performed += OnNavigate;
-        }
-        public void DisableAction()
-        {
-            _navigate.performed -= OnNavigate;
-        }
+
 
         // === Private Methodes ===
-        private void ShowButtons()
+        private void Notify()
         {
-            _confirm.onClick.AddListener(OnConfirm);
-            _cancel.onClick.AddListener(OnCancel);
-            SetButtonsVisible(true);
-        }
-        private void HideButtons()
-        {
-            _confirm.onClick.RemoveListener(OnConfirm);
-            _cancel.onClick.RemoveListener(OnCancel);
-            SetButtonsVisible(false);
+            _onConfirmCallback?.Invoke(_chosen.Skill);
+            Exit();
         }
         private void SetButtonsVisible(bool isShow)
         {
             _confirm?.gameObject.SetActive(isShow);
             _cancel?.gameObject.SetActive(isShow);
         }
-        private void SetSkill(ISkillSelectorComponent skill)
-        {
-            var before = _chosen;
-            _chosen = skill as SkillButton;
-            if (_chosen == null) Debug.LogError("!!!!!");
-            _chosen.Selected = true;
-            if (before != null)
-                before.Selected = false;
-        }
+
         private void ResetSkill()
         {
-            if (_chosen != null)
-                _chosen.Selected = false;
-            _chosen = null;
-        }
-        private void OnConfirm()
-        {
             if (_chosen == null) return;
-            ReleaseButtons();
-            _onConfirmCallback?.Invoke(_chosen.Skill);
-            ResetSkill();
-            DisableAction();
+            _chosen.IsSelected = false;
+            _chosen = null;
+            _ui.UpdateUI(_skillButtons);
         }
-        private void OnCancel()
-        {
-            ResetSkill();
-        }
+
         // InputAction
-        private void OnNavigate(InputAction.CallbackContext callbackContext)
+        private void OnNavigate(InputValue value)
         {
-            var v = callbackContext.ReadValue<Vector2>();
+            var v = value.Get<Vector2>();
             if (v.x == 0) return;
             if (v == Vector2.right)
-            {
-                _idx--;
-                if (_idx < 0)
-                    _idx = _skillButtons.Count - 1;
-
-            }
-            else if (v == Vector2.left)
             {
                 _idx++;
                 if (_idx >= _skillButtons.Count)
                     _idx = 0;
+
             }
-            _skillButtons[_idx].OnClick();
+            else if (v == Vector2.left)
+            {
+                _idx--;
+                if (_idx < 0)
+                    _idx = _skillButtons.Count - 1;
+            }
+            _skillButtons[_idx].Button.onClick.Invoke();
         }
+
         // === Unity Lifecycle ===
         private void Awake()
         {
-            if (_asset)
+            if (_confirm)
             {
-                _onUI = _asset.FindActionMap(_mapName);
-                _navigate = _onUI.FindAction(_actionName);
+                _confirm.gameObject.SetActive(false);
+                _confirm.OnClickAsObservable().Subscribe(_ =>
+                {
+                    if (_chosen?.Skill == null) return;
+                    Notify();
+                }).AddTo(this);
+            }
+            if (_cancel)
+            {
+                _cancel.gameObject.SetActive(false);
+                _cancel.OnClickAsObservable().Subscribe(_ =>
+                {
+                    ResetSkill();
+                }).AddTo(this);
             }
         }
         private void Start()
         {
-            if (_confirm?.isActiveAndEnabled == true)
-            {
-                _confirm?.gameObject.SetActive(false);
-            }
-            if (_cancel?.isActiveAndEnabled == true)
-            {
-                _cancel?.gameObject.SetActive(false);
-            }
-            _chosen = null;
+            ResetSkill();
 
-            _skillButtonPool = new Pool<SkillButton>(skillButtonPrefab, 5, _container, true);
-        }
-
-        private void OnDisable()
-        {
-            DisableAction();
+            _skillButtonPool = new Pool<Button>(_skillButtonPrefab, 5, _container, true);
         }
     }
 }

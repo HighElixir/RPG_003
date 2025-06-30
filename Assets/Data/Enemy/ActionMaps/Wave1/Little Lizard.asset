@@ -7,7 +7,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 0}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: e26d6b46b3ef052458c2ea328ff6647c, type: 3}
   m_Name: Little Lizard
@@ -16,8 +16,10 @@ MonoBehaviour:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 11400000, guid: ad4c38764b445fd4abca8713d6326bfa, type: 2}
-    - {fileID: 11400000, guid: 61f872344731bbc4c978b06bd503e916, type: 2}
+    - {fileID: 11400000, guid: 6c2c55c9f2f04b24a9e79e65dbfd5c76, type: 2}
+    - {fileID: 11400000, guid: f592905c1d75b2b419fb9c88c398cf4c, type: 2}
+    - {fileID: 11400000, guid: 4852ac9fcc9fe7848a7158822047ecd3, type: 2}
+    - {fileID: 11400000, guid: f492f91120501404fa2dc00232527969, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -25,35 +27,41 @@ MonoBehaviour:
     SerializationNodes:
     - Name: skills
       Entry: 7
-      Data: 0|System.Collections.Generic.List`1[[System.ValueTuple`2[[System.Single,
-        mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill, Assembly-CSharp]],
-        mscorlib]], mscorlib
+      Data: 0|System.Collections.Generic.List`1[[System.ValueTuple`3[[System.Single,
+        mscorlib],[RPG_003.Skills.BasicData, Assembly-CSharp],[RPG_003.Effect.SoundVFXData,
+        Assembly-CSharp]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 2
     - Name: 
       Entry: 7
-      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill,
-        Assembly-CSharp]], mscorlib
+      Data: System.ValueTuple`3[[System.Single, mscorlib],[RPG_003.Skills.BasicData,
+        Assembly-CSharp],[RPG_003.Effect.SoundVFXData, Assembly-CSharp]], mscorlib
     - Name: Item1
       Entry: 4
       Data: 1
     - Name: Item2
       Entry: 10
       Data: 0
+    - Name: Item3
+      Entry: 10
+      Data: 1
     - Name: 
       Entry: 8
       Data: 
     - Name: 
       Entry: 7
-      Data: System.ValueTuple`2[[System.Single, mscorlib],[RPG_003.Battle.Characters.Enemy.EnemySkill,
-        Assembly-CSharp]], mscorlib
+      Data: System.ValueTuple`3[[System.Single, mscorlib],[RPG_003.Skills.BasicData,
+        Assembly-CSharp],[RPG_003.Effect.SoundVFXData, Assembly-CSharp]], mscorlib
     - Name: Item1
       Entry: 4
       Data: 1
     - Name: Item2
       Entry: 10
-      Data: 1
+      Data: 2
+    - Name: Item3
+      Entry: 10
+      Data: 3
     - Name: 
       Entry: 8
       Data: 

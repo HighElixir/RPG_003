@@ -1,7 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using RPG_003.Battle;
+using System.Collections.Generic;
 using UnityEngine;
-using RPG_003.Battle;
-using RPG_003.Battle.Characters;
 
 namespace RPG_003.Status
 {
@@ -9,7 +8,7 @@ namespace RPG_003.Status
     {
         private readonly Dictionary<StatusAttribute, StatusAmount> _statusAmounts = new();
         public IReadOnlyDictionary<StatusAttribute, StatusAmount> StatusPair => _statusAmounts;
-        public ICharacter Parent { get; set; }
+        public CharacterObject Parent { get; set; }
 
         private StatusAmount _HPAmount;
         private StatusAmount _MPAmount;
@@ -26,7 +25,7 @@ namespace RPG_003.Status
             set => _MPAmount.currentAmount = Mathf.Clamp(value, 0, MaxMP);
         }
         public float MaxMP => _MPAmount.ChangedMax;
-        public void Initialize(ICharacter parent, CharacterData data)
+        public void Initialize(CharacterObject parent, CharacterData data)
         {
             Parent = parent;
             _statusAmounts.Clear();
@@ -40,12 +39,19 @@ namespace RPG_003.Status
             AddStatus(StatusAttribute.DEF, data.DEF);
             AddStatus(StatusAttribute.MDEF, data.MDEF);
             AddStatus(StatusAttribute.LUK, data.LUK);
+            AddStatus(StatusAttribute.CriiticalRate, data.CR + data.LUKToCR);
+            AddStatus(StatusAttribute.CriticalDamage, data.CRDamage + data.LUKToCRDamage);
+            AddStatus(StatusAttribute.DamageResist, data.TakeDamageScale);
 
             // 現在HPを最大値に設定
             _HPAmount = _statusAmounts[StatusAttribute.HP];
             _HPAmount.currentAmount = _HPAmount.ChangedMax;
             _MPAmount = _statusAmounts[StatusAttribute.MP];
             _MPAmount.currentAmount = _HPAmount.ChangedMax;
+            foreach (var d in data.TakeElementDamageScale)
+            {
+                AddStatus(d.element.GetStatusFromElement(false), d.scale);
+            }
         }
 
         public void AddStatus(StatusAttribute status, float amount)
@@ -105,7 +111,7 @@ namespace RPG_003.Status
             }
             var stat = _statusAmounts[status];
             // 基礎値を変更する代わりに、temporaryChanged を調整して新しい値を実現
-            stat.SetChanged(amount - stat.defaultAmount);
+            stat.SetChanged(amount - stat.DefaultAmount);
         }
 
         public void AddChanged(StatusAttribute status, float amount)
@@ -155,13 +161,14 @@ namespace RPG_003.Status
 
         public void TakeDamage(DamageInfo info)
         {
-            HP = Mathf.Max(0, HP - info.Damage);
+            var infoClone = ((DamageInfo)info.Clone()).ResistDamage();
+            HP = Mathf.Max(0, HP - infoClone.Damage);
             Debug.Log($"Current HP: {HP}, Max HP: {MaxHP}");
             if (HP <= 0)
                 Parent.NotifyDeath();
         }
 
-        public StatusManager(ICharacter parent, CharacterData data)
+        public StatusManager(CharacterObject parent, CharacterData data)
         {
             Initialize(parent, data);
         }

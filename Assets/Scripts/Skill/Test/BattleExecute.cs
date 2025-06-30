@@ -1,4 +1,4 @@
-﻿using RPG_003.Battle.Characters;
+﻿using RPG_003.Battle;
 using RPG_003.Core;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
@@ -20,6 +20,8 @@ namespace RPG_003.Skills
             {
                 _players[_skillAddTarget].Skills.Add(skill);
                 Debug.Log($"Success add skill({skill.Name}) for {_players[_skillAddTarget].CharacterData.Name}");
+                if (skill.Icon == null)
+                    Debug.Log("Icon が null!");
             }
             else
             {
@@ -35,7 +37,6 @@ namespace RPG_003.Skills
                 _players.Add(new PlayerDataHolder(_addData));
             else
                 Debug.LogError("4人まで！");
-
         }
         [Button("StartBattle")]
         private void BattleStart()

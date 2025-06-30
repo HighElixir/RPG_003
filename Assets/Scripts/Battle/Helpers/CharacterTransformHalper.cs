@@ -1,5 +1,4 @@
 ﻿using HighElixir;
-using RPG_003.Battle.Characters;
 using Sirenix.OdinInspector;
 using Sirenix.Serialization;
 using System.Collections.Generic;
@@ -17,7 +16,7 @@ namespace RPG_003.Battle
         /// <summary>
         /// 指定されたポジションの座標を取得してオブジェクトを移動する
         /// </summary>
-        public void SetPosition(CharacterBase target, CharacterPosition position)
+        public void SetPosition(CharacterObject target, CharacterPosition position)
         {
             if (!_entries.TryGetValue(position, out var p))
             {
@@ -39,7 +38,7 @@ namespace RPG_003.Battle
             _entries.Clear();
             foreach (var e in EnumWrapper.GetEnumList<CharacterPosition>())
             {
-                if (e == CharacterPosition.None)continue;
+                if (e == CharacterPosition.None) continue;
                 _entries[e] = Vector2.zero;
             }
         }

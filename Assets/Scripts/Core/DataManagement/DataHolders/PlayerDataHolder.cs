@@ -1,7 +1,5 @@
-﻿using RPG_003.Battle.Characters;
-using RPG_003.Battle.Characters.Player;
-using RPG_003.Skills;
-using Sirenix.Serialization;
+﻿using RPG_003.Skills;
+using RPG_003.Battle;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -12,8 +10,8 @@ namespace RPG_003.Core
     public class PlayerDataHolder
     {
         // == ==
-        [SerializeField]private CharacterData _characterData = new();
-        [SerializeField]private List<SkillDataHolder> _skills = new();
+        [SerializeField] private CharacterData _characterData = new();
+        [SerializeField] private List<SkillDataHolder> _skills = new();
 
         // == Property ==
         public CharacterData CharacterData => _characterData;
@@ -26,16 +24,7 @@ namespace RPG_003.Core
 
         public PlayerData Convert()
         {
-            var p = new PlayerData();
-            p.SetCharcter(CharacterData);
-            p.SetSkillDataInBattles(Skills.ConvertAll((h) =>
-            {
-                var data = h.ConvartData();
-                data.SetVFX(h.SoundVFXData);
-                data.SetIcon(h.Icon);
-                return data;
-            }));
-            return p;
+            return new PlayerData(CharacterData, Skills.ConvertAll(h => { return h.ConvartData(); }));
         }
 
         // === Constracter ===

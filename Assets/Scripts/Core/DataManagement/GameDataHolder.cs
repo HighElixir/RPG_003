@@ -1,8 +1,8 @@
 ﻿using HighElixir.Utilities;
-using UnityEngine;
-using System.Collections.Generic;
-using RPG_003.Battle.Characters.Player;
+using RPG_003.Battle;
 using RPG_003.Skills;
+using System.Collections.Generic;
+using UnityEngine;
 
 namespace RPG_003.Core
 {
@@ -15,7 +15,7 @@ namespace RPG_003.Core
         [SerializeField] private List<PlayerDataHolder> _players = new List<PlayerDataHolder>();
         [SerializeField] private List<SkillDataHolder> _skillDatas = new List<SkillDataHolder>();// 全てのスキルへの参照を持つ
         [SerializeField] private ItemHolder _itemHolder = new();
-        [SerializeField] private SkillDatasHolder _skillDataCount = new(); 
+        [SerializeField] private SkillDatasHolder _skillDataCount = new();
 
         // == property ==
         public IReadOnlyList<PlayerDataHolder> Players => _players.AsReadOnly();
@@ -29,7 +29,7 @@ namespace RPG_003.Core
         public void SetPlayerDatas(List<PlayerDataHolder> data) => _players = new(data);
         public List<PlayerData> GetPlayerDatas()
         {
-            return _players.ConvertAll<PlayerData>((item) => item.Convert());
+            return _players.ConvertAll<PlayerData>(item => item.Convert());
         }
         // SkillHolder
         public void AddSkill(SkillDataHolder skill) => _skillDatas.Add(skill);

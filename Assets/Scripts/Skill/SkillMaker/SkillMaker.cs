@@ -1,64 +1,60 @@
 ﻿using RPG_003.Core;
 using System;
-using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
+using UnityEngine.UI;
+using Lean.Gui;
 
 namespace RPG_003.Skills
 {
-    public class SkillMaker : MonoBehaviour, IObservable<SkillType>
+    [DefaultExecutionOrder(-1)]
+    public class SkillMaker : MonoBehaviour
     {
-        // Observer
-        #region
-        private class UnSubscribe : IDisposable
+        public enum SkillType
         {
-            private List<IObserver<SkillType>> _obs;
-            private IObserver<SkillType> _observer;
-            public UnSubscribe(List<IObserver<SkillType>> obs, IObserver<SkillType> observer)
-            {
-                _obs = obs;
-                _observer = observer;
-            }
-
-            public void Dispose()
-            {
-                _obs.Remove(_observer);
-            }
+            None,
+            Basic,
+            Modifies,
+            Smith,
         }
-        private List<IObserver<SkillType>> _observers = new();
-        public IDisposable Subscribe(IObserver<SkillType> observer)
-        {
-            _observers.Add(observer);
-            observer.OnNext(_current);
-            return new UnSubscribe(_observers, observer);
-        }
-        private void Notify()
-        {
-            foreach (var observer in _observers)
-            {
-                observer.OnNext(_current);
-            }
-        }
-        #endregion
-
-        private SkillType _current;
+        [SerializeField] private Button _createSkillButton;
+        [SerializeField] private LeanWindow _skillPanel;
+        [SerializeField] private Button _basicButton;
+        [SerializeField] private Button _modifiesButton;
+        [SerializeField] private Button _smithButton;
+        [SerializeField] private Button _exit;
+        private ReactiveProperty<SkillType> _current = new(SkillType.None);
+        public IObservable<SkillType> Current => _current;
         public void Confirm(SkillDataHolder production)
         {
-            foreach (var obs in _observers)
-            {
-                obs.OnCompleted();
-            }
+            Debug.Log($"SkillDataHolder: {production.Name} is completed.");
             GameDataHolder.instance.AddSkill(production);
+            _current.Value = SkillType.None;
         }
 
         public void ResetMaker(SkillDataHolder holder)
         {
-            Notify();
         }
-    }
-    public enum SkillType
-    {
-        Basic,
-        Modifies,
-        Smith,
+        private void Awake()
+        {
+            _createSkillButton.OnClickAsObservable().Subscribe(_ => { _skillPanel.Set(true); }).AddTo(this);
+            _basicButton.OnClickAsObservable().Subscribe(_ =>
+            {
+                _current.Value = SkillType.Basic;
+                _skillPanel.Set(false);
+            }).AddTo(this);
+            _modifiesButton.OnClickAsObservable().Subscribe(_ =>
+            {
+                _current.Value = SkillType.Modifies;
+                _skillPanel.Set(false);
+            }).AddTo(this);
+            _smithButton.OnClickAsObservable().Subscribe(_ =>
+            {
+                _current.Value = SkillType.Smith;
+                _skillPanel.Set(false);
+            }).AddTo(this);
+            GetComponent<SkillBuilder>().OnComplete += Confirm;
+            _current.Value = SkillType.None;
+        }
     }
 }

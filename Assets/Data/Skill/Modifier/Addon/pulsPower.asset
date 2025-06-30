@@ -23,7 +23,7 @@ MonoBehaviour:
     scale: 1.2
     fixedAmount: 0
   _forCost:
-  - isHP: 0
+  - conditions: 3
     scale: 1.05
     fixedAmount: 0
   _isOverrideTarget: 0
@@ -31,5 +31,7 @@ MonoBehaviour:
     _isSelf: 0
     _faction: 0
     _count: 0
+    _isRandom: 0
+    _canSelectSameTarget: 0
   _isOverrideTargetCount: 0
   _overrideTargetCount: 0

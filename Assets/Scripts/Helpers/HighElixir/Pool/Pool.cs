@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace HighElixir.Pool
 {
-    public class Pool<T> where T : MonoBehaviour
+    public class Pool<T> where T : Component
     {
         private readonly T _original;
         private readonly int _maxPoolSize;
@@ -13,6 +13,7 @@ namespace HighElixir.Pool
         private readonly HashSet<T> _inUse = new();
 
         public Transform Container => _container;
+        public List<T> InUse => new List<T>(_inUse);
         public Pool(T original, int maxPoolSize, Transform container = null, bool isRect = false)
         {
             if (original == null) throw new ArgumentNullException(nameof(original));
@@ -55,6 +56,7 @@ namespace HighElixir.Pool
             if (_inUse.Remove(obj))
             {
                 obj.gameObject.SetActive(false);
+                obj.transform.SetParent(_container, false);
                 if (_available.Count < _maxPoolSize)
                     _available.Push(obj);
                 else
@@ -71,7 +73,7 @@ namespace HighElixir.Pool
             {
                 UnityEngine.Object.Destroy(obj);
             }
-            foreach(var obj in _inUse)
+            foreach (var obj in _inUse)
             {
                 UnityEngine.Object.Destroy(obj);
             }

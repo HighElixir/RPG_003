@@ -6,10 +6,10 @@ namespace RPG_003.Skills
     [CreateAssetMenu(fileName = "Slot", menuName = "RPG_003/Skills/Smith/Slot")]
     public class SkillSlotData : SkillData
     {
-        [SerializeField] float _MaximumLoad;
-        [SerializeField] int _effectSlotCount;
-        [SerializeField] int _costSlotCount;
-        [SerializeField] float _addLoadScale = 1f; // 各チップの負荷にかかる係数
+        [SerializeField] private float _MaximumLoad;
+        [SerializeField] private int _effectSlotCount;
+        [SerializeField] private int _costSlotCount;
+        [SerializeField] private float _addLoadScale = 1f; // 各チップの負荷にかかる係数
 
         public float MaximumLoad => _MaximumLoad;
         public int EffectSlotCount => _effectSlotCount;

@@ -1,11 +1,9 @@
-﻿
-using RPG_003.Battle.Skills;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG_003.Battle.Characters.Player
+namespace RPG_003.Battle
 {
-    public class Player : CharacterBase
+    public class Player : CharacterObject
     {
         public PlayerData PlayerData { get; private set; }
         public List<Skill> Skills { get; private set; } = new List<Skill>();

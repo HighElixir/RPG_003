@@ -1,4 +1,5 @@
-﻿using RPG_003.Battle.Characters;
+﻿using RPG_003.Skills;
+using UnityEditor;
 
 namespace RPG_003.Battle.Factions
 {
@@ -7,7 +8,7 @@ namespace RPG_003.Battle.Factions
     /// </summary>
     public static class FactionHelper
     {
-        public static bool IsAlly(this ICharacter character)
+        public static bool IsAlly(this CharacterObject character)
         {
             return IsAlly(character.Position);
         }
@@ -20,7 +21,7 @@ namespace RPG_003.Battle.Factions
                 position == CharacterPosition.Player_3 ||
                 position == CharacterPosition.Player_4;
         }
-        public static bool IsEnemy(this ICharacter character)
+        public static bool IsEnemy(this CharacterObject character)
         {
             return IsEnemy(character.Position);
         }
@@ -34,7 +35,7 @@ namespace RPG_003.Battle.Factions
                 position == CharacterPosition.Enemy_4 ||
                 position == CharacterPosition.Enemy_5;
         }
-        public static bool IsSameFaction(this ICharacter c1, ICharacter c2)
+        public static bool IsSameFaction(this CharacterObject c1, CharacterObject c2)
         {
             return IsSameFaction(c1.Position, c2.Position);
         }
@@ -44,7 +45,10 @@ namespace RPG_003.Battle.Factions
                 IsAlly(p1) && IsAlly(p2) ||
                 IsEnemy(p1) && IsEnemy(p2);
         }
-        public static bool IsSameFaction(this ICharacter c, Faction t)
+        /// <summary>
+        /// キャラクターが任意の派閥かどうかを返す
+        /// </summary>
+        public static bool IsSameFaction(this CharacterObject c, Faction t)
         {
             return IsSameFaction(c.Position, t);
         }
@@ -61,6 +65,15 @@ namespace RPG_003.Battle.Factions
                 default:
                     return false;
             }
+        }
+        public static Faction GetReverse(this Faction faction)
+        {
+            return faction switch
+            {
+                Faction.Ally => Faction.Enemy,
+                Faction.Enemy => Faction.Ally,
+                _ => faction,
+            };
         }
     }
 }

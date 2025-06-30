@@ -1,7 +1,4 @@
-﻿
-using System.Collections.Generic;
-using UnityEngine;
-using static UnityEngine.GraphicsBuffer;
+﻿using UnityEngine;
 
 namespace RPG_003.Skills
 {

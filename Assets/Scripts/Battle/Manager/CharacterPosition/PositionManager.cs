@@ -1,5 +1,4 @@
 ﻿using HighElixir;
-using RPG_003.Battle.Characters;
 using RPG_003.Battle.Factions;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +10,9 @@ namespace RPG_003.Battle
     /// </summary>
     public class PositionManager
     {
-        private Dictionary<CharacterPosition, CharacterBase> _characterPositions = new();
+        private Dictionary<CharacterPosition, CharacterObject> _characterPositions = new();
 
-        public PositionManager(out IReadOnlyDictionary<CharacterPosition, CharacterBase> characterPositions)
+        public PositionManager(out IReadOnlyDictionary<CharacterPosition, CharacterObject> characterPositions)
         {
             _characterPositions = new();
             characterPositions = _characterPositions;
@@ -49,15 +48,15 @@ namespace RPG_003.Battle
                 return pos;
             return CharacterPosition.None;
         }
-        public List<CharacterBase> GetCharacters()
+        public List<CharacterObject> GetCharacters()
         {
-            return new List<CharacterBase>(_characterPositions.Values);
+            return new List<CharacterObject>(_characterPositions.Values);
         }
-        public IReadOnlyDictionary<CharacterPosition, CharacterBase> GetCharacterMap()
+        public IReadOnlyDictionary<CharacterPosition, CharacterObject> GetCharacterMap()
         {
             return _characterPositions;
         }
-        public void RemoveCharacter(CharacterBase character)
+        public void RemoveCharacter(CharacterObject character)
         {
             if (character == null || !_characterPositions.ContainsValue(character)) return;
             var pos = CharacterPosition.None;
@@ -72,7 +71,7 @@ namespace RPG_003.Battle
             if (pos == CharacterPosition.None) return;
             _characterPositions.Remove(pos);
         }
-        public void RegisterCharacter(CharacterPosition position, CharacterBase character)
+        public void RegisterCharacter(CharacterPosition position, CharacterObject character)
         {
             if (_characterPositions.ContainsKey(position))
             {

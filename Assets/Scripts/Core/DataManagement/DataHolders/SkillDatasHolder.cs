@@ -1,27 +1,13 @@
 ﻿using RPG_003.Skills;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-
+using UnityEngine;
 namespace RPG_003.Core
 {
+    [Serializable]
     public class SkillDatasHolder
     {
-        public class DataSet
-        {
-            public List<(SkillData data, int count)> values = new();
-            public int AllCount
-            {
-                get
-                {
-                    var res = 0;
-                    foreach (var item in values)
-                    {
-                        res += item.count;
-                    }
-                    return res;
-                }
-            }
-        }
+        [SerializeField]
         private Dictionary<SkillData, int> _skillDict = new();
 
         public float GetCount(SkillData data) => _skillDict[data];
@@ -38,16 +24,18 @@ namespace RPG_003.Core
             if (_skillDict.ContainsKey(equip))
                 _skillDict[equip] -= count;
         }
-
-        public DataSet GetSkillsByType(SkillType type)
+        public void Save(Dictionary<SkillData, int> dict)
         {
-            var res = new DataSet();
-            foreach(var skill in _skillDict)
+            _skillDict.Clear();
+            foreach (var kvp in dict)
             {
-                if (skill.Key.IsMatch(type))
-                    res.values.Add((skill.Key, skill.Value));
+                if (kvp.Value > 0)
+                    _skillDict[kvp.Key] = kvp.Value;
             }
-            return res;
+        }
+        public Dictionary<SkillData, int> GetAllSkills()
+        {
+            return new Dictionary<SkillData, int>(_skillDict);
         }
     }
 }

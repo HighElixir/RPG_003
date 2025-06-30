@@ -1,9 +1,9 @@
-﻿using UnityEngine;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
 namespace RPG_003.Skills
 {
-    [CreateAssetMenu(fileName ="Basic", menuName = "RPG_003/Skills/Basic")]
+    [CreateAssetMenu(fileName = "Basic", menuName = "RPG_003/Skills/Basic")]
     public class BasicData : SkillData
     {
         [SerializeField] private List<DamageData> _damage;

@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Characters.Enemy;
-using Sirenix.OdinInspector;
+﻿using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;

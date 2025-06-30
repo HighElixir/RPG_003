@@ -6,13 +6,12 @@ namespace RPG_003.Battle
     // StatusManagerより後に初期化(StatusAmountが必要なため)
     public class BehaviorIntervalCount
     {
-        private readonly float maxSpeed = 500f;
+        private readonly float maxSpeed = 1000f;
         private readonly float scale = 400f;
         private readonly float minInterval = 10f;
         private readonly float intervalBase = 140f;
 
         private StatusAmount _speedAmount;
-        private IntervalIndicator _indicator;
         private int _currentAmount = 0;
 
         public bool IsReady => _currentAmount == 0;
@@ -35,33 +34,16 @@ namespace RPG_003.Battle
         public void Process(int amount)
         {
             _currentAmount = Mathf.Max(0, _currentAmount - amount);
-            _indicator?.SetAmount(Max - _currentAmount, Max);
         }
 
         public void Reset()
         {
             _currentAmount = Max;
-            _indicator?.SetAmount(0, Max);
         }
         public void Initialize(StatusAmount speedAmount)
         {
             _speedAmount = speedAmount;
             _currentAmount = Max;
-        }
-
-        // インジケーター（UI）関連
-        public void SetIndicator(IntervalIndicator intervalIndicator)
-        {
-            _indicator = intervalIndicator;
-            _indicator.SetAmount(0, Max);
-        }
-        public void HideIndicator()
-        {
-            _indicator.gameObject.SetActive(false);
-        }
-        public void ReleaceIndicator()
-        {
-            _indicator.Release();
         }
     }
 }

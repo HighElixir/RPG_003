@@ -1,9 +1,7 @@
 ﻿using HighElixir.Utilities;
 using RPG_003.Battle;
-using RPG_003.Battle.Characters.Player;
 using System;
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 

@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Characters;
-using RPG_003.Battle.Factions;
+﻿using RPG_003.Battle.Factions;
 using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
@@ -11,16 +10,16 @@ namespace RPG_003.Battle
         private BattleManager _battleManager;
 
 
-        public CharacterBase SelectRandomTarget(Faction faction)
+        public CharacterObject SelectRandomTarget(Faction faction)
         {
-            var c = SelectTargetsByType(faction);
+            var c = TargetSelectorsByType(faction);
             return c.Count > 0 ? c[Random.Range(0, c.Count)] : null;
         }
 
-        public List<CharacterBase> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
+        public List<CharacterObject> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
         {
-            var candidates = SelectTargetsByType(faction);
-            var targets = new List<CharacterBase>();
+            var candidates = TargetSelectorsByType(faction);
+            var targets = new List<CharacterObject>();
 
             // 重複禁止で要望数が候補数より多い場合は上限を候補数に合わせる
             if (!canSelectSameTarget && count > candidates.Count)
@@ -48,7 +47,7 @@ namespace RPG_003.Battle
         }
 
 
-        public List<CharacterBase> SelectTargetsByType(Faction faction)
+        public List<CharacterObject> TargetSelectorsByType(Faction faction)
         {
             var characters = _battleManager.GetCharacterMap();
             return faction switch
@@ -60,14 +59,14 @@ namespace RPG_003.Battle
             };
         }
 
-        public CharacterBase GetCharacter(CharacterPosition position)
+        public CharacterObject GetCharacter(CharacterPosition position)
         {
             if (_battleManager.GetCharacterMap().ContainsKey(position))
                 return _battleManager.GetCharacterMap()[position];
             return null;
         }
 
-        public bool TryGetCharacter(CharacterPosition position, out CharacterBase character)
+        public bool TryGetCharacter(CharacterPosition position, out CharacterObject character)
         {
             var map = _battleManager.GetCharacterMap();
             if (map.ContainsKey(position))
@@ -78,7 +77,7 @@ namespace RPG_003.Battle
             character = null;
             return false;
         }
-        public CharacterPosition GetPosition(CharacterBase character)
+        public CharacterPosition GetPosition(CharacterObject character)
         {
             if (character != null)
             {

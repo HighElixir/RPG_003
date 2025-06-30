@@ -9,12 +9,12 @@ namespace HighElixir.FollowObject
         [SerializeField] protected Vector3 offset;
         protected bool UseTargetPosition => targetTransform != null;
         public bool Enable { get; set; } = true;
-        public void SetTarget(Transform target, Vector3 offset = default)
+        public virtual void SetTarget(Transform target, Vector3 offset = default)
         {
             targetTransform = target;
             this.offset = offset;
         }
-        public void SetTarget(Vector3 target)
+        public virtual void SetTarget(Vector3 target)
         {
             targetPosition = target;
         }
