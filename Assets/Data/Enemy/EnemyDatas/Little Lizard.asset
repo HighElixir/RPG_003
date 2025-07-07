@@ -24,34 +24,21 @@ MonoBehaviour:
   enemyName: Little Lizard
   description: Cute
   icon: {fileID: 21300000, guid: 109bacc3a598fc949b5f41dd31e7eba2, type: 3}
-  characterData:
+  statusData:
     _name: Little Lizard
-    _hp: 1000
-    _mp: 500
-    _str: 15
-    _int: 10
-    _spd: 75
-    _def: 20
-    _mdef: 20
-    _luk: 10
+    _hp: 1100
+    _mp: 600
+    _str: 800
+    _int: 500
+    _spd: 100
+    _def: 600
+    _mdef: 400
+    _luk: 100
     _criticalRate: 0
     _criticalDamage: 0
     _takeDamageScale: 1
     _takeElementDamageScale:
-    - element: 0
-      scale: 1
-    - element: 1
-      scale: 1
     - element: 2
-      scale: 1
-    - element: 3
-      scale: 1
-    - element: 4
-      scale: 1
-    - element: 5
-      scale: 1
-    - element: 6
-      scale: 1
-    - element: 7
-      scale: 1
+      scale: 0.7
+    _giveElementDamageScale: []
   enemyBehaviorData: {fileID: 11400000, guid: 213671e97d2a60844be0364510bb0229, type: 2}

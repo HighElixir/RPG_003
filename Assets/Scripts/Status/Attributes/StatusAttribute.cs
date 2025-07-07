@@ -14,9 +14,9 @@
         HATE,
         MaxHP,
         MaxMP,
-        CriiticalRate,
+        CriticalRate,
         CriticalDamage,
-        DamageResist,
+        TakeDamageScale,
 
         T_Fire,     // 受ける炎ダメージ倍率
         T_Water,      // 受ける水ダメージ倍率
@@ -54,9 +54,9 @@
                 StatusAttribute.HATE => "HATE",
                 StatusAttribute.MaxHP => "MaxHP",
                 StatusAttribute.MaxMP => "MaxMP",
-                StatusAttribute.CriiticalRate => "会心率",
+                StatusAttribute.CriticalRate => "会心率",
                 StatusAttribute.CriticalDamage => "会心ダメージ",
-                StatusAttribute.DamageResist => "ダメージ軽減",
+                StatusAttribute.TakeDamageScale => "ダメージ軽減",
                 // 受けるダメージ倍率
                 StatusAttribute.T_Fire => "受ける炎ダメージ倍率",
                 StatusAttribute.T_Water => "受ける水ダメージ倍率",

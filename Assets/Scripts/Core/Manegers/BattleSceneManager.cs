@@ -22,18 +22,19 @@ namespace RPG_003.Core
         private int _from;
 
         // === Public ===
-        public void ToBattleScene(SceneLoaderAsync loader)
+        public void ToBattleScene(SceneLoaderAsync loader, GameObject receiver)
         {
             _from = SceneManager.GetActiveScene().buildIndex;
-            SceneLoaderAsync.OnLoadCompleted += OnSceneLoaded;
-            loader.StartSceneLoad(_battleSceneId);
+            SceneLoaderAsync.OnSceneChanged += OnSceneChanged;
+            loader.StartSceneLoad(_battleSceneId, receiver);
         }
         public void BackScene(SceneLoaderAsync loader)
         {
             loader.StartSceneLoad(_from);
         }
-        public void OnSceneLoaded()
+        public void OnSceneChanged()
         {
+            SceneLoaderAsync.OnSceneChanged -= OnSceneChanged;
             if (_battleManager == null)
             {
                 foreach (var obj in SceneManager.GetActiveScene().GetRootGameObjects())
@@ -48,7 +49,7 @@ namespace RPG_003.Core
             _battleManager.StartBattle(GameDataHolder.instance.GetPlayerDatas(), _battleData.Wave1);
         }
 
-        public void StartBattle(int wave, List<Player> players)
+        public void StartBattle(int wave, List<Unit> players)
         {
             switch (wave)
             {
@@ -67,15 +68,9 @@ namespace RPG_003.Core
             }
         }
 
-        public void SetBattleManageer(BattleManager battleManager)
+        public void SetBattleManager(BattleManager battleManager)
         {
             _battleManager = battleManager;
-        }
-        // === Private ===
-        // === Unity ===
-        protected override void Awake()
-        {
-            DontDestroyOnLoad(gameObject);
         }
     }
 }

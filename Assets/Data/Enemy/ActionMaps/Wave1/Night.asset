@@ -9,16 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 0
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e26d6b46b3ef052458c2ea328ff6647c, type: 3}
+  m_Script: {fileID: 11500000, guid: 30d037bdf87bf9342bd9c082a58e4e93, type: 3}
   m_Name: Night
   m_EditorClassIdentifier: 
   serializationData:
     SerializedFormat: 2
     SerializedBytes: 
     ReferencedUnityObjects:
-    - {fileID: 11400000, guid: 4852ac9fcc9fe7848a7158822047ecd3, type: 2}
-    - {fileID: 11400000, guid: f492f91120501404fa2dc00232527969, type: 2}
     - {fileID: 11400000, guid: 55dc49bdfe8819e4a996246ce9c624a3, type: 2}
+    - {fileID: 11400000, guid: 4852ac9fcc9fe7848a7158822047ecd3, type: 2}
     SerializedBytesString: 
     Prefab: {fileID: 0}
     PrefabModificationsReferencedUnityObjects: []
@@ -26,9 +25,9 @@ MonoBehaviour:
     SerializationNodes:
     - Name: skills
       Entry: 7
-      Data: 0|Unity.Plastic.Antlr3.Runtime.Misc.ListStack`1[[System.ValueTuple`3[[System.Single,
+      Data: 0|System.Collections.Generic.List`1[[System.ValueTuple`3[[System.Single,
         mscorlib],[RPG_003.Skills.BasicData, Assembly-CSharp],[RPG_003.Effect.SoundVFXData,
-        Assembly-CSharp]], mscorlib]], Unity.Plastic.Antlr3.Runtime
+        Assembly-CSharp]], mscorlib]], mscorlib
     - Name: 
       Entry: 12
       Data: 2
@@ -43,8 +42,8 @@ MonoBehaviour:
       Entry: 10
       Data: 0
     - Name: Item3
-      Entry: 10
-      Data: 1
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -57,10 +56,10 @@ MonoBehaviour:
       Data: 1
     - Name: Item2
       Entry: 10
-      Data: 2
-    - Name: Item3
-      Entry: 10
       Data: 1
+    - Name: Item3
+      Entry: 6
+      Data: 
     - Name: 
       Entry: 8
       Data: 
@@ -70,4 +69,3 @@ MonoBehaviour:
     - Name: 
       Entry: 8
       Data: 
-  weight: 1

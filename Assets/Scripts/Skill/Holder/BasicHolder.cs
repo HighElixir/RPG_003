@@ -1,6 +1,7 @@
 ﻿using RPG_003.Battle;
 using RPG_003.Battle.Factions;
 using RPG_003.Status;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,7 +9,8 @@ using UnityEngine;
 
 namespace RPG_003.Skills
 {
-    public class BasicHolder : SkillDataHolder
+    [Serializable]
+    public class BasicHolder : SkillHolder
     {
         [SerializeField] private BasicData _skill;
 
@@ -21,16 +23,21 @@ namespace RPG_003.Skills
 
         
         // === Public ===
-        public override bool IsValid(out string message)
+        public BasicHolder() { }    
+        public BasicHolder(BasicData data)
+        {
+            _skill = data;
+        }
+        public override bool IsValid(out int errorCode)
         {
             if (_skill != null)
             {
-                message = string.Empty;
+                errorCode = 0;
                 return true;
             }
             else
             {
-                message = "SkillData is null. Please set a valid SkillData.";
+                errorCode = -1;
                 return false;
             }
         }
@@ -62,6 +69,12 @@ namespace RPG_003.Skills
                 return true;
             }
             return false;
+        }
+
+        public override bool RemoveSkillData(SkillData data, out List<SkillData> list)
+        {
+            list = new List<SkillData>();
+            return RemoveSkillData(data);
         }
 
         public override string ToString()
@@ -102,7 +115,7 @@ namespace RPG_003.Skills
             {
                 return 0f; // No damage data available
             }
-            return _skill.DamageDatas.Average(d => d.criticalRate);
+            return _skill.DamageDatas.CalcCritRateAverage();
         }
 
         public override float GetCriticalDamage()
@@ -111,7 +124,18 @@ namespace RPG_003.Skills
             {
                 return 0f; // No damage data available
             }
-            return _skill.DamageDatas.Average(d => d.criticalRateBonus);
+            return _skill.DamageDatas.CalcCritDamageAverage();
+        }
+
+        public override bool IsNeedReplace(SkillData newItem, out List<SkillData> oldItems)
+        {
+            oldItems = new List<SkillData>();
+            if (newItem  != null && newItem is BasicData && SkillData != null)
+            {
+                oldItems.Add(SkillData);
+                return true;
+            }
+            return false;
         }
     }
 }

@@ -10,9 +10,9 @@ namespace RPG_003.Battle
     /// </summary>
     public class PositionManager
     {
-        private Dictionary<CharacterPosition, CharacterObject> _characterPositions = new();
+        private Dictionary<CharacterPosition, Unit> _characterPositions = new();
 
-        public PositionManager(out IReadOnlyDictionary<CharacterPosition, CharacterObject> characterPositions)
+        public PositionManager(out IReadOnlyDictionary<CharacterPosition, Unit> characterPositions)
         {
             _characterPositions = new();
             characterPositions = _characterPositions;
@@ -48,15 +48,15 @@ namespace RPG_003.Battle
                 return pos;
             return CharacterPosition.None;
         }
-        public List<CharacterObject> GetCharacters()
+        public List<Unit> GetCharacters()
         {
-            return new List<CharacterObject>(_characterPositions.Values);
+            return new List<Unit>(_characterPositions.Values);
         }
-        public IReadOnlyDictionary<CharacterPosition, CharacterObject> GetCharacterMap()
+        public IReadOnlyDictionary<CharacterPosition, Unit> GetCharacterMap()
         {
             return _characterPositions;
         }
-        public void RemoveCharacter(CharacterObject character)
+        public void RemoveCharacter(Unit character)
         {
             if (character == null || !_characterPositions.ContainsValue(character)) return;
             var pos = CharacterPosition.None;
@@ -71,7 +71,7 @@ namespace RPG_003.Battle
             if (pos == CharacterPosition.None) return;
             _characterPositions.Remove(pos);
         }
-        public void RegisterCharacter(CharacterPosition position, CharacterObject character)
+        public void RegisterCharacter(CharacterPosition position, Unit character)
         {
             if (_characterPositions.ContainsKey(position))
             {

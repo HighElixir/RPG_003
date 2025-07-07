@@ -16,7 +16,7 @@ namespace RPG_003.Battle
         /// <summary>
         /// 指定されたポジションの座標を取得してオブジェクトを移動する
         /// </summary>
-        public void SetPosition(CharacterObject target, CharacterPosition position)
+        public void SetPosition(Unit target, CharacterPosition position)
         {
             if (!_entries.TryGetValue(position, out var p))
             {

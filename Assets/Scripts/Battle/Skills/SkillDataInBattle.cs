@@ -1,8 +1,10 @@
 ﻿using RPG_003.Battle.Factions;
 using RPG_003.Effect;
 using RPG_003.Skills;
+using RPG_003.Status;
 using System;
 using System.Collections.Generic;
+using System.Text;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -58,6 +60,38 @@ namespace RPG_003.Battle
         {
             var clone = new SkillDataInBattle(_name, _description, _sprite, _damageData, _costDatas, _target, _vFXData);
             return clone;
+        }
+
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"スキル名: {Name}");
+            sb.AppendLine($"説明: {Description}");
+            sb.AppendLine($"ダメージ:");
+            foreach (var damage in DamageDatas)
+            {
+                sb.AppendLine($"  - {damage.element.ToJapanese()}: {damage.type.ToJapanese()}{damage.amount * 100}% + {damage.fixedAmount}{damage.amountAttribute.ToJapanese()}");
+            }
+            sb.AppendLine($"  - 基礎会心率 :{DamageDatas.CalcCritRateAverage() * 100}%");
+            sb.AppendLine($"  - 基礎会心ダメージ :{DamageDatas.CalcCritDamageAverage() * 100}%");
+            sb.AppendLine($"コスト:");
+            float hp = 0;
+            float mp = 0;
+            foreach (var cost in CostDatas)
+            {
+                if (cost.isHP)
+                {
+                    hp += cost.amount;
+                }
+                else
+                {
+                    mp += cost.amount;
+                }
+            }
+            sb.AppendLine($"  - HP: {hp}");
+            sb.AppendLine($"  - MP: {mp}");
+            sb.AppendLine($"ターゲット: {(IsSelf ? "自己" : Target.ToJapanese())}の{TargetCount}体");
+            return sb.ToString();
         }
     }
 }

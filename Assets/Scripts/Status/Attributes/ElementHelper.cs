@@ -13,7 +13,7 @@
                 StatusAttribute.T_Earth | StatusAttribute.A_Earth => Elements.Earth,
                 StatusAttribute.T_Light | StatusAttribute.A_Light => Elements.Light,
                 StatusAttribute.T_Dark | StatusAttribute.A_Dark => Elements.Dark,
-                _ => Elements.None
+                _ => Elements.Physics
             };
         }
         public static StatusAttribute GetStatusFromElement(this Elements element, bool isAttack)

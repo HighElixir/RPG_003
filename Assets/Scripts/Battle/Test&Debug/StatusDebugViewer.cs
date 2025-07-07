@@ -9,7 +9,7 @@ namespace RPG_003.Battle
 #if UNITY_EDITOR
     public class StatusDebugViewer : SerializedMonoBehaviour
     {
-        [SerializeField] private CharacterObject _target;
+        [SerializeField] private Unit _target;
         private bool _isTargetSet = false;
         private bool _showStatus = false;
 

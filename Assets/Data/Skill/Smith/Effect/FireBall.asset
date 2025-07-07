@@ -16,13 +16,14 @@ MonoBehaviour:
   _name: "\u30D5\u30A1\u30A4\u30A2\u30DC\u30FC\u30EB"
   _description: "\u706B\u7403\u3092\u653E\u3064"
   _defaultIcon: {fileID: 21300000, guid: 3434169aea05eeb4185f2fa72c80bf31, type: 3}
+  _sfx: {fileID: 0}
   _load: 1
   _power: -2
   _damage:
   - amount: 1.1
     fixedAmount: 270
     type: 4
-    element: 1
+    element: 2
     amountAttribute: 2
     criticalRate: 0.05
     criticalRateBonus: 0.5

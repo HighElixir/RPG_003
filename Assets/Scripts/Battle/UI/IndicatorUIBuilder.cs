@@ -15,10 +15,10 @@ namespace RPG_003.Battle
         {
             public Image image;
             public TMP_Text text;
-            public CharacterObject character;
+            public Unit character;
             public StatusAmount status;
             public float interval;
-            public Container(Image image, CharacterObject character, TMP_Text text, float interval = 999)
+            public Container(Image image, Unit character, TMP_Text text, float interval = 999)
             {
                 this.image = image;
                 this.character = character;
@@ -46,10 +46,10 @@ namespace RPG_003.Battle
             }
             _containers.Clear();
         }
-        public void UpdateUI(List<CharacterObject> characters)
+        public void UpdateUI(List<Unit> characters)
         {
             ReleaseAll();
-            foreach (CharacterObject character in characters)
+            foreach (Unit character in characters)
             {
                 var interval = character.BehaviorIntervalCount.CurrentAmount;
                 var image = _pool.Get();

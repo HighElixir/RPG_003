@@ -16,11 +16,12 @@ MonoBehaviour:
   _name: "\u885D\u7A81"
   _description: 
   _defaultIcon: {fileID: 0}
+  _sfx: {fileID: 11400000, guid: f492f91120501404fa2dc00232527969, type: 2}
   _damage:
   - amount: 1.2
     fixedAmount: 0
     type: 3
-    element: 0
+    element: 1
     amountAttribute: 1
     criticalRate: 0.05
     criticalRateBonus: 0.2

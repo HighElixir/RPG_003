@@ -10,16 +10,16 @@ namespace RPG_003.Battle
         private BattleManager _battleManager;
 
 
-        public CharacterObject SelectRandomTarget(Faction faction)
+        public Unit SelectRandomTarget(Faction faction)
         {
             var c = TargetSelectorsByType(faction);
             return c.Count > 0 ? c[Random.Range(0, c.Count)] : null;
         }
 
-        public List<CharacterObject> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
+        public List<Unit> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
         {
             var candidates = TargetSelectorsByType(faction);
-            var targets = new List<CharacterObject>();
+            var targets = new List<Unit>();
 
             // 重複禁止で要望数が候補数より多い場合は上限を候補数に合わせる
             if (!canSelectSameTarget && count > candidates.Count)
@@ -47,7 +47,7 @@ namespace RPG_003.Battle
         }
 
 
-        public List<CharacterObject> TargetSelectorsByType(Faction faction)
+        public List<Unit> TargetSelectorsByType(Faction faction)
         {
             var characters = _battleManager.GetCharacterMap();
             return faction switch
@@ -59,14 +59,14 @@ namespace RPG_003.Battle
             };
         }
 
-        public CharacterObject GetCharacter(CharacterPosition position)
+        public Unit GetCharacter(CharacterPosition position)
         {
             if (_battleManager.GetCharacterMap().ContainsKey(position))
                 return _battleManager.GetCharacterMap()[position];
             return null;
         }
 
-        public bool TryGetCharacter(CharacterPosition position, out CharacterObject character)
+        public bool TryGetCharacter(CharacterPosition position, out Unit character)
         {
             var map = _battleManager.GetCharacterMap();
             if (map.ContainsKey(position))
@@ -77,7 +77,7 @@ namespace RPG_003.Battle
             character = null;
             return false;
         }
-        public CharacterPosition GetPosition(CharacterObject character)
+        public CharacterPosition GetPosition(Unit character)
         {
             if (character != null)
             {

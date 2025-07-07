@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Text;
+using UnityEngine;
 
 namespace RPG_003.Skills
 {
@@ -7,5 +8,12 @@ namespace RPG_003.Skills
     {
         [SerializeField] private int _installableAddon = 1;
         public int InstallableAddon => _installableAddon;
+
+        public override string AdditionalDescriptions(string desc)
+        {
+            StringBuilder sb = new StringBuilder(desc);
+            sb.AppendLine($"[アドオンの数] :{InstallableAddon}");
+            return sb.ToString();
+        }
     }
 }

@@ -14,6 +14,18 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/MakeSkill.unity
     guid: 318d415f9e18f8740b5d820114bc6558
+  - enabled: 1
+    path: Assets/Scenes/MakeCharacter.unity
+    guid: b591ecbd6220c57469e2d071503da948
+  - enabled: 1
+    path: Assets/Scenes/Title.unity
+    guid: daf437907dc404446a73f9e4e78b81ac
+  - enabled: 1
+    path: Assets/Scenes/ManagerScene.unity
+    guid: a2ba2f40ce2230e41b43593645d3fac1
+  - enabled: 1
+    path: Assets/Scenes/EditTutor.unity
+    guid: 6bbd55812a0b71348b8c36905a4c0a60
   m_configObjects:
     com.unity.addressableassets: {fileID: 11400000, guid: fd0c23803abc0fb4183db683f4460da3, type: 2}
     com.unity.input.settings.actions: {fileID: -944628639613478452, guid: 2bcd2660ca9b64942af0de543d8d7100, type: 3}

@@ -1,8 +1,8 @@
-﻿using HighElixir.Pool;
+﻿using Cysharp.Threading.Tasks;
+using HighElixir.UI;
 using HighElixir.Utilities;
 using RPG_003.Effect;
-using System;
-using System.Collections;
+using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -13,8 +13,12 @@ namespace RPG_003.Battle
         [SerializeField] private Camera _camera;
         [SerializeField] private SpriteRenderer _background;
         [SerializeField] private EffectPlayer _effectPlayer;
-        [SerializeField] private PopText _popText;
+        [SerializeField] private TextThrower _thrower;
+        [SerializeField] private BattleLog _battleLog;
+        [SerializeField, ReadOnly] private bool _isPlaying = false;
 
+        public TextThrower Text => _thrower;
+        public BattleLog BattleLog => _battleLog;
         // === BackGround ===
         public void SetBackgroundSprite(Sprite sprite)
         {
@@ -23,58 +27,46 @@ namespace RPG_003.Battle
         public void SetBackground(SpriteRenderer background) => _background = background;
 
         // === EffectPlayer ===
-        public IEnumerator EffectPlay(SoundVFXData data, Vector2 vFXposition)
+        public async UniTask EffectPlay(SoundVFXData data, Vector2 vFXposition)
         {
-            yield return _effectPlayer.Play(data, vFXposition);
+            _isPlaying = true;
+            await _effectPlayer.Play(data, vFXposition);
+            _isPlaying = false;
         }
 
-        public IEnumerator EffectPlay(SoundVFXData data, List<Vector2> vFXpositions, bool parallel = true)
+        public async UniTask EffectPlay(SoundVFXData data, List<Vector2> vFXpositions, bool parallel = true)
         {
-            if (vFXpositions == null || vFXpositions.Count == 0)
-                yield break;
+            if (vFXpositions == null || vFXpositions.Count == 0) return;
+            _isPlaying = true;
             if (parallel)
             {
-
-
-                int remaining = vFXpositions.Count;
-
+                List<UniTask> tasks = new List<UniTask>();
                 // 各位置でコルーチンをスタート
                 foreach (var pos in vFXpositions)
                 {
-                    // StartCoroutineはMonoBehaviourメソッドとして呼び出すこと
-                    StartCoroutine(PlayAndNotify(data, pos, () => remaining--));
+                    tasks.Add(_effectPlayer.Play(data, pos));
                 }
 
                 // 全部のremainingが0以下になるまで待機
-                yield return new WaitUntil(() => remaining <= 0);
+                await UniTask.WhenAll(tasks);
             }
             else
             {
                 // 直列再生
                 foreach (var pos in vFXpositions)
                 {
-                    yield return EffectPlay(data, pos);
+                    await _effectPlayer.Play(data, pos);
                 }
             }
+            _isPlaying = false;
         }
 
         // === ThorwText ===
         public void ThrowText(Vector2 position, string text, Color col)
         {
             var c = ColorUtility.ToHtmlStringRGB(col);
-            _popText.CreateText(position, $"<color=#{c}>{text}</color>");
+            _thrower.Create(position, text, col);
         }
-
-        public Vector2 ScreenPointToWorld(Vector3 position)
-        {
-            return _camera.ScreenToWorldPoint(position);
-        }
-        private IEnumerator PlayAndNotify(SoundVFXData data, Vector2 pos, Action onComplete)
-        {
-            yield return _effectPlayer.Play(data, pos);
-            onComplete?.Invoke();
-        }
-
         protected override void Awake()
         {
             base.Awake();

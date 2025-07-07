@@ -3,6 +3,7 @@
     public enum Elements
     {
         None = 0,          // 無属性
+        Physics,          // 無属性
         Fire,     // 火属性
         Water,    // 水属性
         Earth,    // 地属性
@@ -18,7 +19,7 @@
         {
             return element switch
             {
-                Elements.None => "無属性",
+                Elements.Physics => "無属性",
                 Elements.Fire => "火属性",
                 Elements.Water => "水属性",
                 Elements.Earth => "地属性",

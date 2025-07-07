@@ -12,35 +12,30 @@ namespace RPG_003.Core
     public class GameDataHolder : SingletonBehavior<GameDataHolder>
     {
         // == holders ==
-        [SerializeField] private List<PlayerDataHolder> _players = new List<PlayerDataHolder>();
-        [SerializeField] private List<SkillDataHolder> _skillDatas = new List<SkillDataHolder>();// 全てのスキルへの参照を持つ
+        [SerializeField] private PlayerDataHolder _players = new();
+        [SerializeField] private List<SkillHolder> _skillDatas = new();// 全てのスキルへの参照を持つ
         [SerializeField] private ItemHolder _itemHolder = new();
-        [SerializeField] private SkillDatasHolder _skillDataCount = new();
+        [SerializeField] private SkillDataHolder _skillDataCount = new();
 
         // == property ==
-        public IReadOnlyList<PlayerDataHolder> Players => _players.AsReadOnly();
-        public IReadOnlyList<SkillDataHolder> Skills => _skillDatas.AsReadOnly();
+        public PlayerDataHolder Players => _players;
+        public IReadOnlyList<SkillHolder> Skills => _skillDatas.AsReadOnly();
         public ItemHolder Items => _itemHolder;
-        public SkillDatasHolder SkillDatas => _skillDataCount;
+        public SkillDataHolder SkillDatas => _skillDataCount;
         // === Public ===
         // PlayerDataHolder関連
-        public void AddPlayerData(PlayerDataHolder player) => _players.Add(player);
-        public void RemovePlayerData(PlayerDataHolder remove) => _players.Remove(remove);
-        public void SetPlayerDatas(List<PlayerDataHolder> data) => _players = new(data);
         public List<PlayerData> GetPlayerDatas()
         {
-            return _players.ConvertAll<PlayerData>(item => item.Convert());
+            return _players.Data.ConvertAll<PlayerData>(item => item.Convert());
         }
         // SkillHolder
-        public void AddSkill(SkillDataHolder skill) => _skillDatas.Add(skill);
-        public void RemoveSkill(SkillDataHolder skill) => _skillDatas.Remove(skill);
+        public void AddSkill(SkillHolder skill) => _skillDatas.Add(skill);
+        public void RemoveSkill(SkillHolder skill) => _skillDatas.Remove(skill);
 
         // === UnityLifecycle ===
         protected override void Awake()
         {
             base.Awake();
-            if (gameObject)
-                DontDestroyOnLoad(gameObject);
         }
     }
 }

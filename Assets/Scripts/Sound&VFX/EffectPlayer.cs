@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace RPG_003.Effect
@@ -8,9 +8,8 @@ namespace RPG_003.Effect
     {
         [SerializeField] private AudioSource _AudioSource;
 
-        public IEnumerator Play(SoundVFXData vFXData, Vector2 position)
+        public async UniTask Play(SoundVFXData vFXData, Vector2 position)
         {
-
             if (vFXData.AudioClip != null)
             {
                 var c = vFXData.AudioClip;
@@ -19,12 +18,11 @@ namespace RPG_003.Effect
             }
             if (vFXData.VFX != null)
             {
-                var v = Instantiate(vFXData.VFX, position, Quaternion.identity);
-                yield return new WaitWhile(() => v != null && v.IsAlive());
+                ParticleSystem v = Instantiate(vFXData.VFX, position, Quaternion.identity);
+                await UniTask.WaitWhile(() => v != null && v.IsAlive());
                 if (v != null)
                     Destroy(v.gameObject);
             }
-            yield break;
         }
 
         private void Awake()

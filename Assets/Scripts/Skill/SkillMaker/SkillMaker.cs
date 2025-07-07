@@ -25,15 +25,11 @@ namespace RPG_003.Skills
         [SerializeField] private Button _exit;
         private ReactiveProperty<SkillType> _current = new(SkillType.None);
         public IObservable<SkillType> Current => _current;
-        public void Confirm(SkillDataHolder production)
+        public void Confirm(SkillHolder production)
         {
-            Debug.Log($"SkillDataHolder: {production.Name} is completed.");
+            Debug.Log($"SkillHolder: {production.Name} is completed.");
             GameDataHolder.instance.AddSkill(production);
             _current.Value = SkillType.None;
-        }
-
-        public void ResetMaker(SkillDataHolder holder)
-        {
         }
         private void Awake()
         {

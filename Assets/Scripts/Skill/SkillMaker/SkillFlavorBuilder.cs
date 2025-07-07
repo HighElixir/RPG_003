@@ -5,8 +5,11 @@ using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
+using UniRx;
+using UniRx.Triggers;
 using RPG_003.Effect;
 using UnityEngine.UI;
+using Lean.Gui;
 
 namespace RPG_003.Skills
 {
@@ -22,7 +25,11 @@ namespace RPG_003.Skills
         [SerializeField, BoxGroup("Pool")] private Button _prefab; 
         [SerializeField, BoxGroup("Pool")] private Transform _container;
         [SerializeField, BoxGroup("AddressablesKey")] private string _folderLabel = "SoundVFX"; // Addressablesのラベルを指定
+        [SerializeField, BoxGroup("Reference")] private SkillMaker _maker;
+        [SerializeField, BoxGroup("Reference")] private LeanWindow _window;
+        [SerializeField, BoxGroup("Reference")] private VerticalLayoutGroup _verticalLayoutGroup;
         private bool _isInitialized = false;
+        private bool _enable = false;
         public Action<SoundVFXData> OnComplete { get; private set; }
 
         // 呼び出し側でラベルを変えたいなら引数で渡せるようにした
@@ -47,7 +54,7 @@ namespace RPG_003.Skills
             foreach (var data in datas)
             {
                 var btn = _buttonPool.Get();
-                btn.transform.SetParent(_container, false);
+                btn.transform.SetParent(_verticalLayoutGroup.transform, false);
                 btn.onClick.AddListener(
                     () =>
                 {
@@ -55,9 +62,27 @@ namespace RPG_003.Skills
                 });
             }
         }
+        public void OnClick()
+        {
+            if (_enable)
+            {
+                _window.On = true;
+            }
+        }
         private void Init()
         {
-            _buttonPool = new Pool<Button>(_prefab, 100, _container, true);
+            if (_maker == null)
+            {
+                Debug.LogError("");
+                enabled = false;
+                return;
+            }
+            _buttonPool = new Pool<Button>(_prefab, 20, _container, true);
+            _maker.Current.Subscribe(res => 
+            {
+                if (res != SkillMaker.SkillType.None) _enable = true;
+                else _enable = false;
+            }).AddTo(this);
             _isInitialized = true;
         }
         private void Awake()

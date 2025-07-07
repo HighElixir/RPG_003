@@ -1,6 +1,6 @@
-﻿using HighElixir.Pool;
+﻿using Cysharp.Threading.Tasks;
+using HighElixir.Pool;
 using Sirenix.OdinInspector;
-using System;
 using System.Collections.Generic;
 using UniRx;
 using UnityEngine;
@@ -26,6 +26,7 @@ namespace RPG_003.Battle
                 IsSelected = isSelected;
             }
         }
+
         // === References ===
         [BoxGroup("Reference"), SerializeField] private SkillSelectorUI _ui;
         [BoxGroup("Pool"), SerializeField] private Button _skillButtonPrefab;
@@ -35,22 +36,28 @@ namespace RPG_003.Battle
         [BoxGroup("UI"), SerializeField] private Button _confirm;
         [PropertyTooltip("シーンビュー上にて配置されている想定")]
         [BoxGroup("UI"), SerializeField] private Button _cancel;
+        [BoxGroup("UI"), SerializeField] private GraphicalManager _uiManage;
 
         // === Date ===
         private ButtonContainer _chosen;
-        private Action<Skill> _onConfirmCallback;
         private Pool<Button> _skillButtonPool;
         private List<ButtonContainer> _skillButtons = new();
         private int _idx = 0;
+        private bool _selecting = false;
 
         // === Public Methodes ===
-        public void InvokeSelector(List<Skill> skills, Action<Skill> onConfirmCallback)
+        public async UniTask<Skill> InvokeSelector(List<Skill> skills)
         {
-            _onConfirmCallback = onConfirmCallback;
+            Debug.Log("[SkillSelector] Invoke");
+            _selecting = true;
             ResetSkill();
             CreateButtons(skills);
             _confirm.gameObject.SetActive(true);
             _cancel.gameObject.SetActive(true);
+            await UniTask.WaitWhile(() => _selecting);
+            var res = _chosen.Skill;
+            Exit();
+            return res;
         }
         public void Exit()
         {
@@ -87,9 +94,8 @@ namespace RPG_003.Battle
             {
                 if (item.Skill.IsActive) return;
             }
-            Notify();
+            _selecting = false;
         }
-
         public void ReleaseButtons()
         {
             foreach (var button in _skillButtons)
@@ -99,20 +105,12 @@ namespace RPG_003.Battle
             _skillButtons.Clear();
         }
 
-
-
         // === Private Methodes ===
-        private void Notify()
-        {
-            _onConfirmCallback?.Invoke(_chosen.Skill);
-            Exit();
-        }
         private void SetButtonsVisible(bool isShow)
         {
             _confirm?.gameObject.SetActive(isShow);
             _cancel?.gameObject.SetActive(isShow);
         }
-
         private void ResetSkill()
         {
             if (_chosen == null) return;
@@ -150,8 +148,13 @@ namespace RPG_003.Battle
                 _confirm.gameObject.SetActive(false);
                 _confirm.OnClickAsObservable().Subscribe(_ =>
                 {
-                    if (_chosen?.Skill == null) return;
-                    Notify();
+                    if (!_selecting) return;
+                    if (_chosen == null || _chosen.Skill == null)
+                    {
+                        _uiManage.ThrowText(_confirm.GetComponent<RectTransform>().anchoredPosition, "スキルを選んでね！", Color.red);
+                        return;
+                    }
+                    _selecting = false;
                 }).AddTo(this);
             }
             if (_cancel)
@@ -159,6 +162,7 @@ namespace RPG_003.Battle
                 _cancel.gameObject.SetActive(false);
                 _cancel.OnClickAsObservable().Subscribe(_ =>
                 {
+                    if (!_selecting) return;
                     ResetSkill();
                 }).AddTo(this);
             }
@@ -166,7 +170,6 @@ namespace RPG_003.Battle
         private void Start()
         {
             ResetSkill();
-
             _skillButtonPool = new Pool<Button>(_skillButtonPrefab, 5, _container, true);
         }
     }

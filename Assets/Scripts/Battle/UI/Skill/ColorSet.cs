@@ -9,6 +9,7 @@ namespace RPG_003.Battle
         {
             return elements switch
             {
+                Elements.Physics => Color.gray,
                 Elements.Fire => Color.red,
                 Elements.Water => new Color(65, 105, 255, 1),
                 Elements.Earth => new Color(0, 100, 0, 1),

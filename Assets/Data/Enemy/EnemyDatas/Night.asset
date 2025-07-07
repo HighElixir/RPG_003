@@ -24,34 +24,19 @@ MonoBehaviour:
   enemyName: Night
   description: 
   icon: {fileID: 21300000, guid: 6aa2c084e23bc8e469b947725adac0fd, type: 3}
-  characterData:
+  statusData:
     _name: Night
-    _hp: 3000
-    _mp: 500
-    _str: 200
-    _int: 0
-    _spd: 99
-    _def: 1500
-    _mdef: 1500
+    _hp: 1300
+    _mp: 0
+    _str: 1000
+    _int: 500
+    _spd: 100
+    _def: 700
+    _mdef: 400
     _luk: 100
     _criticalRate: 0
     _criticalDamage: 0
     _takeDamageScale: 1
-    _takeElementDamageScale:
-    - element: 0
-      scale: 1
-    - element: 1
-      scale: 1
-    - element: 2
-      scale: 1
-    - element: 3
-      scale: 1
-    - element: 4
-      scale: 1
-    - element: 5
-      scale: 1
-    - element: 6
-      scale: 1
-    - element: 7
-      scale: 1
+    _takeElementDamageScale: []
+    _giveElementDamageScale: []
   enemyBehaviorData: {fileID: 11400000, guid: ed7bd1ddf01bbe746a4da30bac9be05c, type: 2}

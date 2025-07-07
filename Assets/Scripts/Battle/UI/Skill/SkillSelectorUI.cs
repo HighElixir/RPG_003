@@ -23,7 +23,6 @@ namespace RPG_003.Battle
                     button.image.color = _usable;
                 else
                     button.image.color = _unusable;
-                if (data.Sprite == null) Debug.Log("asasaa");
                 button.image.sprite = data.Sprite;
                 button.GetComponentInChildren<TMP_Text>().SetText(data.Name);
             }

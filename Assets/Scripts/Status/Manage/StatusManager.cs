@@ -8,7 +8,7 @@ namespace RPG_003.Status
     {
         private readonly Dictionary<StatusAttribute, StatusAmount> _statusAmounts = new();
         public IReadOnlyDictionary<StatusAttribute, StatusAmount> StatusPair => _statusAmounts;
-        public CharacterObject Parent { get; set; }
+        public Unit Parent { get; set; }
 
         private StatusAmount _HPAmount;
         private StatusAmount _MPAmount;
@@ -25,7 +25,7 @@ namespace RPG_003.Status
             set => _MPAmount.currentAmount = Mathf.Clamp(value, 0, MaxMP);
         }
         public float MaxMP => _MPAmount.ChangedMax;
-        public void Initialize(CharacterObject parent, CharacterData data)
+        public void Initialize(Unit parent, StatusData data)
         {
             Parent = parent;
             _statusAmounts.Clear();
@@ -39,9 +39,9 @@ namespace RPG_003.Status
             AddStatus(StatusAttribute.DEF, data.DEF);
             AddStatus(StatusAttribute.MDEF, data.MDEF);
             AddStatus(StatusAttribute.LUK, data.LUK);
-            AddStatus(StatusAttribute.CriiticalRate, data.CR + data.LUKToCR);
+            AddStatus(StatusAttribute.CriticalRate, data.CR + data.LUKToCR);
             AddStatus(StatusAttribute.CriticalDamage, data.CRDamage + data.LUKToCRDamage);
-            AddStatus(StatusAttribute.DamageResist, data.TakeDamageScale);
+            AddStatus(StatusAttribute.TakeDamageScale, data.TakeDamageScale);
 
             // 現在HPを最大値に設定
             _HPAmount = _statusAmounts[StatusAttribute.HP];
@@ -161,14 +161,19 @@ namespace RPG_003.Status
 
         public void TakeDamage(DamageInfo info)
         {
-            var infoClone = ((DamageInfo)info.Clone()).ResistDamage();
-            HP = Mathf.Max(0, HP - infoClone.Damage);
-            Debug.Log($"Current HP: {HP}, Max HP: {MaxHP}");
+            HP = Mathf.Max(0, HP - info.Damage);
             if (HP <= 0)
                 Parent.NotifyDeath();
+            MakeText(info);
         }
 
-        public StatusManager(CharacterObject parent, CharacterData data)
+        private void MakeText(DamageInfo info)
+        {
+            string color = ColorUtility.ToHtmlStringRGBA(info.Elements.GetColorElement());
+            var b = GraphicalManager.instance.BattleLog;
+            b.Add($"{info.Target.Data.Name}は<color=#{color}>{info.Damage}</color>ダメージを受けた！", BattleLog.IconType.Negative);                
+        }
+        public StatusManager(Unit parent, StatusData data)
         {
             Initialize(parent, data);
         }

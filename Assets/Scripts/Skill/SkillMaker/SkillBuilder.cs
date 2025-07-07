@@ -44,22 +44,22 @@ namespace RPG_003.Skills
         [SerializeField, BoxGroup("Button")] private Button _confirm;
         [SerializeField, BoxGroup("Button")] private Button _delete;
         [SerializeField] private SkillMaker _director;
-        [SerializeField] private SkillButtonUIBuilder _ui;
+        [SerializeField] private SkillUIBuilder _ui;
         [SerializeField] private SkillGetter _getter;
-        private ReactiveProperty<SkillDataHolder> _temp = new();
+        private ReactiveProperty<SkillHolder> _temp = new();
         private IDisposable _unSubscriber;
         private SkillMaker.SkillType _currentWork;
         private List<DataContainer> _buttons = new();
 
-        public Action<SkillDataHolder> OnComplete { get; set; }
-        public IObservable<SkillDataHolder> Temp => _temp;
+        public Action<SkillHolder> OnComplete { get; set; }
+        public IObservable<SkillHolder> Temp => _temp;
         public void Init()
         {
             _buttonPool = new(_prefab, 100, _container, true);
             if (_unSubscriber != null)
                 _unSubscriber.Dispose();
             _director = GetComponent<SkillMaker>();
-            _ui = GetComponent<SkillButtonUIBuilder>();
+            _ui = GetComponent<SkillUIBuilder>();
             _unSubscriber = _director.Current.Subscribe(Next).AddTo(this);
             Temp.Subscribe(temp =>
             {
@@ -80,12 +80,18 @@ namespace RPG_003.Skills
             _name.onEndEdit.AddListener((s) =>
             {
                 if (_temp != null)
+                {
                     _temp.Value.SetCustomName(s);
+                    _ui.UpdateUI(_buttons, _currentWork, _temp.Value);
+                }
             });
             _description.onEndEdit.AddListener((s) =>
             {
                 if (_temp != null)
+                {
                     _temp.Value.SetCustomDesc(s);
+                    _ui.UpdateUI(_buttons, _currentWork, _temp.Value);
+                }
             });
 
             // Initialize button
@@ -111,7 +117,7 @@ namespace RPG_003.Skills
             {
                 if (_temp != null)
                 {
-                    BreakHolder(_temp.Value);
+                    Next(_currentWork);
                 }
             });
         }
@@ -162,9 +168,15 @@ namespace RPG_003.Skills
                 {
                     if (dic.TryGetValue(kvp.Key, out int count) && count >= 1 && _temp.Value.CanSetSkillData(kvp.Key))
                     {
-                        var tmp = _temp.Value.SkillData;
-                        if (tmp != null)
-                            _getter.Add(tmp, 1);
+                        if (_temp.Value.IsNeedReplace(kvp.Key, out var oldItems))
+                        {
+                            foreach (var item in oldItems)
+                            {
+                                if (item == null) continue;
+                                _getter.Add(item, 1);
+                                _temp.Value.RemoveSkillData(item);
+                            }
+                        }
                         _getter.Remove(kvp.Key, 1);
                         _temp.Value.SetSkillData(kvp.Key);
                         Debug.Log($"Set SkillData: {kvp.Key.Name}, having {dic[kvp.Key]}");
@@ -185,13 +197,21 @@ namespace RPG_003.Skills
                 var b = _buttonPool.Get();
                 b.onClick.AddListener(() =>
                 {
-                    if (_temp.Value.RemoveSkillData(item))
+                    if (_temp.Value.RemoveSkillData(item, out var list))
+                    {
                         _getter.Add(item, 1); // スキルデータを戻す
-                    _temp.Value.RemoveSkillData(item);
+                        foreach (var item2 in list)
+                        {
+                            Debug.Log($"{item2.Name} is Removed.");
+                            _getter.Add(item2, 1);
+                        }
+                    }
                     SetButton(); // Update buttons after breaking the skill data
                     _ui.UpdateUI(_buttons, _currentWork, _temp.Value);
                 });
-                _buttons.Add(new(b, true, item, 0));
+                var c = new DataContainer(b, true, item, 1);
+                Debug.Log(c.ToString());
+                _buttons.Add(c);
             }
         }
 
@@ -204,15 +224,17 @@ namespace RPG_003.Skills
             _buttons.Clear();
             Debug.Log("ReleaseButtons Completed");
         }
-        private void BreakHolder(SkillDataHolder skillDataHolder)
+        private void BreakHolder(SkillHolder skillHolder)
         {
-            if (skillDataHolder == null || skillDataHolder.SkillData == null) return;
-            var list = skillDataHolder.GetSkillDatas();
+            if (skillHolder == null || skillHolder.SkillData == null) return;
+            var list = skillHolder.GetSkillDatas();
             foreach (var data in list)
             {
-                if (_getter.Datas.TryGetValue(data, out int count))
+                if (data == null) continue;
+                Debug.Log(data.ToString());
+                if (_getter.Datas.ContainsKey(data))
                 {
-                    _getter.Datas[data] = count + 1;
+                    _getter.Datas[data] += 1;
                 }
                 else
                 {

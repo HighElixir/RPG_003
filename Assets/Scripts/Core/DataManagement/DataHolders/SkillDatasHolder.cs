@@ -5,7 +5,7 @@ using UnityEngine;
 namespace RPG_003.Core
 {
     [Serializable]
-    public class SkillDatasHolder
+    public class SkillDataHolder
     {
         [SerializeField]
         private Dictionary<SkillData, int> _skillDict = new();

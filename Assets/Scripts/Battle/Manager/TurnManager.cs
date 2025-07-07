@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Cysharp.Threading.Tasks;
+using RPG_003.Battle.Factions;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Threading;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -15,38 +17,37 @@ namespace RPG_003.Battle
         private BattleManager _parent;
 
         // === Data ===
-        private List<CharacterObject> _turnActors = new List<CharacterObject>();
+        private List<Unit> _turnActors = new List<Unit>();
 
         // === Action & Callback ===
-        public Action<CharacterObject> OnExecuteTurn;
-
-        private Dictionary<CharacterObject, Coroutine> _coroutines = new();
-        private MonoBehaviour _coroutineRunner;
+        public Action<Unit> OnExecuteTurn;
+        private CancellationTokenSource _tokenSource = new();
 
         // === Constructor ===
-        public TurnManager(BattleManager parent, MonoBehaviour coroutineRunner)
+        public TurnManager(BattleManager parent)
         {
             _parent = parent;
-            _coroutineRunner = coroutineRunner;
         }
 
         // === Public ===
-
-        /// <summary>
-        /// BattleManager.ProcessTurn で呼ばれる。
-        /// </summary>
-        public void ProcessTurn()
+        public async UniTask ProcessTurn()
         {
+            if (!_parent.IsBattleContinue) return;
+            await _parent.WaitForPause();
             if (_turnActors.Count > 0)
             {
-                var next = _turnActors[0];
-                ExecuteTurn(next);
-                return;
+                while (_turnActors.Count > 0)
+                {
+                    if (!_parent.IsBattleContinue) return;
+                    await _parent.WaitForPause();
+                    var next = _turnActors.First();
+                    await ExecuteTurn(next);
+                }
             }
 
+            // 最小の行動値に合わせて全体を減少
             var all = _parent.GetCharacters();
             if (all.Count == 0) return;
-
             int delta = all.Min(c => c.BehaviorIntervalCount.CurrentAmount);
             Debug.Log($"[TurnManager] Processing turn: advancing all by {delta}");
 
@@ -59,62 +60,33 @@ namespace RPG_003.Battle
                 }
             }
             _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
+
+            // 行動値が0のunitを全て行動待ちリストに追加
             var ready = all.Where(c => c.BehaviorIntervalCount.IsReady).OrderByDescending(c => c.BehaviorIntervalCount.Speed);
             _turnActors.AddRange(ready);
-#if UNITY_EDITOR       
-            if (_turnActors.Count != 0)
-            {
-                var sb = new StringBuilder("[TurnManager] _turnActors:");
-                foreach (var turnActor in _turnActors)
-                {
-                    sb.Append($"\n {turnActor.Data.Name},");
-                }
-                Debug.Log(sb.ToString());
-            }
-#endif
-            _parent.ProcessTurn();
+            _ = ProcessTurn();
         }
 
-        /// <summary>
-        /// BattleManager から Turn 終了通知が来たら呼ぶ
-        /// </summary>
-        public void FinishTurn()
-        {
-            if (_turnActors.Count > 0)
-            {
-                var nextActor = _turnActors[0];
-                ExecuteTurn(nextActor);
-            }
-            else
-            {
-                ProcessTurn();
-            }
-        }
-        public void RemoveCharacter(CharacterObject character)
+        public void RemoveCharacter(Unit character)
         {
             _turnActors.Remove(character);
-            if (_coroutines.ContainsKey(character))
-                _coroutineRunner.StopCoroutine(_coroutines[character]);
-
         }
 
         public void Reset()
         {
-            foreach (var c in _coroutines.Values)
-            {
-                _coroutineRunner.StopCoroutine(c);
-            }
+            _tokenSource.Cancel();
             _turnActors.Clear();
         }
         // === Private ===
-        private void ExecuteTurn(CharacterObject actor, bool instantStart = false)
+        private async UniTask ExecuteTurn(Unit actor, bool instantStart = false)
         {
             if (actor == null) return;
-            if (!instantStart) Remove(actor);
+            if (!instantStart) RemoveToTurnActors(actor);
             OnExecuteTurn?.Invoke(actor);
-            _coroutines[actor] = _coroutineRunner.StartCoroutine(actor.TurnBehaviour());
+            GraphicalManager.instance.BattleLog.Add($"<color=#{ColorUtility.ToHtmlStringRGB(actor.Faction.FactionToColor())}>{actor.Data.Name}</color>のターン！", BattleLog.IconType.Normal);
+            await actor.Behaviour.TurnBehaviour(_tokenSource.Token);
         }
-        private void Remove(CharacterObject character)
+        private void RemoveToTurnActors(Unit character)
         {
             _turnActors.Remove(character);
             character.BehaviorIntervalCount.Reset();

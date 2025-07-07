@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f2e2f0f86aee2348bc3d18a51b9ca61, type: 3}
   m_Name: Punch
   m_EditorClassIdentifier: 
+  _soundName: "\u6BB4\u6253"
   _audioClip: {fileID: 8300000, guid: 498a61c0bcdf0b649916507c344ef285, type: 3}
-  _VFX: {fileID: 0}
+  _VFX: {fileID: 2708598583397607910, guid: 6398d43fe79ea0140913dc5530c646af, type: 3}
+  _isEveryTarget: 0

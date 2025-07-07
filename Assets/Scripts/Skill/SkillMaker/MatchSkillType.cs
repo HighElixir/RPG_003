@@ -2,7 +2,7 @@
 {
     public static class MatchSkillType
     {
-        public static bool IsMatch(this SkillData data, SkillDataHolder holder)
+        public static bool IsMatch(this SkillData data, SkillHolder holder)
         {
             var paramA = (data is SmithChip || data is SkillSlotData) && holder is SmithHolder;
             var paramB = (data is ModifierData || data is AddonData) && holder is ModifierHolder;

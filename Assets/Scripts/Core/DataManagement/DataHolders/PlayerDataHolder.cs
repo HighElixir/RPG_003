@@ -1,37 +1,30 @@
-﻿using RPG_003.Skills;
-using RPG_003.Battle;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using RPG_003.Character;
 
 namespace RPG_003.Core
 {
+    /// <summary>
+    /// チーム編成を兼ねている
+    /// </summary>
     [Serializable]
     public class PlayerDataHolder
     {
         // == ==
-        [SerializeField] private CharacterData _characterData = new();
-        [SerializeField] private List<SkillDataHolder> _skills = new();
+        [SerializeField] private List<CharacterDataHolder> _data = new();
 
         // == Property ==
-        public CharacterData CharacterData => _characterData;
-        public List<SkillDataHolder> Skills => _skills ??= new List<SkillDataHolder>();
-
+        public List<CharacterDataHolder> Data => _data;
+        public int Count => _data.Count;
 
         // === Public ===
-        public void SetCharacter(CharacterData characterData) => _characterData = characterData;
-        public void SetSkills(List<SkillDataHolder> skills) => _skills = skills;
-
-        public PlayerData Convert()
+        public void Add(CharacterDataHolder data)
         {
-            return new PlayerData(CharacterData, Skills.ConvertAll(h => { return h.ConvartData(); }));
+            _data.Add(data);
         }
 
         // === Constracter ===
-        public PlayerDataHolder(CharacterData characterData)
-        {
-            _characterData = characterData;
-            _skills = new List<SkillDataHolder>();
-        }
+        public PlayerDataHolder() { }
     }
 }

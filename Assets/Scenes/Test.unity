@@ -528,10 +528,19 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _execute: {fileID: 992407886}
-  _basicData: {fileID: 11400000, guid: 8b94307027b70a344b6a5dc921b87fdb, type: 2}
-  _skillName: "\u304A\u5B9D\u30E9\u30C3\u30B7\u30E5"
-  _icon: {fileID: 21300000, guid: c8303e833b0ef184e99c1bc8940fff84, type: 3}
-  _soundVFXData: {fileID: 11400000, guid: f492f91120501404fa2dc00232527969, type: 2}
+  _holder:
+    rid: 3120453605746016347
+  references:
+    version: 2
+    RefIds:
+    - rid: 3120453605746016347
+      type: {class: BasicHolder, ns: RPG_003.Skills, asm: Assembly-CSharp}
+      data:
+        _custonIcon: {fileID: 0}
+        _soundVFXData: {fileID: 0}
+        _custonName: 
+        _custonDesc: 
+        _skill: {fileID: 11400000, guid: 8b94307027b70a344b6a5dc921b87fdb, type: 2}
 --- !u!114 &992407886
 MonoBehaviour:
   m_ObjectHideFlags: 0

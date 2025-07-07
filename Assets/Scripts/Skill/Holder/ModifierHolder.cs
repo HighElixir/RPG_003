@@ -1,4 +1,5 @@
-﻿using RPG_003.Battle;
+﻿using HighElixir;
+using RPG_003.Battle;
 using RPG_003.Battle.Factions;
 using RPG_003.Status;
 using System;
@@ -10,31 +11,56 @@ using UnityEngine;
 namespace RPG_003.Skills
 {
     [Serializable]
-    public class ModifierHolder : SkillDataHolder
+    public class ModifierHolder : SkillHolder
     {
         [SerializeField] private ModifierData _skill;
-        [SerializeField] private List<AddonData> _data = new();
+        [SerializeField] private List<AddonData> _addons = new();
         public override SkillData SkillData => _skill;
-        public List<AddonData> Data => _data;
+        public List<AddonData> Addons => _addons;
         public override Sprite Icon => _custonIcon ? _custonIcon : _skill.DefaultIcon;
 
-        public override string Name => string.IsNullOrEmpty(_custonName) ? _skill.Name : _custonName;
-
-        public override string Desc => string.IsNullOrEmpty(_custonDesc) ? _skill.Description : _custonDesc;
-        public override bool IsValid(out string message)
+        public override string Name
         {
-            if (_skill != null && _data.Count <= _skill.InstallableAddon)
+            get
             {
-                message = string.Empty;
+                if (string.IsNullOrEmpty(_custonName))
+                {
+                    if (_skill != null)
+                        return _skill.Name;
+                    return "";
+                }
+                return _custonName;
+            }
+        }
+
+        public override string Desc
+        {
+            get
+            {
+                if (string.IsNullOrEmpty(_custonDesc))
+                {
+                    if (_skill != null)
+                        return _skill.Description;
+                    return "";
+                }
+                return _custonDesc;
+            }
+        }
+
+        public override bool IsValid(out int errorCode)
+        {
+            if (_skill != null && _addons.Count <= _skill.InstallableAddon)
+            {
+                errorCode = 0;
                 return true;
             }
             else if (_skill == null)
             {
-                message = "ModifierDataが設定されていません。";
+                errorCode = -1;
             }
             else
             {
-                message = $"Addonの数が上限を超えています。最大数: {_skill.InstallableAddon}";
+                errorCode = -2;
             }
             return false;
         }
@@ -47,7 +73,7 @@ namespace RPG_003.Skills
             }
             if (_skill != null && data is AddonData addonData)
             {
-                return _data.Count < _skill.InstallableAddon;
+                return _addons.Count < _skill.InstallableAddon;
             }
             // 他のスキルデータは受け入れない
             return false;
@@ -55,19 +81,56 @@ namespace RPG_003.Skills
         public override float GetCriticalRate()
         {
             if (_skill == null || _skill.DamageDatas == null || _skill.DamageDatas.Count == 0)
-            {
-                return 0f; // No damage data available
-            }
-            return _skill.DamageDatas.Average(d => d.criticalRate);
-        }
+                return 0f;
 
+            // 各ダメージデータに対して、アドオン効果を適用したクリティカル率を計算
+            var adjustedRates = _skill.DamageDatas.Select(dmg =>
+            {
+                float rate = dmg.criticalRate;
+                foreach (var addon in _addons)
+                {
+                    foreach (var eff in addon.ForDamages)
+                    {
+                        // このダメージに対して効果を乗せられるかチェック
+                        if (eff.Usable(dmg))
+                        {
+                            // scale をかけたうえで fixedAmount を足す
+                            rate = rate * eff.scale + eff.fixedAmount;
+                        }
+                    }
+                }
+                return rate;
+            });
+
+            // 最終的に平均クリティカル率を返す
+            return adjustedRates.Average();
+        }
         public override float GetCriticalDamage()
         {
             if (_skill == null || _skill.DamageDatas == null || _skill.DamageDatas.Count == 0)
             {
                 return 0f; // No damage data available
             }
-            return _skill.DamageDatas.Average(d => d.criticalRateBonus);
+            // 各ダメージデータに対して、アドオン効果を適用したクリティカル率を計算
+            var adjustedRates = _skill.DamageDatas.Select(dmg =>
+            {
+                float bonus = dmg.criticalRateBonus;
+                foreach (var addon in _addons)
+                {
+                    foreach (var eff in addon.ForDamages)
+                    {
+                        // このダメージに対して効果を乗せられるかチェック
+                        if (eff.Usable(dmg))
+                        {
+                            // scale をかけたうえで fixedAmount を足す
+                            bonus = bonus * eff.scale + eff.fixedAmount;
+                        }
+                    }
+                }
+                return bonus;
+            });
+            // 最終的に平均クリティカル率を返す
+            return adjustedRates.Average();
         }
         public override SkillDataInBattle ConvartData()
         {
@@ -82,7 +145,7 @@ namespace RPG_003.Skills
                 SoundVFXData
             );
 
-            foreach (var addon in _data)
+            foreach (var addon in _addons)
             {
                 // --- ダメージ修正 ---
                 for (int i = 0; i < s.DamageDatas.Count; i++)
@@ -90,14 +153,7 @@ namespace RPG_003.Skills
                     var dmg = s.DamageDatas[i];
                     foreach (var eff in addon.ForDamages)
                     {
-                        bool attrMatch = dmg.amountAttribute == eff.amountAttribute;
-                        bool elemMatch =
-                            eff.amountAttribute == AmountAttribute.Heal ||
-                            eff.amountAttribute == AmountAttribute.Consume ||
-                            eff.elements == Elements.None ||
-                            dmg.element == eff.elements;
-
-                        if (attrMatch && elemMatch)
+                        if (eff.Usable(dmg))
                         {
                             // 【ダメージの係数】に scale をかけ、
                             dmg.amount = dmg.amount * eff.scale;
@@ -114,7 +170,7 @@ namespace RPG_003.Skills
                     var cost = s.CostDatas[i];
                     foreach (var eff in addon.Costs)
                     {
-                        if (eff.conditions == AddonEffectForCost.Patarn.All || (cost.isHP && eff.conditions == AddonEffectForCost.Patarn.HP) || (!cost.isHP && eff.conditions == AddonEffectForCost.Patarn.MP))
+                        if (eff.Usable(cost))
                         {
                             // コストも同様に scale をかけたあと fixedAmount を加算
                             cost.amount = cost.amount * eff.scale + eff.fixedAmount;
@@ -152,15 +208,14 @@ namespace RPG_003.Skills
             }
             if (data is AddonData addon)
             {
-                _data.Add(addon);
+                _addons.Add(addon);
             }
         }
-
         public override bool RemoveSkillData(SkillData data)
         {
-            if (_data.Contains(data as AddonData))
+            if (data is AddonData addon && _addons.Contains(addon))
             {
-                return _data.Remove(data as AddonData);
+                return _addons.Remove(addon);
             }
             else if (_skill == data as ModifierData)
             {
@@ -170,10 +225,25 @@ namespace RPG_003.Skills
             return false;
         }
 
+        public override bool RemoveSkillData(SkillData data, out List<SkillData> list)
+        {
+            list = new List<SkillData>();
+            if (data is ModifierData)
+            {
+                var clone = new List<AddonData>(_addons);
+                foreach (var addon in clone)
+                {
+                    if (RemoveSkillData(addon))
+                        list.Add(addon);
+                }
+            }
+            return RemoveSkillData(data);
+        }
+
         public override IReadOnlyList<SkillData> GetSkillDatas()
         {
             var res = new List<SkillData> { _skill };
-            res.AddRange(_data);
+            res.AddRange(_addons);
             return res.AsReadOnly();
         }
 
@@ -208,6 +278,30 @@ namespace RPG_003.Skills
             sb.AppendLine($"  - MP: {mp}");
             sb.AppendLine($"ターゲット: {(_skill.Target.IsSelf ? "自己" : _skill.Target.Faction.ToJapanese())}の{_skill.Target.Count}体");
             return sb.ToString();
+        }
+
+        public override bool IsNeedReplace(SkillData newItem, out List<SkillData> oldItems)
+        {
+            oldItems = new();
+            if (newItem is AddonData && _addons.TryGetOverItem(_skill.InstallableAddon, out var res))
+            {
+                oldItems.AddRange(res);
+                return true;
+            }
+            else if (newItem is ModifierData modifier && _skill != null)
+            {
+                oldItems.Add(SkillData);
+                var needRemove = _addons.Count - modifier.InstallableAddon;
+                if (needRemove > 0)
+                {
+                    for (int i = 0; i < needRemove; i++)
+                    {
+                        oldItems.Add(_addons[i]);
+                    }
+                }
+                return true;
+            }
+            return false;
         }
     }
 }

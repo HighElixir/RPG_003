@@ -7,13 +7,14 @@ namespace RPG_003.Battle
     [Serializable]
     public class DamageInfo : ICloneable
     {
-        public CharacterObject Source { get; set; }
-        public CharacterObject Target { get; set; }
+        public Unit Source { get; set; }
+        public Unit Target { get; set; }
+        public Skill Skill { get; set; }
         public float Damage { get; set; }
         public Elements Elements { get; set; }
         public AmountAttribute AmountAttribute { get; set; }
         public bool IsCritical { get; set; }
-        public DamageInfo(CharacterObject source, CharacterObject target, float damage, AmountAttribute amount = AmountAttribute.Physic, bool isCritical = false, Elements elements = Elements.None)
+        public DamageInfo(Unit source, Unit target, float damage, AmountAttribute amount = AmountAttribute.Physic, bool isCritical = false, Elements elements = Elements.None)
         {
             Source = source;
             Target = target;
@@ -21,6 +22,7 @@ namespace RPG_003.Battle
             IsCritical = isCritical;
             Elements = elements;
         }
+        public DamageInfo() { }
         public object Clone()
         {
             var clone = new DamageInfo(Source, Target, Damage, AmountAttribute, IsCritical, Elements)

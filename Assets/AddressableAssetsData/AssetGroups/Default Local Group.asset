@@ -25,6 +25,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 29fa9ebb7d30b4d43b14f0d46b69646c
+    m_Address: Assets/Data/Skill/Smith/Slot/s_woodenSlot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SkillData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4852ac9fcc9fe7848a7158822047ecd3
     m_Address: Assets/Data/Enemy/Skills/Sp_1/Brunt.asset
     m_ReadOnly: 0
@@ -36,11 +42,29 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 498a61c0bcdf0b649916507c344ef285
+    m_Address: "Assets/Sounds/\u4E2D\u30D1\u30F3\u30C1.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55dc49bdfe8819e4a996246ce9c624a3
     m_Address: Assets/Data/Enemy/Skills/Sp_1/DarkSlash.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - EnemySkill
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 59034c94f8e407c4c99f0fedb682cc79
+    m_Address: "Assets/Sounds/\u706B\u708E\u9B54\u6CD51.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 60c9b099848af2a459eee3cd3ad6a8f9
+    m_Address: "Assets/Sounds/\u6CB3\u539F.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6901d00c7a672e24bb9024eed88a0c51
     m_Address: Assets/Data/Enemy/SpawnTable/Wave1.asset
@@ -53,6 +77,35 @@ MonoBehaviour:
     m_SerializedLabels:
     - EnemySkill
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8557cc3af59a0e744b11c98b9e848eae
+    m_Address: "Assets/Sounds/\u98A8\u306B\u63FA\u308C\u308B\u8349\u67281.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b28ea2fc80e218b448a12684f24dc183
+    m_Address: "Assets/Sounds/\u96F7\u9B54\u6CD52.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b930a1b6a4802aa4887a21a3f7b3891e
+    m_Address: Assets/Data/Picture/Title_1.png
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed9038dd265f5064fb0dc08c8819b2e4
+    m_Address: Assets/Data/SoundEffectData/thunder/Thunder.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SoundVFX
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: edb9715098266b647a7fc0046bc517ae
+    m_Address: "Assets/Sounds/\u5263\u3067\u65AC\u308B2.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: f492f91120501404fa2dc00232527969
     m_Address: Assets/Data/SoundEffectData/Phisics/Punch.asset
     m_ReadOnly: 0
@@ -64,6 +117,12 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels:
     - SoundVFX
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fc346e1a010d71549b1caee6be034633
+    m_Address: Assets/Data/Skill/Smith/Slot/Slot.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SkillData
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b91b0758a04e71e43a4917449c0cff90, type: 2}

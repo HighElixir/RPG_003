@@ -1,4 +1,4 @@
-﻿using HighElixir.PauseManage;
+﻿using Cysharp.Threading.Tasks;
 using RPG_003.Battle.Behaviour;
 using RPG_003.Battle.Factions;
 using RPG_003.Core;
@@ -6,69 +6,64 @@ using RPG_003.Status;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace RPG_003.Battle
 {
     [DefaultExecutionOrder(-1)]
-    public class BattleManager : PausableMonoBehaviour
+    public class BattleManager : MonoBehaviour
     {
         //=== Reference ===
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
         [BoxGroup("Reference"), SerializeField] private SkillSelector _skillButtonManager;
-        [BoxGroup("Reference"), SerializeField] private CharacterObject _characterObject;
+        [BoxGroup("Reference"), SerializeField] private Unit _unitPrefab;
         [BoxGroup("Reference"), SerializeField] private TargetSelector _targetSelector;
         [BoxGroup("Reference"), SerializeField] private IndicatorUIBuilder _indicatorUI;
-        [BoxGroup("Reference"), SerializeField] private Player _player;
+        [BoxGroup("Reference"), SerializeField] private PlaySounds _sounds;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
         [BoxGroup("Reference"), SerializeField] private SceneLoaderAsync _sceneLoaderAsync;
-
+        [BoxGroup("Container"), SerializeField] private Transform _charactersContainer;
         private PositionManager _posManager;
         private TurnManager _turnManager;
 
-        // === Debug ===
-        [SerializeField, ReadOnly] private IReadOnlyDictionary<CharacterPosition, CharacterObject> _characterPositions;
+
 
         //=== Non-Serialized Fields ===
-        private Transform _charactersContainer;
         private bool _isBattleContinue = false;
+        private BoolReactiveProperty _isPause = new BoolReactiveProperty(false);
 
 #if UNITY_EDITOR
 #pragma warning disable 0414
-        private bool _allowNextTurn = false;
-        [SerializeField, Tooltip("True => バトルマネージャにボタンが表示され、それを押すことでターンを進行するようになる")]
-        private bool _enebleUseTurnManage = true;
+        [SerializeField, ReadOnly] private IReadOnlyDictionary<CharacterPosition, Unit> _characterPositions;
 #pragma warning restore 0414
 #endif
 
         //=== Properties ===
-        public Action<CharacterObject> OnCharacterRemoved { get; set; }
+        public Action<Unit> OnCharacterRemoved { get; set; }
         public TargetSelector TargetSelector => _targetSelector;
         public SkillSelector SkillSelector => _skillButtonManager;
         public bool IsBattleContinue => _isBattleContinue;
+        public IObservable<bool> IsPause => _isPause.AsObservable();
         public IndicatorUIBuilder IndicatorUIBuilder => _indicatorUI;
 
         //=== Public Methods ===
         public void StartBattle(List<PlayerData> players, SpawningTable table)
         {
-            _isBattleContinue = true;
             Initialize();
+            foreach (var item in _charactersContainer)
+                Destroy(item as GameObject);
 
+            var p = new List<Unit>();
             for (int i = 0; i < players.Count && i < 4; i++)
             {
-                var c = Instantiate(_player, Vector3.zero, Quaternion.identity);
-                this.InitPlayer(c, players[i], players[i].CharacterData, new PlayerBehaviour());
-                RegisterCharacter((CharacterPosition)i, c);
+                var c = Instantiate(_unitPrefab, Vector3.zero, Quaternion.identity);
+                c.InitPlayer(this, players[i]).SetBehaivior(new PlayerBehaviour());
+                p.Add(c);
             }
-
-            for (int i = 0; i < 5; i++)
-                SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
-
-            _indicatorUI.UpdateUI(_posManager.GetCharacters());
-            ProcessTurn(); // BattleManager のラッパー
+            StartBattle(p, table);
         }
-        public void StartBattle(List<Player> players, SpawningTable table)
+        public void StartBattle(List<Unit> players, SpawningTable table)
         {
             _posManager.Clear();
             _turnManager.Reset();
@@ -81,8 +76,10 @@ namespace RPG_003.Battle
             for (int i = 0; i < 5; i++)
                 SummonEnemy(table.GetSpawnData(0f).GetEnemyData(), (CharacterPosition)i + 4);
 
+            _sounds.Play(PlaySounds.PlaySound.BGM);
             _isBattleContinue = true;
-            ProcessTurn(); // BattleManager のラッパー
+            _indicatorUI.UpdateUI(_posManager.GetCharacters());
+            _ = _turnManager.ProcessTurn();
         }
         public void EndBattle()
         {
@@ -93,46 +90,32 @@ namespace RPG_003.Battle
         public void EndBattle_Won()
         {
             Debug.Log("Won");
+            _sounds.Play(PlaySounds.PlaySound.Win);
             EndBattle();
         }
         public void EndBattle_Lost()
         {
             Debug.Log("Lost");
+            _sounds.Play(PlaySounds.PlaySound.Lose);
             EndBattle();
-        }
-
-        public void FinishTurn(CharacterObject actor)
-        {
-            if (_isBattleContinue)
-            {
-                // BattleManager が呼ばれたら、TurnManager に任せる
-#if UNITY_EDITOR
-                if (_enebleUseTurnManage)
-                    _allowNextTurn = true;
-                else
-                    _turnManager.FinishTurn();
-#else
-                _turnManager.FinishTurn();
-#endif
-            }
         }
 
         // デフォルトの場合、空いてる場所にスポーンさせる
         public void SummonEnemy(EnemyData enemyData, CharacterPosition characterPosition = CharacterPosition.None)
         {
-            var c = Instantiate(_characterObject, Vector3.zero, Quaternion.identity);
-            this.InitCharacter(c, enemyData.characterData, enemyData.enemyBehaviorData.GetCharacterBehaviour());
             if (characterPosition == CharacterPosition.None && !_posManager.TryGetUsablePosition(out characterPosition, Faction.Enemy))
             {
                 Debug.Log("モンスターをスポーンさせるために必要なスペースがありません");
                 return;
             }
-            if (enemyData.icon != null)
-                c.SetIcon(enemyData.icon);
+            var c = Instantiate(_unitPrefab, Vector3.zero, Quaternion.identity);
+            c.InitEnemy(this, enemyData);
+
+            GraphicalManager.instance.BattleLog.Add($"<color=purple>{enemyData.enemyName}</color>が現れた！", BattleLog.IconType.Normal);
             RegisterCharacter(characterPosition, c);
         }
         // 各派生クラスにキャラクターを登録する
-        public void RegisterCharacter(CharacterPosition position, CharacterObject character)
+        public void RegisterCharacter(CharacterPosition position, Unit character)
         {
             //var indicator = _indicatorFactory.Create(_characterTransformHelper.GetPosition(position));
             _posManager.RegisterCharacter(position, character);
@@ -141,7 +124,7 @@ namespace RPG_003.Battle
             Debug.Log($"Starting battle with player: {character.Data.Name} at position: {position}");
         }
 
-        public void RemoveCharacter(CharacterObject character)
+        public void RemoveCharacter(Unit character)
         {
             // PositionManager で位置削除
             _posManager.RemoveCharacter(character);
@@ -151,22 +134,17 @@ namespace RPG_003.Battle
             Destroy(character.gameObject);
         }
 
-        public CharacterPosition GetUsablePosition(Faction faction = Faction.All)
-        {
-            return _posManager.GetUsablePosition(faction);
-        }
-
         public bool TryGetUsablePosition(out CharacterPosition position, Faction faction = Faction.All)
         {
             return _posManager.TryGetUsablePosition(out position, faction);
         }
 
-        public List<CharacterObject> GetCharacters()
+        public List<Unit> GetCharacters()
         {
             return _posManager.GetCharacters();
         }
 
-        public IReadOnlyDictionary<CharacterPosition, CharacterObject> GetCharacterMap()
+        public IReadOnlyDictionary<CharacterPosition, Unit> GetCharacterMap()
         {
             return _posManager.GetCharacterMap();
         }
@@ -178,62 +156,50 @@ namespace RPG_003.Battle
 
         public void ApplyDamage(DamageInfo info)
         {
-            Debug.Log(info.ToString());
-            Debug.Log($"{info.Target} is Taking damage: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            Color c = info.Elements == Elements.None ? Color.red : info.Elements.GetColorElement();
-            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterObject).transform.position, 1.5f), $"{info.Damage}", c);
-            info.Target.TakeDamage(info);
+            if (!info.Target.IsAlive) return;
+            var resist = info.ResistDamage();
+            // ThrowText
+            Color c = resist.Elements == Elements.None ? Color.red : resist.Elements.GetColorElement();
+            GraphicalManager.instance.Text.Create(resist.Target.gameObject, resist.Damage.ToString(), c);
+
+            // ダメージ適用
+            resist.Target.TakeDamage(resist);
         }
 
         public void ApplyHeal(DamageInfo info)
         {
             Debug.Log($"{info.Target} is Taking heal: {info.Damage} from {info.Source.Data.Name ?? "Unknown"}");
-            GraphicalManager.instance.ThrowText(RandomPos((info.Target as CharacterObject).transform.position, 1.5f), $"{info.Damage}", Color.green);
+            GraphicalManager.instance.Text.Create(info.Target.gameObject, $"{info.Damage}", Color.green);
             info.Target.TakeHeal(info);
         }
 
         // === Pause ===
 
-        protected override void OnPaused()
+        protected void OnPaused()
         {
             Time.timeScale = 0;
+            _isPause.Value = true;
         }
 
-        protected override void OnResumed()
+        protected void OnResumed()
         {
             Time.timeScale = 1.0f;
+            _isPause.Value = false;
         }
-
-        // === Notify ===
-        public void OnDeath(CharacterObject character)
+        public async UniTask WaitForPause()
         {
+            await UniTask.WaitWhile(() => _isPause.Value);
+        } 
+        // === Notify ===
+        public void OnDeath(Unit character)
+        {
+            GraphicalManager.instance.BattleLog.Add($"{BattleLog.NameWithColor(character)}が<color=red>死亡</color>した！", BattleLog.IconType.Dead);
             Debug.Log(character.Data.Name + "が死亡した！");
             character.OnDeath?.Invoke(character);
             CheckBattleEnd();
         }
 
-#if UNITY_EDITOR
-        [ShowIf("_allowNextTurn", "_enebleUseTurnManage"), Button("TurnBehavior")]
-        public void Next()
-        {
-            _allowNextTurn = false;
-            Debug.Log("Next turn triggered in editor.");
-            _turnManager.ProcessTurn();
-        }
-#endif
-
         //=== Private ===
-        public void ProcessTurn()
-        {
-            if (!_isBattleContinue) return;
-#if UNITY_EDITOR
-            _allowNextTurn = true;
-            if (!_enebleUseTurnManage)
-                _turnManager.ProcessTurn();
-#else
-            _turnManager.ProcessTurn();
-#endif
-        }
 
         private void CheckBattleEnd()
         {
@@ -241,23 +207,17 @@ namespace RPG_003.Battle
             if (c.allies <= 0) EndBattle_Lost();
             if (c.enemies <= 0) EndBattle_Won();
         }
-        private Vector2 RandomPos(Vector2 pos, float radius)
-        {
-            // Random.insideUnitCircle は原点を中心とした半径1の円内のランダムな点を返す
-            Vector2 offset = UnityEngine.Random.insideUnitCircle * radius;
-            return pos + offset;
-        }
+
         private void Initialize()
         {
             if (!_charactersContainer)
                 _charactersContainer = new GameObject("CharactersContainer").transform;
-            BattleSceneManager.instance.SetBattleManageer(this);
             // 分割クラスの初期化
             _posManager = new PositionManager(out _characterPositions);
-            _turnManager = new TurnManager(this, this);
+            _turnManager = new TurnManager(this);
         }
         //=== Unity Lifecycle ===
-        protected override void Awake()
+        protected void Awake()
         {
             Initialize();
         }

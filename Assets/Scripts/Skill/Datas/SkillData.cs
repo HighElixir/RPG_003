@@ -1,4 +1,6 @@
-﻿using System;
+﻿using RPG_003.Effect;
+using System;
+using System.Text;
 using UnityEngine;
 
 namespace RPG_003.Skills
@@ -10,31 +12,40 @@ namespace RPG_003.Skills
         [SerializeField] private string _name;
         [SerializeField, TextArea(3, 10)] private string _description;
         [SerializeField] private Sprite _defaultIcon;
+        [SerializeField] private SoundVFXData _sfx;
 
         public string ID => _id;
         public string Name => _name;
-        public string Description => _description;
+        public string Description => AdditionalDescriptions(_description);
         public Sprite DefaultIcon => _defaultIcon;
-        public override string ToString() => $"{ID}:{Name}";
+        public SoundVFXData Sfx => _sfx;
+        public override string ToString()
+        {
+            StringBuilder sb = new StringBuilder();
+            sb.AppendLine($"名前 :" + Name);
+            sb.AppendLine($"説明 :" + Description);
+            return sb.ToString();
+        }
 
+        public virtual string AdditionalDescriptions(string desc)
+        {
+            return desc;
+        }
 #if UNITY_EDITOR
         private void OnValidate()
         {
             if (string.IsNullOrWhiteSpace(_id))
-                Debug.LogWarning($"[{name}] IDが空だよ！id決めてね");
-        }
-
-        private void Reset()
-        {
-            var head = GetType().ToString() switch
             {
-                nameof(BasicData) => "b_",
-                nameof(ModifierData) => "m_",
-                _ => ""
-            };
-            _id = head + name;
+                var head = GetType().Name switch
+                {
+                    nameof(BasicData) => "b_",
+                    nameof(ModifierData) => "m_",
+                    nameof(SmithChip) => "s_",
+                    _ => ""
+                };
+                _id = head + name;
+            }
         }
 #endif
-
     }
 }

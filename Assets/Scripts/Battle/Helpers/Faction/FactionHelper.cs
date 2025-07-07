@@ -8,7 +8,7 @@ namespace RPG_003.Battle.Factions
     /// </summary>
     public static class FactionHelper
     {
-        public static bool IsAlly(this CharacterObject character)
+        public static bool IsAlly(this Unit character)
         {
             return IsAlly(character.Position);
         }
@@ -21,7 +21,7 @@ namespace RPG_003.Battle.Factions
                 position == CharacterPosition.Player_3 ||
                 position == CharacterPosition.Player_4;
         }
-        public static bool IsEnemy(this CharacterObject character)
+        public static bool IsEnemy(this Unit character)
         {
             return IsEnemy(character.Position);
         }
@@ -35,7 +35,7 @@ namespace RPG_003.Battle.Factions
                 position == CharacterPosition.Enemy_4 ||
                 position == CharacterPosition.Enemy_5;
         }
-        public static bool IsSameFaction(this CharacterObject c1, CharacterObject c2)
+        public static bool IsSameFaction(this Unit c1, Unit c2)
         {
             return IsSameFaction(c1.Position, c2.Position);
         }
@@ -48,7 +48,7 @@ namespace RPG_003.Battle.Factions
         /// <summary>
         /// キャラクターが任意の派閥かどうかを返す
         /// </summary>
-        public static bool IsSameFaction(this CharacterObject c, Faction t)
+        public static bool IsSameFaction(this Unit c, Faction t)
         {
             return IsSameFaction(c.Position, t);
         }
@@ -74,6 +74,22 @@ namespace RPG_003.Battle.Factions
                 Faction.Enemy => Faction.Ally,
                 _ => faction,
             };
+        }
+
+        public static Faction PositionToFaction(this CharacterPosition p)
+        {
+            if (p == CharacterPosition.Player_1 || 
+                p == CharacterPosition.Player_2 ||
+                p == CharacterPosition.Player_3 ||
+                p == CharacterPosition.Player_4)
+                return Faction.Ally;
+            if (p == CharacterPosition.Enemy_1 ||
+                p == CharacterPosition.Enemy_2 ||
+                p == CharacterPosition.Enemy_3 ||
+                p == CharacterPosition.Enemy_4 ||
+                p == CharacterPosition.Enemy_5)
+                return Faction.Enemy;
+            return Faction.None;
         }
     }
 }

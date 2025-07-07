@@ -1,0 +1,18 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5f2e2f0f86aee2348bc3d18a51b9ca61, type: 3}
+  m_Name: Slash
+  m_EditorClassIdentifier: 
+  _soundName: "\u30B9\u30E9\u30C3\u30B7\u30E5"
+  _audioClip: {fileID: 8300000, guid: edb9715098266b647a7fc0046bc517ae, type: 3}
+  _VFX: {fileID: 7364936370289906279, guid: 74c549d1b06b6b140a1fd9536eea637f, type: 3}
+  _isEveryTarget: 1

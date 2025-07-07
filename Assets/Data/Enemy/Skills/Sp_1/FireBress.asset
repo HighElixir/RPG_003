@@ -16,11 +16,12 @@ MonoBehaviour:
   _name: "\u30D5\u30A1\u30A4\u30A2\u30D6\u30EC\u30B9"
   _description: 
   _defaultIcon: {fileID: 0}
+  _sfx: {fileID: 0}
   _damage:
   - amount: 1.2
     fixedAmount: 0
     type: 4
-    element: 1
+    element: 2
     amountAttribute: 2
     criticalRate: 0
     criticalRateBonus: 0

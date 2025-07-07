@@ -1,31 +1,32 @@
-﻿using RPG_003.Battle;
+﻿using RPG_003.Status;
 using RPG_003.Core;
 using Sirenix.OdinInspector;
-using System.Collections.Generic;
 using UnityEngine;
+using RPG_003.Character;
 
 namespace RPG_003.Skills
 {
     public class BattleExecute : MonoBehaviour
     {
+        [SerializeField] private PlayerDataHolder _players = new();
         [SerializeField] private SceneLoaderAsync _sceneLoader;
-        [SerializeField] private List<PlayerDataHolder> _players = new();
-        [SerializeField, BoxGroup("CharacterEditor")] private CharacterData _addData;
+        [SerializeField] protected LoadingUIController _loadingUIController;
+        [SerializeField, BoxGroup("CharacterEditor")] private StatusData _addData;
         [SerializeField, BoxGroup("CharacterEditor/Skill"), PropertyRange(0, 4)] private int _skillAddTarget;
         [SerializeField, BoxGroup("CharacterEditor/Skill")] private string _name;
         // === Public ===
-        public void AddSkill(SkillDataHolder skill)
+        public void AddSkill(SkillHolder skill)
         {
-            if (_players[_skillAddTarget].Skills.Count < 3)
+            if (_players.Data[_skillAddTarget].Skills.Count < 3)
             {
-                _players[_skillAddTarget].Skills.Add(skill);
-                Debug.Log($"Success add skill({skill.Name}) for {_players[_skillAddTarget].CharacterData.Name}");
+                _players.Data[_skillAddTarget].Skills.Add(skill);
+                Debug.Log($"Success add skill({skill.Name}) for {_players.Data[_skillAddTarget].Name}");
                 if (skill.Icon == null)
                     Debug.Log("Icon が null!");
             }
             else
             {
-                Debug.LogError($"{_players[_skillAddTarget].CharacterData.Name}のSkillが3つを超えてるよ！");
+                Debug.LogError($"{_players.Data[_skillAddTarget].Name}のSkillが3つを超えてるよ！");
             }
         }
 
@@ -34,22 +35,44 @@ namespace RPG_003.Skills
         private void CreateCharacter()
         {
             if (_players.Count < 4)
-                _players.Add(new PlayerDataHolder(_addData));
+                _players.Add(new CharacterDataHolder().SetStatus(_addData));
             else
                 Debug.LogError("4人まで！");
         }
-        [Button("StartBattle")]
-        private void BattleStart()
+        [Button("Set Default")]
+        private void SetData()
         {
-            GameDataHolder.instance.SetPlayerDatas(_players);
-            BattleSceneManager.instance.ToBattleScene(_sceneLoader);
+            _addData = new StatusData()
+                .SetHp(CoreDatas.HP)
+                .SetMp(CoreDatas.MP)
+                .SetStr(CoreDatas.STR)
+                .SetInt(CoreDatas.INT)
+                .SetDef(CoreDatas.DEF)
+                .SetMDef(CoreDatas.MDEF)
+                .SetLuk(CoreDatas.LUK)
+                .SetCriticalRate(CoreDatas.CRR)
+                .SetCriticalDamage(CoreDatas.CRD)
+                .SetTakeDamageScale(1f)
+                .ListInit();
+        }
+        [Button("StartBattle")]
+        public void BattleStart()
+        {
+            if (UnityEditor.EditorApplication.isPlaying)
+            {
+                foreach (var player in _players.Data)
+                {
+                    GameDataHolder.instance.Players.Add(player);
+                }
+                BattleSceneManager.instance.ToBattleScene(_sceneLoader, _loadingUIController.gameObject);
+            }
         }
         // === Unity ===
         private void OnValidate()
         {
-            _skillAddTarget = Mathf.Clamp(_skillAddTarget, 0, _players.Count - 1);
-            if (_players.Count == 0) return;
-            _name = _players[_skillAddTarget].CharacterData.Name;
+            _skillAddTarget = Mathf.Clamp(_skillAddTarget, 0, _players.Data.Count - 1);
+            if (_players.Data.Count == 0) return;
+            _name = _players.Data[_skillAddTarget].ConvertedData.Name;
         }
     }
 }
