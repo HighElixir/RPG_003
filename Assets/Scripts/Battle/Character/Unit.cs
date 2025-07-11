@@ -25,9 +25,9 @@ namespace RPG_003.Battle
         public Action<Unit> OnDeath { get; set; }
 
         // === Property ===
+        internal BattleManager BattleManager => _battleManager;
         public StatusManager StatusManager => _statusManager;
         public BehaviorIntervalCount BehaviorIntervalCount => _BehaviorIntervalCount;
-        public BattleManager BattleManager => _battleManager;
         public ICharacterBehaviour Behaviour => _characterBehaviour;
         public virtual StatusData Data => _statusData;
         public virtual List<Skill> Skills => _skills;
@@ -38,19 +38,23 @@ namespace RPG_003.Battle
         public Sprite FullBody { get; set; }
 
         // === Public Methode ===
-        public void TakeDamage(DamageInfo damage)
+        public void TakeDamage(DamageInfo info)
         {
             if (IsAlive)
-                _statusManager.TakeDamage(damage);
-            else
-                Debug.LogWarning($"{gameObject.name} is already dead and cannot take damage.");
+            {
+                var isDead = _statusManager.TakeDamage(info);
+                GraphicalManager.instance.BattleLog.Add(BattleLog.TakeDamage(info), BattleLog.IconType.Negative);
+                GetComponent<UnitUI>().Shake();
+                if (isDead)
+                    NotifyDeath();
+            }
         }
         public void TakeHeal(DamageInfo info)
         {
             if (IsAlive)
+            {
                 _statusManager.TakeHeal(info);
-            else
-                Debug.LogWarning($"{gameObject.name} is already dead and cannot be healed.");
+            }
         }
         public void Revive(DamageInfo info)
         {
@@ -69,7 +73,7 @@ namespace RPG_003.Battle
         {
         }
         #region
-        public Unit Initialize(BattleManager battleManager)
+        internal Unit Initialize(BattleManager battleManager)
         {
             _battleManager = battleManager;
             _BehaviorIntervalCount = new BehaviorIntervalCount();
@@ -89,7 +93,6 @@ namespace RPG_003.Battle
         public Unit SetBehaivior(ICharacterBehaviour behaviour)
         {
             _characterBehaviour = behaviour;
-            _characterBehaviour.Initialize(this, _battleManager);
             return this;
         }
         public Unit SetStatusManager(StatusManager manager)

@@ -7,6 +7,7 @@ using UnityEngine.UI;
 using UniRx;
 using System.Linq;
 using Cysharp.Threading.Tasks;
+using UnityEngine.EventSystems;
 
 namespace RPG_003.Battle
 {
@@ -19,9 +20,6 @@ namespace RPG_003.Battle
         // === Reference ===
         [BoxGroup("Reference"), SerializeField] private BattleManager _battleManager;
         [BoxGroup("Reference"), SerializeField] private Camera _camera;
-        [BoxGroup("Buttons"), SerializeField] private Button _confirmButton;
-        [BoxGroup("Buttons"), SerializeField] private Button _cancelButton;
-        [BoxGroup("UI"), SerializeField] private GraphicalManager _graphicalManager;
         [BoxGroup("UI"), SerializeField] private TargetSelectorUI _ui;
         private TargetSelectHelper _targetSelectHelper;
 
@@ -31,6 +29,10 @@ namespace RPG_003.Battle
         // === Data ===
         private Skill _skill;
         private (TargetInfo info, bool hasCanceled) _result;
+
+        // === flag ===
+        private bool _clicked = false;
+
         /// <summary>
         /// 前回選択されたメインターゲット
         /// </summary> 
@@ -63,11 +65,7 @@ namespace RPG_003.Battle
         private bool NeedsNewTarget(Unit before, Faction targetFaction) =>
     before == null || !before.Position.IsSameFaction(targetFaction) || !before.IsAlive;
 
-        private void SetVisibleButtons(bool isVisible)
-        {
-            _confirmButton?.gameObject.SetActive(isVisible);
-            _cancelButton?.gameObject.SetActive(isVisible);
-        }
+
         private void SubmitSelect()
         {
             _result = (_targetInfo, false);
@@ -100,10 +98,12 @@ namespace RPG_003.Battle
             if (_targetInfo.IsValid)
                 SubmitSelect();
         }
-        public void OnClick()
+        public void OnClick(InputValue input)
         {
+            if (!input.isPressed) _clicked = false;
             if (!IsSelecting.Value) return;
-
+            if (_clicked) return;
+            _clicked = true;
             // ① まずスクリーン座標をゲット
             Debug.Log($"[スクリーン座標] {_pos}");
 
@@ -115,14 +115,23 @@ namespace RPG_003.Battle
                 character.IsSameFaction(_skill.skillDataInBattle.Target))
             {
                 Debug.Log("Hitted. Name : " + character.Data.Name);
-                if (_targetInfo.Contains(character)) _targetInfo.RemoveTarget(character);
-                else if (_skill.skillDataInBattle.TargetCount < _targetInfo.TargetCount) _targetInfo.AddTarget(character);
-                else _targetInfo.MainTarget = character;
+                if (character == _targetInfo.MainTarget)
+                {
+                    SubmitSelect();
+                }
+                else
+                {
+                    _targetInfo.MainTarget = character;
 
-                UpdateUI();
+                    UpdateUI();
+                }
                 return;
             }
             Debug.Log("Don't Hit");
+        }
+        public void OnRightClick()
+        {
+            CancelSelect();
         }
         public void OnPoint(InputValue context)
         {
@@ -160,24 +169,6 @@ namespace RPG_003.Battle
             if (!_camera) _camera = Camera.main;
             if (!_battleManager) _battleManager = GetComponent<BattleManager>();
             _targetSelectHelper = new TargetSelectHelper(_battleManager);
-
-            _confirmButton?.onClick.AsObservable().Subscribe(_ =>
-            {
-                if (!IsSelecting.Value) return;
-                if (_targetInfo.IsValid)
-                    SubmitSelect();
-                else
-                    _graphicalManager.Text.Create(_confirmButton.gameObject, "ターゲットを選んでね！", Color.red);
-            }).AddTo(this);
-            _cancelButton?.onClick.AsObservable().Subscribe(_ =>
-            {
-                if (IsSelecting.Value)
-                    CancelSelect();
-            }).AddTo(this);
-            IsSelecting.Subscribe(value =>
-            {
-                SetVisibleButtons(value);
-            }).AddTo(this);
         }
     }
 }

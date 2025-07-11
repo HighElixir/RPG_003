@@ -9,11 +9,11 @@ namespace RPG_003.Skills
     public class BattleExecute : MonoBehaviour
     {
         [SerializeField] private PlayerDataHolder _players = new();
-        [SerializeField] private SceneLoaderAsync _sceneLoader;
         [SerializeField] protected LoadingUIController _loadingUIController;
         [SerializeField, BoxGroup("CharacterEditor")] private StatusData _addData;
         [SerializeField, BoxGroup("CharacterEditor/Skill"), PropertyRange(0, 4)] private int _skillAddTarget;
         [SerializeField, BoxGroup("CharacterEditor/Skill")] private string _name;
+        private static bool _added = false;
         // === Public ===
         public void AddSkill(SkillHolder skill)
         {
@@ -35,7 +35,9 @@ namespace RPG_003.Skills
         private void CreateCharacter()
         {
             if (_players.Count < 4)
-                _players.Add(new CharacterDataHolder().SetStatus(_addData));
+            {
+                _players.Add(new CharacterDataHolder().SetStatus(_addData).SetName(_addData.Name));
+            }
             else
                 Debug.LogError("4人まで！");
         }
@@ -60,16 +62,24 @@ namespace RPG_003.Skills
         {
             if (UnityEditor.EditorApplication.isPlaying)
             {
-                foreach (var player in _players.Data)
+                if (!_added)
                 {
-                    GameDataHolder.instance.Players.Add(player);
+                    foreach (var player in _players.Data)
+                    {
+                        GameDataHolder.instance.Players.Add(player);
+                    }
+                    _added = true;
                 }
-                BattleSceneManager.instance.ToBattleScene(_sceneLoader, _loadingUIController.gameObject);
+                BattleSceneManager.instance.ToBattleScene(_loadingUIController.gameObject);
             }
         }
         // === Unity ===
         private void OnValidate()
         {
+            if (!UnityEditor.EditorApplication.isPlaying)
+            {
+                _added = false;
+            }
             _skillAddTarget = Mathf.Clamp(_skillAddTarget, 0, _players.Data.Count - 1);
             if (_players.Data.Count == 0) return;
             _name = _players.Data[_skillAddTarget].ConvertedData.Name;

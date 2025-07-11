@@ -27,7 +27,7 @@ namespace HighElixir.UI
 
         private RectTransform UiParentRect => uiCanvas.transform as RectTransform;
 
-        public void Create(GameObject go, string text, Color color)
+        public TMP_Text Create(GameObject go, string text, Color color)
         {
             Vector2 localPos;
             // UI 要素ならそのままアンカー位置を使う
@@ -50,15 +50,13 @@ namespace HighElixir.UI
                     Debug.LogWarning("スクリーン→ローカル変換に失敗したよ！");
             }
 
-            // あとはこれまで通り
-            Create(localPos, Quaternion.identity, text, color);
+            return Create(localPos, Quaternion.identity, text, color);
         }
 
         // Vector2 版
-        public void Create(Vector2 pos, Quaternion rotation, string text, Color color)
+        public TMP_Text Create(Vector2 pos, Quaternion rotation, string text, Color color)
         {
-            // プールから取得＆初期化
-            var t = _pool.Get();  // プールから Text コンポ使ってる想定
+            var t = _pool.Get();
             var r = t.GetComponent<RectTransform>();
             r.SetParent(UiParentRect, false);
             r.anchoredPosition = pos;
@@ -73,9 +71,10 @@ namespace HighElixir.UI
                .OnComplete(() => Release(t));
 
             _sequences[t] = seq;
+            return t;
         }
 
-        public void Create(Vector2 pos, string text, Color color) => Create(pos, Quaternion.identity, text, color);
+        public TMP_Text Create(Vector2 pos, string text, Color color) => Create(pos, Quaternion.identity, text, color);
         public void Release(TMP_Text text)
         {
             // Tween を止めて辞書から削除、プールに返却
@@ -83,6 +82,11 @@ namespace HighElixir.UI
             {
                 seq.Kill();
                 _sequences.Remove(text);
+
+                // 初期化
+                text.rectTransform.sizeDelta = _prefab.rectTransform.sizeDelta;
+                text.rectTransform.localScale = _prefab.rectTransform.localScale;
+                text.rectTransform.rotation = _prefab.rectTransform.rotation;
             }
             _pool.Release(text);
         }
@@ -91,7 +95,6 @@ namespace HighElixir.UI
             if (_container == null) _container = transform.GetComponent<RectTransform>();
             _pool = new Pool<TMP_Text>(_prefab, _poolSize, _container, true);
             _sequences = new Dictionary<TMP_Text, Sequence>();
-            //Debug.Log("aaaaaa");
         }
         private void OnDestroy()
         {

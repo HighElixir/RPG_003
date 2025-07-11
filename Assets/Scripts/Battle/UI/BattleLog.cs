@@ -58,7 +58,7 @@ namespace RPG_003.Battle
             }
             var n = temp1 / temp2.height;
             if (_reverse) n = 1 - n;
-            _bar.value = n;
+            //_bar.value = n;
         }
 
         public void ReleaceOld()
@@ -72,6 +72,14 @@ namespace RPG_003.Battle
             sb.Append($"<color=#{ColorUtility.ToHtmlStringRGB(skill.parent.Faction.FactionToColor())}>{skill.parent.Data.Name}</color>は");
             sb.Append($"{skill.skillDataInBattle.Name}を放った！");
             return sb.ToString();
+        }
+        public static string TakeDamage(DamageInfo info)
+        {
+            string color = ColorUtility.ToHtmlStringRGBA(info.Elements.GetColorElement());
+            if (info.AmountAttribute == Skills.AmountAttribute.Consume)
+                return $"{info.Target.Data.Name}は{info.Damage}のHPを消費した!";
+            else
+                return $"{info.Target.Data.Name}は<color=#{color}>{info.Damage}</color>ダメージを受けた！";
         }
         public static string NameWithColor(Unit unit)
         {

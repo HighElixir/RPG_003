@@ -9,12 +9,15 @@ namespace RPG_003.Core
     public class SceneLoaderAsync : MonoBehaviour
     {
         private Scene _from;
+        private static int _beforeSceneId;
+        public static Scene managerScene;
 
         // シーン遷移許可フラグ
         private bool _allowTransition = false;
 
-        public static UnityAction OnLoadCompleted { get; set; }
-        public static UnityAction OnSceneChanged { get; set; }
+        public static UnityEvent OnLoadStarted { get; set; } = new UnityEvent();
+        public static UnityEvent OnLoadCompleted { get; set; } = new UnityEvent();
+        public static UnityEvent OnSceneChanged { get; set; } = new UnityEvent();
 
         // 外部から呼んで「もう遷移OK！」にするメソッド
         public void AllowSceneTransition()
@@ -23,15 +26,22 @@ namespace RPG_003.Core
         }
 
         /// <param name="receiver"><see cref="ILoadSceneReceiver">ILoadSceneReceiver</see>の実装が必要</param>
-        public void StartSceneLoad(int sceneId, GameObject receiver = null, bool changedirect = true)
+        public void StartSceneLoad(int sceneId, GameObject receiver = null, bool changeDirectry = true)
         {
             _from = SceneManager.GetActiveScene();
-            _allowTransition = changedirect;
+            _beforeSceneId = _from.buildIndex;
+            _allowTransition = changeDirectry;
             LoadSceneAsync(sceneId, receiver).Forget();
         }
-
+        public void SceneChangeBefore(GameObject reciver = null, bool changeDirectry = true)
+        {
+            if (_from == null) return;
+            StartSceneLoad(_beforeSceneId, reciver, changeDirectry);
+        }
         private async UniTaskVoid LoadSceneAsync(int sceneId, GameObject receiver)
         {
+            SceneManager.SetActiveScene(managerScene);
+            await SceneManager.UnloadSceneAsync(_from).ToUniTask();
             var operation = SceneManager.LoadSceneAsync(sceneId, LoadSceneMode.Additive);
             operation.allowSceneActivation = false;
             if (receiver != null)
@@ -54,7 +64,6 @@ namespace RPG_003.Core
             await operation.ToUniTask();
             Debug.Log("Scene");
             SceneManager.SetActiveScene(SceneManager.GetSceneByBuildIndex(sceneId));
-            await SceneManager.UnloadSceneAsync(_from).ToUniTask();
             _ = Resources.UnloadUnusedAssets();
             if (receiver != null)
                 ExecuteEvents.Execute<ILoadSceneReceiver>(receiver, null, (reciever, _) => reciever.OnCompleted());

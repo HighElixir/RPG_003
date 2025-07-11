@@ -159,19 +159,11 @@ namespace RPG_003.Status
             HP = Mathf.Min(MaxHP, HP + info.Damage);
         }
 
-        public void TakeDamage(DamageInfo info)
+        /// <returns>死亡したかどうか</returns>
+        public bool TakeDamage(DamageInfo info)
         {
             HP = Mathf.Max(0, HP - info.Damage);
-            if (HP <= 0)
-                Parent.NotifyDeath();
-            MakeText(info);
-        }
-
-        private void MakeText(DamageInfo info)
-        {
-            string color = ColorUtility.ToHtmlStringRGBA(info.Elements.GetColorElement());
-            var b = GraphicalManager.instance.BattleLog;
-            b.Add($"{info.Target.Data.Name}は<color=#{color}>{info.Damage}</color>ダメージを受けた！", BattleLog.IconType.Negative);                
+            return HP <= 0;
         }
         public StatusManager(Unit parent, StatusData data)
         {

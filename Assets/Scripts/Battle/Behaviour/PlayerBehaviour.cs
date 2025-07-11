@@ -12,13 +12,14 @@ namespace RPG_003.Battle.Behaviour
         private SkillSelector _SkillSelector;
 
         private Skill _chosen;
-        public void Initialize(Unit parent, BattleManager battleManager)
+        public ICharacterBehaviour Initialize(Unit parent, BattleManager battleManager)
         {
             _parent = parent;
             var bm = battleManager;
             _target = bm.TargetSelector;
             _SkillSelector = bm.SkillSelector;
             parent.OnDeath += OnDeath;
+            return this;
         }
 
         public async UniTask TurnBehaviour(CancellationToken token, bool instant = false)

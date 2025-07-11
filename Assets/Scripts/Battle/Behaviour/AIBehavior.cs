@@ -7,26 +7,26 @@ namespace RPG_003.Battle.Behaviour
 {
     public class AIBehavior : ICharacterBehaviour
     {
-        private readonly EnemyBehaviorData _EnemyBehaviorData;
+        private ISkillBehaviour _skill;
         private Unit _parent;
         private TargetSelectHelper _TargetSelectHelper;
 
-        public AIBehavior(EnemyBehaviorData EnemyBehaviorData)
-        {
-            _EnemyBehaviorData = EnemyBehaviorData;
-        }
-
-        public void Initialize(Unit parent, BattleManager battleManager)
+        public ICharacterBehaviour Initialize(Unit parent, BattleManager battleManager)
         {
             _parent = parent;
             _TargetSelectHelper = new TargetSelectHelper(battleManager);
             parent.OnDeath += OnDeath;
+            return this;
         }
-
+        public AIBehavior SetSkill(ISkillBehaviour behaviour)
+        {
+            _skill = behaviour;
+            return this;
+        }
         public async UniTask TurnBehaviour(CancellationToken token, bool instant = false)
         {
             // --- スキル選択 ---
-            var chosenSkill = _EnemyBehaviorData.GetSkill(_parent);
+            var chosenSkill = _skill.GetSkill(_parent);
 
             // --- ターゲット選択 ---
             var faction = chosenSkill.skillDataInBattle.Target.GetReverse();

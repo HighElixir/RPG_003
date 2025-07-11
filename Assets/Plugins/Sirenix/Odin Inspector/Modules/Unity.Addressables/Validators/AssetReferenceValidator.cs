@@ -10,17 +10,17 @@
 #pragma warning disable
 #endif
 
-using Sirenix.OdinInspector.Editor.Validation;
-using Sirenix.OdinInspector.Modules.Addressables.Editor;
-using Sirenix.Utilities;
-using Sirenix.Utilities.Editor;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 using UnityEditor;
 using UnityEditor.AddressableAssets;
+using Sirenix.OdinInspector.Editor.Validation;
+using Sirenix.Utilities;
+using Sirenix.Utilities.Editor;
 using UnityEditor.AddressableAssets.Settings;
-using UnityEngine;
 using UnityEngine.AddressableAssets;
+using Sirenix.OdinInspector.Modules.Addressables.Editor;
 
 #if ODIN_VALIDATOR_3_1
 [assembly: RegisterValidationRule(typeof(AssetReferenceValidator), Description =
@@ -39,7 +39,7 @@ using UnityEngine.AddressableAssets;
 
 namespace Sirenix.OdinInspector.Modules.Addressables.Editor
 {
-    public class AssetReferenceValidator : ValueValidator<AssetReference>
+	public class AssetReferenceValidator : ValueValidator<AssetReference>
     {
         [Tooltip("If true and the AssetReference is not marked with the Optional attribute, " +
             "the validator will display an error message if the AssetReference is not set. " +

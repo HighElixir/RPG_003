@@ -12,6 +12,7 @@ GameObject:
   - component: {fileID: 6758260262054897617}
   - component: {fileID: 3533108166672907285}
   - component: {fileID: -1575660980315860390}
+  - component: {fileID: -1640013947242472333}
   m_Layer: 0
   m_Name: Chara
   m_TagString: Untagged
@@ -137,3 +138,20 @@ CircleCollider2D:
   m_CompositeOrder: 0
   m_Offset: {x: 0, y: 0.21133333}
   m_Radius: 0.5
+--- !u!114 &-1640013947242472333
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3718730788311810732}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 25adabc7c051c41408d65e012adeda34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _actionMove: {x: 0.5, y: 0, z: 0}
+  _moveDuration: 0.2
+  _waitDuration: 0.7
+  _strangth: 0.4
+  _nameDelta: {x: 0, y: -55.37}

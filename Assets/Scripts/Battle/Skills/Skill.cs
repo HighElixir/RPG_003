@@ -68,7 +68,7 @@ namespace RPG_003.Battle
         {
             if (!isPaymentSkip)
                 PaymentCost();
-
+            parent.GetComponent<UnitUI>().Action();
             // ログ追加
             string text = BattleLog.UseSkill(this, info);
             BattleLog.IconType icon = parent.IsAlly() ? BattleLog.IconType.Positive : BattleLog.IconType.Negative;

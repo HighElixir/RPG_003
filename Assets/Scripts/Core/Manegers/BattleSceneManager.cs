@@ -1,7 +1,8 @@
-﻿using HighElixir.Utilities;
+﻿using HighElixir;
 using RPG_003.Battle;
 using System;
 using System.Collections.Generic;
+using UniRx;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -18,23 +19,24 @@ namespace RPG_003.Core
         }
         [SerializeField] private int _battleSceneId;
         [SerializeField] private BattleData _battleData;
+        [SerializeField] private SceneLoaderAsync _sceneLoader;
         private BattleManager _battleManager;
-        private int _from;
-
+        private IDisposable _loader;
+        private int _tutor;
         // === Public ===
-        public void ToBattleScene(SceneLoaderAsync loader, GameObject receiver)
+        public void ToBattleScene(GameObject receiver = null, int tutor = -1)
         {
-            _from = SceneManager.GetActiveScene().buildIndex;
-            SceneLoaderAsync.OnSceneChanged += OnSceneChanged;
-            loader.StartSceneLoad(_battleSceneId, receiver);
+            _tutor = tutor;
+            _loader = SceneLoaderAsync.OnSceneChanged.AsObservable().Subscribe(_ => OnSceneChanged()).AddTo(this);
+            _sceneLoader.StartSceneLoad(_battleSceneId, receiver);
         }
-        public void BackScene(SceneLoaderAsync loader)
+        public void BackScene()
         {
-            loader.StartSceneLoad(_from);
+            _sceneLoader.SceneChangeBefore();
         }
         public void OnSceneChanged()
         {
-            SceneLoaderAsync.OnSceneChanged -= OnSceneChanged;
+            _loader.Dispose();
             if (_battleManager == null)
             {
                 foreach (var obj in SceneManager.GetActiveScene().GetRootGameObjects())
@@ -49,7 +51,7 @@ namespace RPG_003.Core
             _battleManager.StartBattle(GameDataHolder.instance.GetPlayerDatas(), _battleData.Wave1);
         }
 
-        public void StartBattle(int wave, List<Unit> players)
+        public void StartBattle(int wave, List<RPG_003.Battle.Unit> players)
         {
             switch (wave)
             {

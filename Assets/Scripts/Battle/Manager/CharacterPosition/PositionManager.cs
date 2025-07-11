@@ -12,12 +12,6 @@ namespace RPG_003.Battle
     {
         private Dictionary<CharacterPosition, Unit> _characterPositions = new();
 
-        public PositionManager(out IReadOnlyDictionary<CharacterPosition, Unit> characterPositions)
-        {
-            _characterPositions = new();
-            characterPositions = _characterPositions;
-        }
-
         /// <summary>
         /// CharacterPositionの中から使われていない枠を探す
         /// </summary>
@@ -39,15 +33,8 @@ namespace RPG_003.Battle
             position = CharacterPosition.None;
             return false;
         }
-        /// <summary>
-        /// CharacterPositionの中から使われていない枠を探す
-        /// </summary>
-        public CharacterPosition GetUsablePosition(Faction faction)
-        {
-            if (TryGetUsablePosition(out var pos, faction))
-                return pos;
-            return CharacterPosition.None;
-        }
+
+        // 全てのキャラをリストにして返す
         public List<Unit> GetCharacters()
         {
             return new List<Unit>(_characterPositions.Values);
@@ -86,12 +73,18 @@ namespace RPG_003.Battle
             _characterPositions.Clear();
         }
 
-        public int FactionCount(Faction faction, bool isAlive = true)
+        /// <summary>
+        /// 各派閥の登録済みのキャラクターを返す
+        /// </summary>
+        /// <param name="faction">検索対象</param>
+        /// <param name="needAlive">生存している必要があるかどうか</param>
+        /// <returns></returns>
+        public int FactionCount(Faction faction, bool needAlive = true)
         {
             int res = 0;
             foreach (var p in EnumWrapper.GetEnumList<CharacterPosition>())
             {
-                if (p.IsSameFaction(faction) && _characterPositions.ContainsKey(p) && (!isAlive || _characterPositions[p].IsAlive))
+                if (p.IsSameFaction(faction) && _characterPositions.ContainsKey(p) && (!needAlive || _characterPositions[p].IsAlive))
                     res++;
             }
             return res;

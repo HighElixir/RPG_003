@@ -15,6 +15,36 @@ MonoBehaviour:
   m_GroupName: Default Local Group
   m_GUID: 4ecb60d74dcdc3149ac93c5ef4493ff5
   m_SerializeEntries:
+  - m_GUID: 02ebc5dabe8e4ae45b1034a08e923a92
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_2_spiral.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 0712635f06f89e9439277d9c0f036b8d
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_3_heat.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 18daf2db6860425458ee20d95910c44d
+    m_Address: Assets/Data/SoundEffectData/Misc/Heal.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SoundVFX
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1ab0fdc0a98f42243b6934a55ebb3c4f
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_abyss_portal.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 1b3e92bd46daa4d41b27a746dd48bbcf
+    m_Address: Assets/Data/SoundEffectData/Misc/SoundVFXData.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - SoundVFX
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 1b9a015eabedb144381a7ba9f5f588a7
     m_Address: Assets/Data/Enemy/EnemyDatas/Little Lizard.asset
     m_ReadOnly: 0
@@ -25,11 +55,83 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2197b7071791ba54b8c5bf606a1dfe6a
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_shield_glass_open.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2887ef7e2f44bc34abf1ce43fb01f4c4
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_gale_sigh.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 28e9b4a6c3d32174983bf47e70dcb41b
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_3_bell.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 29fa9ebb7d30b4d43b14f0d46b69646c
     m_Address: Assets/Data/Skill/Smith/Slot/s_woodenSlot.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - SkillData
+    - SlotData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 2bc9be0284e9601409a3ce756bc16e46
+    m_Address: Assets/Data/Skill/Modifier/GreatSlash.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ModifierSkillData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 32a085624b9f652458773be29e8fc6c1
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_shield_glass_blow.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3a7e3ee195b047a42aedb63329649a55
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_chrono_gale.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3b8802e7aeef74e40a46ee4ed4e48bd4
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_abyss.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 3d32a12ce6100b247946e5dd9ce86b4e
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_gale_bell.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 45129facdf9a45e4192b169f8958889e
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_pitch.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 4600ae768f0e1084da6bae5c548dc487
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_aura_wind_low.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 46fcbc6f93e08024dba40fbe88155614
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_aura_bell.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 474a1ae1d11994045bbb835d3b7a8ee8
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_hammer.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 4852ac9fcc9fe7848a7158822047ecd3
     m_Address: Assets/Data/Enemy/Skills/Sp_1/Brunt.asset
@@ -48,11 +150,35 @@ MonoBehaviour:
     m_SerializedLabels:
     - Sounds
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 523ebf68884d98049942c0866eb29b2c
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_3_explode.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 54575495169c29343a4a2e5729709bea
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_3_whistle.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5543cefa2f8fc9e40bb3b5af6eac40ad
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_2_explode.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 55dc49bdfe8819e4a996246ce9c624a3
     m_Address: Assets/Data/Enemy/Skills/Sp_1/DarkSlash.asset
     m_ReadOnly: 0
     m_SerializedLabels:
     - EnemySkill
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5772abcb0364a7941a55f56bb3592801
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_gale_tick.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 59034c94f8e407c4c99f0fedb682cc79
     m_Address: "Assets/Sounds/\u706B\u708E\u9B54\u6CD51.mp3"
@@ -60,16 +186,58 @@ MonoBehaviour:
     m_SerializedLabels:
     - Sounds
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 5c51547abc7e2fa4abc7ad8418de60ba
+    m_Address: Assets/Data/Skill/Basic/punch.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6059ad12707bef74c8143a562ab4cfa5
+    m_Address: Assets/Data/Skill/Basic/Sweet.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 60c9b099848af2a459eee3cd3ad6a8f9
     m_Address: "Assets/Sounds/\u6CB3\u539F.mp3"
     m_ReadOnly: 0
     m_SerializedLabels:
     - Sounds
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 610e8d1ba6c503040950a7e96659c759
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/bgm_Chrono_Storm_loopable.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 63b4155ef41540f4685302a83db73e5e
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_gale_wind.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 662b0219fbe32c7428c14080c1f3aadf
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_wheel.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 683719be3a5ec1d4d8861a63b3d18b08
+    m_Address: Assets/Data/Skill/Modifier/ice.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ModifierSkillData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6901d00c7a672e24bb9024eed88a0c51
     m_Address: Assets/Data/Enemy/SpawnTable/Wave1.asset
     m_ReadOnly: 0
     m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 6b893643882582e43a828f7b3c884709
+    m_Address: Assets/Data/Skill/Basic/ZeroCost.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 6c2c55c9f2f04b24a9e79e65dbfd5c76
     m_Address: Assets/Data/Enemy/Skills/Sp_1/FireBress.asset
@@ -77,8 +245,133 @@ MonoBehaviour:
     m_SerializedLabels:
     - EnemySkill
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7299018103695904d948d5e92f108c15
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_wind.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 782d663f20394964a8dd5cf7e0df5d9d
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_bell.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 78c8ebc3cb9067b4799e90ff6930d50f
+    m_Address: Assets/Data/Skill/Smith/Target/Target.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - TargetData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 794fe46f67b8ef44f982154801faa3fc
+    m_Address: Assets/Data/Skill/Basic/Fire.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7c7c0a86e2d72ba4985f437397013dd6
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_shield_wind.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 7e5123fa45021464d932dfb8696354cd
+    m_Address: Assets/Data/Skill/Modifier/thunder.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - ModifierSkillData
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: 8557cc3af59a0e744b11c98b9e848eae
     m_Address: "Assets/Sounds/\u98A8\u306B\u63FA\u308C\u308B\u8349\u67281.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8787a22db31fdb041b2ed1b4cb3617e4
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_aura_wind_high.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 883072e458d6ea1428ba543b36102797
+    m_Address: Assets/Data/Skill/Smith/Effect/Stub.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - EffectData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 89e0f69e3ad999a4aa99111f0765d6b7
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_explosion_1.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8b94307027b70a344b6a5dc921b87fdb
+    m_Address: Assets/Data/Skill/Basic/TriAxe.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8c77850bf78c07a49b57e00fe175d6a6
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_explosion_2.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8d9f0d43afd77e64691913fe4610cb1b
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_rattle.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 8f14c9f162be18344b908f4a8d56bc93
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_latency_wind_reverb.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 90200ecad99eec047b5bd9bc7b66877e
+    m_Address: Assets/Data/Skill/Smith/Cost/Cost.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - CostData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 9347dabc1ca10264daeeb9cfb1131286
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_chrono_gale_phase.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: 97541d4ce7a0de8428250b671620932f
+    m_Address: Assets/Data/Skill/Basic/CriticalPiace.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - BasicSkillData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a272418358c9d334c9d5f0b806191bce
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_2_weed.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a3d3f7eca1d3ea045b3f199046aa0345
+    m_Address: Assets/Data/Enemy/EnemyDatas/Gobrin.asset
+    m_ReadOnly: 0
+    m_SerializedLabels: []
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: a48301f0f15853a4db9e2035e648313d
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_fire_weed_loop.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: abd2965673831184d910f719d05f7f42
+    m_Address: Assets/Data/Skill/Smith/Effect/FireBall.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - EffectData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ae143492ebcfa344d89463a25ffeb64f
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_explosion_3.wav
     m_ReadOnly: 0
     m_SerializedLabels:
     - Sounds
@@ -94,6 +387,54 @@ MonoBehaviour:
     m_ReadOnly: 0
     m_SerializedLabels: []
     FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: b9bb9812de15b314b8b3f16f01e95541
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_shield_bell.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c6236786972bc63468a551df46a2515f
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_3_weed.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c7865fd595be8a046a018f3e24771dd6
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_1_explode.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: c9a37df1a9b6bc945947588c2be073e3
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_explosion_2_burn.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: d580d0953e120bc4784c41b17e697db2
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/msfx_abyss_mud.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: dc4d8126919b8144c8fb2976f2a10301
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_aura_loopable.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: e560ecad227da124e8903114db0c1287
+    m_Address: Assets/Data/Skill/Modifier/Addon/pulsPower.asset
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Addon
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: ed0501dbfe59de64892dfc9cdf20c1a5
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_chrono_latency.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: ed9038dd265f5064fb0dc08c8819b2e4
     m_Address: Assets/Data/SoundEffectData/thunder/Thunder.asset
     m_ReadOnly: 0
@@ -102,6 +443,12 @@ MonoBehaviour:
     FlaggedDuringContentUpdateRestriction: 0
   - m_GUID: edb9715098266b647a7fc0046bc517ae
     m_Address: "Assets/Sounds/\u5263\u3067\u65AC\u308B2.mp3"
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: f4504136726ad314ea47de102a8627bc
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_aura.wav
     m_ReadOnly: 0
     m_SerializedLabels:
     - Sounds
@@ -122,7 +469,13 @@ MonoBehaviour:
     m_Address: Assets/Data/Skill/Smith/Slot/Slot.asset
     m_ReadOnly: 0
     m_SerializedLabels:
-    - SkillData
+    - SlotData
+    FlaggedDuringContentUpdateRestriction: 0
+  - m_GUID: fe58af53a4274b34aac9753aaa83b103
+    m_Address: Assets/Fantasy SFX for Particle Distort Texture effect library/sfx_shield.wav
+    m_ReadOnly: 0
+    m_SerializedLabels:
+    - Sounds
     FlaggedDuringContentUpdateRestriction: 0
   m_ReadOnly: 0
   m_Settings: {fileID: 11400000, guid: b91b0758a04e71e43a4917449c0cff90, type: 2}

@@ -1,7 +1,7 @@
 ﻿using System;
 using UnityEngine;
 
-namespace HighElixir.Utilities
+namespace HighElixir
 {
     public abstract class SingletonBehavior<T> : MonoBehaviour where T : MonoBehaviour
     {

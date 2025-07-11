@@ -12,5 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5f2e2f0f86aee2348bc3d18a51b9ca61, type: 3}
   m_Name: fire
   m_EditorClassIdentifier: 
+  _soundName: "\u30D5\u30A1\u30A4\u30A21"
   _audioClip: {fileID: 8300000, guid: 59034c94f8e407c4c99f0fedb682cc79, type: 3}
   _VFX: {fileID: 8891297334280618237, guid: c4ed38c72957f2241ad144a1614956d9, type: 3}
+  _isEveryTarget: 0

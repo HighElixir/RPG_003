@@ -1,4 +1,4 @@
-﻿using HighElixir.Utilities;
+﻿using HighElixir;
 using UnityEngine;
 
 #if UNITY_EDITOR

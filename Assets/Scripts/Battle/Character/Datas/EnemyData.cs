@@ -11,7 +11,7 @@ namespace RPG_003.Battle
         public string description;
         public Sprite icon;
         public StatusData statusData;
-        public EnemyBehaviorData enemyBehaviorData;
+        [SerializeReference] public ISkillBehaviour skill;
 
         private void Awake()
         {

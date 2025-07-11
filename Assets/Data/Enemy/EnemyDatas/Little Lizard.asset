@@ -41,4 +41,18 @@ MonoBehaviour:
     - element: 2
       scale: 0.7
     _giveElementDamageScale: []
-  enemyBehaviorData: {fileID: 11400000, guid: 213671e97d2a60844be0364510bb0229, type: 2}
+  skill:
+    rid: 3120453836268109923
+  references:
+    version: 2
+    RefIds:
+    - rid: 3120453836268109923
+      type: {class: SkillWithWeightData, ns: RPG_003.Battle, asm: Assembly-CSharp}
+      data:
+        _skills:
+        - weight: 1
+          skill: {fileID: 11400000, guid: 6c2c55c9f2f04b24a9e79e65dbfd5c76, type: 2}
+          sound: {fileID: 0}
+        - weight: 1
+          skill: {fileID: 11400000, guid: 5c51547abc7e2fa4abc7ad8418de60ba, type: 2}
+          sound: {fileID: 0}

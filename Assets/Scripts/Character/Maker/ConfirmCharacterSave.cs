@@ -1,4 +1,5 @@
 ﻿using HighElixir.UI;
+using RPG_003.Core;
 using System.Text;
 using TMPro;
 using UnityEngine;
@@ -12,6 +13,7 @@ namespace RPG_003.Character
         [SerializeField] private TextThrower _thrower;
         [SerializeField] private Button _confirm;
         [SerializeField] private TMP_Text _text;
+        [SerializeField] private SceneLoader _sceneLoader;
 
         public void OnOn()
         {
@@ -34,7 +36,10 @@ namespace RPG_003.Character
             {
                 var code = _characterBuilder.Temp.IsValid;
                 if (code == 0)
+                {
                     _characterBuilder.Save();
+                    _sceneLoader.SceneToBefore();
+                }
                 else
                 {
                     var text = code switch
