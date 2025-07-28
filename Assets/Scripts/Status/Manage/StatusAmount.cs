@@ -9,8 +9,12 @@ namespace RPG_003.Status
         /// HPやMPなどの頻繁に変動するステータスで使用
         /// </summary>
         public float currentAmount;
-        private float temporaryChanged;
-        private float temporaryRatio = 1f; // 足し算・引き算で管理
+
+        // 足し算・引き算で管理
+        // 計算式: ChangedMax = (DefaultAmount + TemporaryChanged) * TemporaryRatio
+        private float _temporaryChanged;
+        private float _temporaryRatio = 1f; 
+        
 
         private bool dirty = true; // 値が変更されたかどうか
         private float _changedMax;
@@ -21,48 +25,39 @@ namespace RPG_003.Status
                 if (dirty)
                 {
                     dirty = false;
-                    _changedMax = (_defaultAmount + temporaryChanged) * Math.Max(0, temporaryRatio); // デフォルト値に一時的な変更を加え、倍率を掛ける
+                    _changedMax = (_defaultAmount + _temporaryChanged) * Math.Max(0, _temporaryRatio); // デフォルト値に一時的な変更を加え、倍率を掛ける
                 }
                 return _changedMax;
             }
         }
         public float DefaultAmount => _defaultAmount;
+        public float TemporaryChanged
+        {
+            get => _temporaryChanged;
+            set
+            {
+                if (_temporaryChanged == value) return;
+                _temporaryChanged = value;
+                dirty = true; // 値が変更されたので、ChangedMaxを再計算する必要がある
+            }
+        }
+        public float TemporaryRatio
+        {
+            get => _temporaryRatio;
+            set
+            {
+                if (value < 0f) throw new ArgumentOutOfRangeException(nameof(value), "TemporaryRatio must be non-negative.");
+                if (_temporaryRatio == value) return;
+                _temporaryRatio = value;
+                dirty = true; // 値が変更されたので、ChangedMaxを再計算する必要がある
+            }
+        }
         public StatusAmount(float defaultAmount)
         {
-            this._defaultAmount = defaultAmount;
+            _defaultAmount = defaultAmount;
             currentAmount = defaultAmount;
         }
 
-        public void AddChanged(float amount)
-        {
-            temporaryChanged += amount;
-            dirty = true;
-        }
-        public void SetChanged(float amount)
-        {
-            temporaryChanged = amount;
-            dirty = true;
-        }
-        public void ResetChanged()
-        {
-            temporaryChanged = 0f;
-            dirty = true;
-        }
-        public void AddRatio(float ratio)
-        {
-            temporaryRatio += ratio;
-            dirty = true;
-        }
-        public void SetRatio(float ratio)
-        {
-            temporaryRatio = ratio;
-            dirty = true;
-        }
-        public void ResetRatio()
-        {
-            temporaryRatio = 1f;
-            dirty = true;
-        }
 #if UNITY_EDITOR
         public void Debug(float @new, bool isCurrent)
         {
@@ -74,4 +69,3 @@ namespace RPG_003.Status
 #endif
     }
 }
-// unicode形式で保存済み

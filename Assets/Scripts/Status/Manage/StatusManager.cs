@@ -25,7 +25,8 @@ namespace RPG_003.Status
             set => _MPAmount.currentAmount = Mathf.Clamp(value, 0, MaxMP);
         }
         public float MaxMP => _MPAmount.ChangedMax;
-        public void Initialize(Unit parent, StatusData data)
+
+        public StatusManager Initialize(Unit parent, StatusData data)
         {
             Parent = parent;
             _statusAmounts.Clear();
@@ -49,9 +50,10 @@ namespace RPG_003.Status
             _MPAmount = _statusAmounts[StatusAttribute.MP];
             _MPAmount.currentAmount = _HPAmount.ChangedMax;
             foreach (var d in data.TakeElementDamageScale)
-            {
                 AddStatus(d.element.GetStatusFromElement(false), d.scale);
-            }
+            foreach (var d in data.GiveElementDamageScale)
+                AddStatus(d.element.GetStatusFromElement(true), d.scale);
+            return this;
         }
 
         public void AddStatus(StatusAttribute status, float amount)
@@ -91,69 +93,6 @@ namespace RPG_003.Status
 
         public List<StatusAttribute> GetStatusList() => new List<StatusAttribute>(_statusAmounts.Keys);
 
-        public float GetAmounts(StatusAttribute status)
-        {
-            return status switch
-            {
-                StatusAttribute.HP => HP,
-                StatusAttribute.MP => MP,
-                StatusAttribute.MaxHP => MaxHP,
-                StatusAttribute.MaxMP => MaxMP,
-                _ => TryGetStatus(status, out var r) ? r.ChangedMax : -100
-            };
-        }
-        public void UpdateStatus(StatusAttribute status, float amount)
-        {
-            if (!IsRegistered(status))
-            {
-                Debug.LogError($"Cannot update unregistered status: {status}");
-                return;
-            }
-            var stat = _statusAmounts[status];
-            // 基礎値を変更する代わりに、temporaryChanged を調整して新しい値を実現
-            stat.SetChanged(amount - stat.DefaultAmount);
-        }
-
-        public void AddChanged(StatusAttribute status, float amount)
-        {
-            if (!IsRegistered(status))
-            {
-                Debug.LogError($"Cannot add change to unregistered status: {status}");
-                return;
-            }
-            _statusAmounts[status].AddChanged(amount);
-        }
-
-        public void ResetChanged(StatusAttribute status)
-        {
-            if (!IsRegistered(status))
-            {
-                Debug.LogError($"Cannot reset change for unregistered status: {status}");
-                return;
-            }
-            _statusAmounts[status].ResetChanged();
-        }
-
-        public void AddRatio(StatusAttribute status, float ratio)
-        {
-            if (!IsRegistered(status))
-            {
-                Debug.LogError($"Cannot add ratio to unregistered status: {status}");
-                return;
-            }
-            _statusAmounts[status].AddRatio(ratio);
-        }
-
-        public void ResetRatio(StatusAttribute status)
-        {
-            if (!IsRegistered(status))
-            {
-                Debug.LogError($"Cannot reset ratio for unregistered status: {status}");
-                return;
-            }
-            _statusAmounts[status].ResetRatio();
-        }
-
         public void TakeHeal(DamageInfo info)
         {
             HP = Mathf.Min(MaxHP, HP + info.Damage);
@@ -164,10 +103,6 @@ namespace RPG_003.Status
         {
             HP = Mathf.Max(0, HP - info.Damage);
             return HP <= 0;
-        }
-        public StatusManager(Unit parent, StatusData data)
-        {
-            Initialize(parent, data);
         }
     }
 }
