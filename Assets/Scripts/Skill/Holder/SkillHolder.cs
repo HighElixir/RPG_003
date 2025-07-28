@@ -30,9 +30,10 @@ namespace RPG_003.Skills
         {
             _custonIcon = icon;
         }
-        public void SetSoundVFXData(SoundVFXData soundVFXData)
+        public SkillHolder SetSoundVFXData(SoundVFXData soundVFXData)
         {
             _soundVFXData = soundVFXData;
+            return this;
         }
         public void SetCustomName(string name)
         {

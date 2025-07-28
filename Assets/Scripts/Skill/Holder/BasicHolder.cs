@@ -48,11 +48,19 @@ namespace RPG_003.Skills
         public override void SetSkillData(SkillData data)
         {
             _skill = data as BasicData;
-            Debug.Log($"Set SkillData: {_skill.Name}");
+            //Debug.Log($"Set SkillData: {_skill.Name}");
         }
         public override SkillDataInBattle ConvartData()
         {
-            var s = new SkillDataInBattle(Name, Desc, Icon, _skill.DamageDatas, _skill.CostDatas, _skill.Target, SoundVFXData);
+            var s = SkillDataInBattle.Create()
+                .SetName(Name)
+                .SetDescription(Desc)
+                .SetDamageDatas(_skill.DamageDatas)
+                .SetCostDatas(_skill.CostDatas)
+                .SetEffectDatas(_skill.EffectDatas)
+                .SetTarget(_skill.Target)
+                .SetSprite(Icon)
+                .SetVFX(SoundVFXData);
             return s;
         }
 

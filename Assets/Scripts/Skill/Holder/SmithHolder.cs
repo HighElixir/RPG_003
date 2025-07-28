@@ -148,9 +148,21 @@ namespace RPG_003.Skills
         {
             var damage = new List<DamageData>();
             var cost = new List<CostData>();
-            _effect.ForEach(e => damage.AddRange(e.Damage));
+            var effect = new List<EffectData>();
+            _effect.ForEach(e => {
+                damage.AddRange(e.Damage);
+                effect.AddRange(e.Effects);
+            });
             _cost.ForEach(c => cost.AddRange(c.Cost));
-            return new SkillDataInBattle(Name, Desc, Icon, damage, cost, _target.Target, SoundVFXData);
+            return SkillDataInBattle.Create()
+                .SetName(Name)
+                .SetDescription(Desc)
+                .SetDamageDatas(damage)
+                .SetCostDatas(cost)
+                .SetEffectDatas(effect)
+                .SetTarget(_target.Target)
+                .SetSprite(Icon)
+                .SetVFX(SoundVFXData);
         }
 
         /// <summary>

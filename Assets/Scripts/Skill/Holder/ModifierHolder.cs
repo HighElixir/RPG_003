@@ -135,15 +135,16 @@ namespace RPG_003.Skills
         public override SkillDataInBattle ConvartData()
         {
             // 元のスキルデータをコピーしてバトル用データを生成
-            var s = new SkillDataInBattle(
-                Name,
-                Desc,
-                Icon,
-                new List<DamageData>(_skill.DamageDatas),
-                new List<CostData>(_skill.CostDatas),
-                _skill.Target,
-                SoundVFXData
-            );
+            var s = SkillDataInBattle.Create()
+                .SetName(Name)
+                .SetDescription(Desc)
+                .SetDescription(_custonDesc)
+                .SetSprite(Icon)
+                .SetDamageDatas(_skill.DamageDatas)
+                .SetCostDatas(_skill.CostDatas)
+                .SetEffectDatas(_skill.EffectDatas)
+                .SetTarget(_skill.Target)
+                .SetVFX(SkillData.Sfx ?? _soundVFXData);
 
             foreach (var addon in _addons)
             {
@@ -168,7 +169,7 @@ namespace RPG_003.Skills
                 for (int i = 0; i < s.CostDatas.Count; i++)
                 {
                     var cost = s.CostDatas[i];
-                    foreach (var eff in addon.Costs)
+                    foreach (var eff in addon.ForCosts)
                     {
                         if (eff.Usable(cost))
                         {
@@ -179,10 +180,19 @@ namespace RPG_003.Skills
                     s.CostDatas[i] = cost;
                 }
 
+                // --- ターゲット修正 ---
                 if (addon.IsOverrideTarget) s.TargetData = addon.OverrideTarget;
                 if (addon.IsOverrideTargetCount)
                     s.TargetData = new TargetData(s.TargetData.IsSelf, s.TargetData.Faction, addon.OverrideTargetCount, s.TargetData.IsRandom, s.TargetData.CanSelectSameTarget);
 
+                // --- エフェクト追加 ---
+                foreach (var effect in addon.Effects)
+                {
+                    if (effect.effect != null)
+                        s.EffectDatas.Add(effect);
+                }
+
+                // 属性上書き
                 foreach (var mapping in addon.OverrideElement)
                 {
                     for (int j = 0; j < s.DamageDatas.Count; j++)
