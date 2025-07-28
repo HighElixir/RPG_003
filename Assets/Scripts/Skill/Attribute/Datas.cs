@@ -1,6 +1,8 @@
 ﻿using RPG_003.Battle.Factions;
+using RPG_003.StatesEffect;
 using RPG_003.Status;
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPG_003.Skills
@@ -25,6 +27,24 @@ namespace RPG_003.Skills
         public float criticalRateBonus;
         [Tooltip("ダメージのブレ")]
         public float variance;
+    }
+
+    public struct EffectData
+    {
+        public enum EffectTarget
+        {
+            Self,          // 自分に適用
+            Target,        // ターゲットに適用
+            RandomTarget,  // ランダムなターゲットに適用
+            AllAllies,     // 全ての味方に適用
+            AllEnemies,     // 全ての敵に適用
+            All,          // 全てのユニットに適用
+        }
+        public EffectTarget target;
+        public float chance; // 効果が発動する確率
+
+        [SerializeReference]
+        public IStatesEffect effect; // 適用する効果
     }
     [Serializable]
     public struct CostData

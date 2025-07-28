@@ -1,5 +1,4 @@
-﻿using RPG_003.Battle.Behaviour;
-using RPG_003.Battle.Factions;
+﻿using RPG_003.Battle.Factions;
 using System.Collections.Generic;
 using UnityEngine;
 

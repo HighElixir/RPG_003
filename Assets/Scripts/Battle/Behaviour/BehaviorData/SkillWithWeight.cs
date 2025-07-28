@@ -1,5 +1,4 @@
-﻿using RPG_003.Effect;
-using RPG_003.Skills;
+﻿using RPG_003.Skills;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,8 +13,7 @@ namespace RPG_003.Battle
         public class SkillWeight
         {
             public float weight = 1;
-            public BasicData skill;
-            public SoundVFXData sound;
+            public AISkillSet skillSet;
         }
         [SerializeField]
         private List<SkillWeight> _skills = new();
@@ -28,7 +26,7 @@ namespace RPG_003.Battle
                 return Skill.CreateSkills(ConvertAll());
             }
         }
-        public Skill GetSkill(Unit parent)
+        public AISkillSet GetSkill(Unit parent)
         {
             if (_skills.Count == 0)
                 return null;
@@ -40,10 +38,7 @@ namespace RPG_003.Battle
                 cumulativeWeight += skill.weight;
                 if (randomValue <= cumulativeWeight)
                 {
-                    var skillHolder = new BasicHolder();
-                    skillHolder.SetSkillData(skill.skill);
-                    skillHolder.SetSoundVFXData(skill.sound);
-                    return new Skill(skillHolder.ConvartData(), parent);
+                    return skill.skillSet;
                 }
             }
             return null; // ここに到達することはないはず
@@ -54,8 +49,8 @@ namespace RPG_003.Battle
             var res = new List<SkillDataInBattle>();
             foreach (var skill in _skills)
             {
-                var tmp = new BasicHolder(skill.skill).ConvartData();
-                if (skill.sound != null) tmp.SetVFX(skill.sound);
+                var tmp = new BasicHolder(skill.skillSet.skill).ConvartData();
+                if (skill.skillSet.sound != null) tmp.SetVFX(skill.skillSet.sound);
                 res.Add(tmp);
             }
             return res;

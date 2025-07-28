@@ -53,7 +53,7 @@ namespace RPG_003.Battle
             if (NeedsNewTarget(_beforeTarget, skill.skillDataInBattle.Target))
                 _beforeTarget = _targetSelectHelper.SelectRandomTarget(skill.skillDataInBattle.Target);
             _targetInfo = new(_beforeTarget);
-            Debug.Log($"[TargetSelector] skill={skill.skillDataInBattle.Name}, caster={skill.parent.Data.Name}");
+            // Debug.Log($"[TargetSelector] skill={skill.skillDataInBattle.Name}, caster={skill.parent.Data.Name}");
             IsSelecting.Value = true;
             UpdateUI();
             await UniTask.WaitWhile(() => IsSelecting.Value);

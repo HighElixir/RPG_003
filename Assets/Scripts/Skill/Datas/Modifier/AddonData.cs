@@ -1,4 +1,5 @@
 ﻿using RPG_003.Status;
+using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,15 +12,17 @@ namespace RPG_003.Skills
         [SerializeField] private List<string> _limitIds;
         [SerializeField] private List<AddonEffectForDamage> _forDamage;
         [SerializeField] private List<AddonEffectForCost> _forCost;
+        [SerializeReference] private List<EffectData> _addEffectDatas;
         [SerializeField] private bool _isOverrideTarget = false;
-        [SerializeField] private TargetData _overrideTarget;
+        [SerializeField, ShowIf("_isOverrideTarget")] private TargetData _overrideTarget;
         [SerializeField] private bool _isOverrideTargetCount = false;
-        [SerializeField] private int _overrideTargetCount;
+        [SerializeField, ShowIf("_isOverrideTargetCount")] private int _overrideTargetCount;
         [SerializeField] private List<(Elements from, Elements to)> _overrideElement = new();
 
         public List<string> LimitIds => _limitIds;
         public List<AddonEffectForDamage> ForDamages => _forDamage;
-        public List<AddonEffectForCost> Costs => _forCost;
+        public List<AddonEffectForCost> ForCosts => _forCost;
+        public List<EffectData> Effects => _addEffectDatas;
         public bool IsOverrideTarget => _isOverrideTarget;
         public TargetData OverrideTarget => _overrideTarget;
         public bool IsOverrideTargetCount => _isOverrideTargetCount;

@@ -14,7 +14,9 @@ namespace RPG_003.Battle
         {
             InitCharacter(c, manage, playerData.StatusData);
             c.SetSkills(Skill.CreateSkills(playerData.Skills).SetParent(c));
-            c.SetBehaivior(new PlayerBehaviour().Initialize(c, manage));
+            var b = new PlayerBehaviour().Initialize(manage);
+            c.SetBehaivior(b);
+            c.OnDeath += b.OnDeath;
             if (playerData.Icon != null)
                 c.SetIcon(playerData.Icon);
             return c;
@@ -24,7 +26,9 @@ namespace RPG_003.Battle
             InitCharacter(c, manage, enemy.statusData);
             enemy.skill.Initialize();
             c.SetSkills(enemy.skill.Skills);
-            c.SetBehaivior(new AIBehavior().SetSkill(enemy.skill).Initialize(c, manage));
+            var b = new AIBehavior().SetSkill(enemy.skill).Initialize(manage);
+            c.SetBehaivior(b);
+            c.OnDeath += b.OnDeath;
             if (enemy.icon != null)
                 c.SetIcon(enemy.icon);
             return c;

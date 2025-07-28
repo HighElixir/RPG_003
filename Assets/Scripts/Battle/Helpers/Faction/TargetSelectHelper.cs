@@ -15,37 +15,84 @@ namespace RPG_003.Battle
             var c = TargetSelectorsByType(faction);
             return c.Count > 0 ? c[Random.Range(0, c.Count)] : null;
         }
-
-        public List<Unit> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget)
+        public List<Unit> SelectRandomTargets(AISkillSet skillSet, bool isReverse)
+        {
+            var target = skillSet.skill.Target;
+            var faction = isReverse ? target.Faction.GetReverse() : target.Faction;
+            var count = target.Count;
+            var canSelectSameTarget = target.CanSelectSameTarget;
+            var brain = skillSet.brain;
+            var pow = skillSet.pow;
+            if (Random.Range(0f, 1f) <= pow)
+                return SelectRandomTargets(faction, count, canSelectSameTarget, brain);
+            else
+                return SelectRandomTargets(faction, count, canSelectSameTarget);
+        }
+        public List<Unit> SelectRandomTargets(Faction faction, int count, bool canSelectSameTarget, TargetSource brain = TargetSource.Random)
         {
             var candidates = TargetSelectorsByType(faction);
             var targets = new List<Unit>();
 
-            // 重複禁止で要望数が候補数より多い場合は上限を候補数に合わせる
             if (!canSelectSameTarget && count > candidates.Count)
                 count = candidates.Count;
 
-            // 必要な数だけランダム取得
             while (targets.Count < count)
             {
-                var idx = Random.Range(0, candidates.Count);
-                var pick = candidates[idx];
+                Unit pick;
+                switch (brain)
+                {
+                    case TargetSource.Random:
+                        pick = RandomPick(candidates);
+                        break;
+                    case TargetSource.MinHP:
+                        pick = FixedHpPick(candidates, false);
+                        break;
+                    case TargetSource.MaxHP:
+                        pick = FixedHpPick(candidates, true);
+                        break;
+                    case TargetSource.MinHPRatio:
+                        pick = HpRatioPick(candidates, false);
+                        break;
+                    case TargetSource.MaxHPRatio:
+                        pick = HpRatioPick(candidates, true);
+                        break;
+                    default:
+                        pick = RandomPick(candidates);
+                        break;
+                }
 
-                // 重複許可 or 未登録なら追加
-                if (canSelectSameTarget || !targets.Contains(pick))
-                {
-                    targets.Add(pick);
-                }
-                // 重複禁止で満たせないならループ抜ける（安全策）
-                else if (!canSelectSameTarget && targets.Count >= candidates.Count)
-                {
+                if (pick == null)
                     break;
-                }
+
+                if (canSelectSameTarget || !targets.Contains(pick))
+                    targets.Add(pick);
+                else if (!canSelectSameTarget && targets.Count >= candidates.Count)
+                    break;
             }
 
             return targets;
         }
 
+        // ランダムピックはそのまま
+        private Unit RandomPick(List<Unit> pool) => pool.Count > 0 ? pool[Random.Range(0, pool.Count)] : null;
+
+        // 絶対HPで最小 or 最大を取る
+        private Unit FixedHpPick(List<Unit> pool, bool isMax)
+        {
+            if (pool == null || pool.Count == 0) return null;
+            return isMax
+                ? pool.OrderByDescending(u => u.StatusManager.HP).First()
+                : pool.OrderBy(u => u.StatusManager.HP).First();
+        }
+
+        // HP割合（CurrentHP / MaxHP）で最小 or 最大を取る
+        private Unit HpRatioPick(List<Unit> pool, bool isMax)
+        {
+            if (pool == null || pool.Count == 0) return null;
+            return isMax
+                ? pool.OrderByDescending(u => (float)u.StatusManager.HP / u.StatusManager.MaxHP).First()
+                : pool.OrderBy(u => (float)u.StatusManager.HP / u.StatusManager.MaxHP).First();
+        }
 
         public List<Unit> TargetSelectorsByType(Faction faction)
         {

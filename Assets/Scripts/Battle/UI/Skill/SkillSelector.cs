@@ -78,7 +78,7 @@ namespace RPG_003.Battle
                     _ui.UpdateUI(_skillButtons);
                     _selecting = false;
                 }).AddTo(this);
-                Debug.Log(skill.ToString());
+                //Debug.Log(skill.ToString());
             }
             _idx = 0;
             _ui.UpdateUI(_skillButtons);

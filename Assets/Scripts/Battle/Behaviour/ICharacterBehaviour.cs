@@ -6,10 +6,10 @@ namespace RPG_003.Battle.Behaviour
 {
     public interface ICharacterBehaviour
     {
-        ICharacterBehaviour Initialize(Unit parent, BattleManager battleManager);
+        ICharacterBehaviour Initialize(BattleManager battleManager);
 
         /// <param name="instant">ターン開始処理や終了処理を飛ばすかどうか(ターン割込みなどでTrue)</param>
-        UniTask TurnBehaviour(CancellationToken token, bool instant = false);
+        UniTask TurnBehaviour(Unit parent, CancellationToken token, bool instant = false);
         void OnDeath(Unit character);
     }
 }

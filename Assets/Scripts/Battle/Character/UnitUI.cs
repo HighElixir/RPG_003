@@ -77,6 +77,7 @@ namespace RPG_003.Battle
         }
         private void OnDestroy()
         {
+            if (_sequence != null) _sequence.Kill();
             if (_text != null) GetComponent<Unit>().BattleManager.ReleaceText(_text);
         }
     }

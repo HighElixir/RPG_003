@@ -44,7 +44,29 @@ namespace RPG_003.Equipments
                 {
                     // プレーヤーの情報表示クラスに情報を渡す
                     _indi.gameObject.SetActive(!_indi.gameObject.activeInHierarchy);
-                    _indi.SetPlayer(p);
+                    var sb = _indi.SetPlayer(p);
+                    int idx = 0;
+                    foreach (var button in sb)
+                    {
+                        button.onClick.AsObservable().Subscribe(_ =>
+                        {
+                            if (SetSkill)
+                            {
+                                var idx_s = idx;
+                                if (idx_s < p.Skills.Count && p.Skills[idx_s] != null)
+                                    GameDataHolder.instance.AddSkill(p.Skills[idx_s]);
+                                SetSkill = false;
+                                GameDataHolder.instance.RemoveSkill(_holder);
+                                if (idx_s < p.Skills.Count)
+                                    p.Skills[idx_s] = _holder;
+                                else
+                                    p.Skills.Add(_holder);
+                                    _holder = null;
+                                _indi.UpdateSkill(button, _holder);
+                            }
+                        }).AddTo(this);
+                        idx++;
+                    }
                 }).AddTo(this);
             }
 
@@ -77,7 +99,7 @@ namespace RPG_003.Equipments
         public async UniTask ShakeButton(Button button)
         {
             var defaultRotation = button.transform.rotation;
-            var tween = button.transform.DOShakeRotation(2, strength:15).SetLoops(-1);
+            var tween = button.transform.DOShakeRotation(2, strength: 15).SetLoops(-1);
             await UniTask.WaitWhile(() => SetSkill);
             tween.Kill();
             button.transform.rotation = defaultRotation;

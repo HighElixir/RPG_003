@@ -13,6 +13,7 @@ namespace RPG_003.Battle
     {
         // === Reference ===
         private StatusManager _statusManager;
+        private StatesEffectController _effectController;
         private ICharacterBehaviour _characterBehaviour;
         private BehaviorIntervalCount _BehaviorIntervalCount;
         private BattleManager _battleManager;
@@ -27,6 +28,7 @@ namespace RPG_003.Battle
         // === Property ===
         internal BattleManager BattleManager => _battleManager;
         public StatusManager StatusManager => _statusManager;
+        public StatesEffectController EffectController => _effectController;
         public BehaviorIntervalCount BehaviorIntervalCount => _BehaviorIntervalCount;
         public ICharacterBehaviour Behaviour => _characterBehaviour;
         public virtual StatusData Data => _statusData;
@@ -38,6 +40,14 @@ namespace RPG_003.Battle
         public Sprite FullBody { get; set; }
 
         // === Public Methode ===
+        public async UniTask ExecuteTurn(bool isInstante, CancellationToken token)
+        {
+            if (IsAlive)
+            {
+                await _effectController.Update();
+                await _characterBehaviour.TurnBehaviour(this, token, isInstante);
+            }
+        }
         public void TakeDamage(DamageInfo info)
         {
             if (IsAlive)
@@ -77,6 +87,7 @@ namespace RPG_003.Battle
         {
             _battleManager = battleManager;
             _BehaviorIntervalCount = new BehaviorIntervalCount();
+            _effectController = new StatesEffectController(this);
             OnDeath += (chara) =>
             {
                 IsAlive = false;
@@ -87,7 +98,7 @@ namespace RPG_003.Battle
         public Unit SetStatus(StatusData data)
         {
             _statusData = data;
-            SetStatusManager(new StatusManager(this, data));
+            SetStatusManager(new StatusManager().Initialize(this, data));
             return this;
         }
         public Unit SetBehaivior(ICharacterBehaviour behaviour)

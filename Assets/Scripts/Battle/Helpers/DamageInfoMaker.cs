@@ -35,7 +35,7 @@ namespace RPG_003.Battle
                         amount = source.StatusManager.GetStatusAmount(data.type).ChangedMax;
                         break;
                 }
-               // Debug.Log($"[DamageCalc] ステータス量 ({data.type}): {amount}");
+                // Debug.Log($"[DamageCalc] ステータス量 ({data.type}): {amount}");
 
                 // 追加ダメージ = amount * data.amount * data.variance
                 var rand = UnityEngine.Random.Range(1f - data.variance, 1f + data.variance);
@@ -80,7 +80,7 @@ namespace RPG_003.Battle
             DamageInfo d = source.Clone() as DamageInfo;
 
             // 属性がConsume(消費)の時は何もしない
-            if (source.AmountAttribute == AmountAttribute.Consume) return d;
+            if (source.AmountAttribute.HasFlag(AmountAttribute.Consume)) return d;
             // 元ダメージ
             float original = d.Damage;
             //Debug.Log($"[ResistCalc] 元のダメージ: {original}");

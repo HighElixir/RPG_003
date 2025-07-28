@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using RPG_003.Battle.Behaviour;
 
 namespace RPG_003.Battle
 {
@@ -7,6 +6,6 @@ namespace RPG_003.Battle
     {
         void Initialize();
         List<Skill> Skills { get; }
-        Skill GetSkill(Unit parent);
+        AISkillSet GetSkill(Unit parent);
     }
 }

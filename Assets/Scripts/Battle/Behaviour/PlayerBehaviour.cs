@@ -1,5 +1,4 @@
 ﻿using Cysharp.Threading.Tasks;
-using System.Collections.Generic;
 using System.Threading;
 using UnityEngine;
 
@@ -7,22 +6,19 @@ namespace RPG_003.Battle.Behaviour
 {
     public class PlayerBehaviour : ICharacterBehaviour
     {
-        private Unit _parent;
         private TargetSelector _target;
         private SkillSelector _SkillSelector;
 
         private Skill _chosen;
-        public ICharacterBehaviour Initialize(Unit parent, BattleManager battleManager)
+        public ICharacterBehaviour Initialize(BattleManager battleManager)
         {
-            _parent = parent;
             var bm = battleManager;
             _target = bm.TargetSelector;
             _SkillSelector = bm.SkillSelector;
-            parent.OnDeath += OnDeath;
             return this;
         }
 
-        public async UniTask TurnBehaviour(CancellationToken token, bool instant = false)
+        public async UniTask TurnBehaviour(Unit parent, CancellationToken token, bool instant = false)
         {
             _chosen = null;
             //Debug.Log($"Turn Start : actor is {_parent.Data.Name}");
@@ -35,7 +31,7 @@ namespace RPG_003.Battle.Behaviour
 #endif
                 // キャンセルされたらここで早期リターン
                 //if (token.IsCancellationRequested) return;
-                var selected = await _SkillSelector.InvokeSelector(_parent.Skills);
+                var selected = await _SkillSelector.InvokeSelector(parent.Skills);
                 if (selected == null)
                 {
                     Debug.Log("選べるスキルがないよ！");

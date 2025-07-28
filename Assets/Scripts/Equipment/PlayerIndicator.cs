@@ -1,5 +1,5 @@
-﻿using JetBrains.Annotations;
-using RPG_003.Character;
+﻿using RPG_003.Character;
+using RPG_003.Skills;
 using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
@@ -8,35 +8,43 @@ namespace RPG_003.Equipments
 {
     public class PlayerIndicator : MonoBehaviour
     {
-        [SerializeField] private EquipmentManager _manager;
         [SerializeField] private Button[] _skillButtons = new Button[3];
 
-        public void SetPlayer(CharacterDataHolder chara)
+        public Button[] SetPlayer(CharacterDataHolder chara)
         {
             var i = 0;
             foreach (var button in _skillButtons)
             {
-                var item = GetChind(button.gameObject);
                 if (i < chara.Skills.Count)
                 {
-                    var skill = chara.Skills[i];
+                    UpdateSkill(button, chara.Skills[i]);
                     i++;
-                    item.image.sprite = skill.Icon;
-                    item.image.color = new(1, 1, 1, 1);
-                    item.text.SetText(skill.Name);
                 }
                 else
-                {
-                    item.image.color = new(1, 1, 1, 0);
-                }
+                    UpdateSkill(button);
             }
+            return _skillButtons;
         }
 
+        public void UpdateSkill(Button button, SkillHolder skill = null)
+        {
+            var item = GetChind(button.gameObject);
+            if (skill != null)
+            {
+                item.image.sprite = skill.Icon;
+                item.image.color = new(1, 1, 1, 1);
+                item.text.SetText(skill.Name);
+            }
+            else
+            {
+                item.image.color = new(1, 1, 1, 0);
+            }
+        }
         // Buttonの子要素を取得。どちらかが欠けている場合、エラーを返す
         private (Image image, TMP_Text text) GetChind(GameObject obj)
         {
             (Image image, TMP_Text text) res = (null, null);
-            for(int i = 0; i < obj.transform.childCount; i++)
+            for (int i = 0; i < obj.transform.childCount; i++)
             {
                 var g = obj.transform.GetChild(i);
                 if (res.image == null && g.TryGetComponent<Image>(out var image))
@@ -47,10 +55,6 @@ namespace RPG_003.Equipments
             if (res.image == null || res.text == null)
                 throw new MissingComponentException();
             return res;
-        }
-        private void SkillEquip()
-        {
-
         }
     }
 }

@@ -15,15 +15,6 @@ public class TargetInfo : IEnumerable<Unit>
     public int MaxTargetCount { get; }
     public int TargetCount => 1 + _additionalTargets.Count;
     public bool IsValid => MainTarget != null && TargetCount <= MaxTargetCount;
-
-    public TargetInfo(Unit mainTarget, List<Unit> additionalTargets = null, int maxTargetCount = 1)
-    {
-        MaxTargetCount = Mathf.Max(maxTargetCount, 1);
-        _mainTarget = mainTarget ?? throw new ArgumentNullException(nameof(mainTarget));
-        if (additionalTargets != null)
-            SetTargets(additionalTargets);
-    }
-
     public Unit MainTarget
     {
         get => _mainTarget;
@@ -31,12 +22,19 @@ public class TargetInfo : IEnumerable<Unit>
     }
 
     public IReadOnlyList<Unit> AdditionalTargets => _additionalTargets.AsReadOnly();
+    public TargetInfo(Unit mainTarget, List<Unit> additionalTargets = null, int maxTargetCount = 1)
+    {
+        MaxTargetCount = Mathf.Max(maxTargetCount, (additionalTargets != null ? additionalTargets.Count : 1));
+        _mainTarget = mainTarget ?? throw new ArgumentNullException(nameof(mainTarget));
+        if (additionalTargets != null)
+            SetTargets(additionalTargets);
+    }
+
 
     public void AddTarget(Unit target)
     {
         if (target != null && !_additionalTargets.Contains(target) && !Equals(_mainTarget, target))
             _additionalTargets.Add(target);
-        RemoveOverTarget();
     }
 
     public void RemoveTarget(Unit target)
@@ -57,20 +55,9 @@ public class TargetInfo : IEnumerable<Unit>
     private void SetTargets(List<Unit> targets)
     {
         ClearAdditional();
-        var t = new List<Unit>(collection: targets);
         _additionalTargets.AddRange(targets);
-        RemoveOverTarget();
     }
 
-    private void RemoveOverTarget()
-    {
-        var c = TargetCount - MaxTargetCount;
-        if (c > 0)
-        {
-            for (int i = 0; i < c; i++)
-                _additionalTargets.RemoveAt(0);
-        }
-    }
     public override string ToString()
     {
         // Main and additional target names
@@ -83,17 +70,15 @@ public class TargetInfo : IEnumerable<Unit>
     }
     public IEnumerator<Unit> GetEnumerator()
     {
-        var res = new List<Unit>();
-        res.AddRange(_additionalTargets);
-        res.Add(_mainTarget);
-        return res.GetEnumerator();
+        // 追加ターゲットを先に返す
+        foreach (var t in _additionalTargets)
+            yield return t;
+        // 最後にメインターゲット
+        yield return _mainTarget;
     }
 
-    // privateじゃないといけないらしい (そもそもアクセス修飾子がつけられない)
-    // また、↑のほうをIEnumerator GetEnumrator()とすると、foreachステートメントで返される型がobjectになる
-    // 明示的インターフェース実装で、キャスト時にだけ使われるらしい
+    // 非ジェネリック版はおまけ
     IEnumerator IEnumerable.GetEnumerator()
-    {
-        return ((IEnumerable<Unit>)this).GetEnumerator();
-    }
+        => GetEnumerator();
+
 }

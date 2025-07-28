@@ -49,14 +49,14 @@ namespace RPG_003.Battle
             var all = _parent.GetCharacters();
             if (all.Count == 0) return;
             int delta = all.Min(c => c.BehaviorIntervalCount.CurrentAmount);
-            Debug.Log($"[TurnManager] Processing turn: advancing all by {delta}");
+            //Debug.Log($"[TurnManager] Processing turn: advancing all by {delta}");
 
             if (delta > 0)
             {
                 foreach (var c in all)
                 {
                     c.BehaviorIntervalCount.Process(delta);
-                    Debug.Log($"[TurnManager] Character {c.Data.Name}'s new intervalCount is: {c.BehaviorIntervalCount.CurrentAmount}.");
+                    //Debug.Log($"[TurnManager] Character {c.Data.Name}'s new intervalCount is: {c.BehaviorIntervalCount.CurrentAmount}.");
                 }
             }
             _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
@@ -84,7 +84,7 @@ namespace RPG_003.Battle
             if (!instantStart) RemoveToTurnActors(actor);
             OnExecuteTurn?.Invoke(actor);
             GraphicalManager.instance.BattleLog.Add($"<color=#{ColorUtility.ToHtmlStringRGB(actor.Faction.FactionToColor())}>{actor.Data.Name}</color>のターン！", BattleLog.IconType.Normal);
-            await actor.Behaviour.TurnBehaviour(_tokenSource.Token);
+            await actor.ExecuteTurn(instantStart, _tokenSource.Token);
         }
         private void RemoveToTurnActors(Unit character)
         {

@@ -8,14 +8,11 @@ namespace RPG_003.Battle.Behaviour
     public class AIBehavior : ICharacterBehaviour
     {
         private ISkillBehaviour _skill;
-        private Unit _parent;
         private TargetSelectHelper _TargetSelectHelper;
 
-        public ICharacterBehaviour Initialize(Unit parent, BattleManager battleManager)
+        public ICharacterBehaviour Initialize(BattleManager battleManager)
         {
-            _parent = parent;
             _TargetSelectHelper = new TargetSelectHelper(battleManager);
-            parent.OnDeath += OnDeath;
             return this;
         }
         public AIBehavior SetSkill(ISkillBehaviour behaviour)
@@ -23,29 +20,28 @@ namespace RPG_003.Battle.Behaviour
             _skill = behaviour;
             return this;
         }
-        public async UniTask TurnBehaviour(CancellationToken token, bool instant = false)
+        public async UniTask TurnBehaviour(Unit parent, CancellationToken token, bool instant = false)
         {
             // --- スキル選択 ---
-            var chosenSkill = _skill.GetSkill(_parent);
+            var chosenSkill = _skill.GetSkill(parent);
 
             // --- ターゲット選択 ---
-            var faction = chosenSkill.skillDataInBattle.Target.GetReverse();
-            var count = chosenSkill.skillDataInBattle.TargetCount;
-            var canSame = chosenSkill.skillDataInBattle.CanSelectSameTarget;
-            var targets = _TargetSelectHelper.SelectRandomTargets(faction, count, canSame);
+            var targets = _TargetSelectHelper.SelectRandomTargets(chosenSkill, true);
+            string debug = "targets";
             foreach (var target in targets)
             {
-                Debug.Log($"Target : {target.Data.Name}");
+                debug += "\n" + target.name;
             }
-            if (targets.Count <= 0) Debug.Log("Can't find Targets.");
+            Debug.Log(debug);
+            if (targets.Count <= 0) return;
             // --- ダメージ計算＆適用 ---
-            await chosenSkill.Execute(targets.AsTargetInfo(), true);
+            await chosenSkill.Convert(parent).Execute(targets.AsTargetInfo(), true);
             await UniTask.Delay(1000);
         }
-        public virtual void OnDeath(Unit dead)
+        public virtual void OnDeath(Unit unit)
         {
-            Debug.Log(dead.Data.Name + "をゲームから削除");
-            _parent.BattleManager.RemoveCharacter(dead as Unit);
+            Debug.Log(unit.Data.Name + "をゲームから削除");
+            unit.BattleManager.RemoveCharacter(unit);
         }
     }
 }

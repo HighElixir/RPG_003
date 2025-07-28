@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace RPG_003.Battle
 {
@@ -9,10 +11,16 @@ namespace RPG_003.Battle
         /// </summary>
         public static TargetInfo AsTargetInfo(this List<Unit> targets)
         {
-            var clone = new List<Unit>(targets);
-            var temp = clone[0];
-            clone.Remove(temp);
-            return new TargetInfo(temp, clone);
+            if (targets == null || targets.Count == 0)
+                throw new ArgumentException("targets が空だよ");
+
+            // 先頭要素をそのまま取得
+            var first = targets[0];
+            // 先頭以外を別リストに複製
+            var rest = targets.Skip(1).ToList();
+
+            return new TargetInfo(first, rest);
         }
+
     }
 }

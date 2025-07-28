@@ -1,9 +1,13 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Core;
+using RPG_003.Helper;
+using RPG_003.Skills;
+using RPG_003.StatesEffect;
 using RPG_003.Status;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 
 namespace RPG_003.Battle
@@ -101,7 +105,16 @@ namespace RPG_003.Battle
             info.Target.TakeHeal(info);
         }
 
-        
+        public void ApplyEffect(IStatesEffect effect, Unit target, Unit source = null)
+        {
+            if (target == null || !target.IsAlive) return;
+            // エフェクトの適用
+            target.EffectController.AddEffect(effect);
+            GraphicalManager.instance.BattleLog.Add(
+                StringRules.TransTextSourceToTarget(effect.OnAddedMessage, source, target),
+                effect.IsPositive ? BattleLog.IconType.Positive : BattleLog.IconType.Negative
+                );
+        }
         // === Notify ===
         public void OnDeath(Unit character)
         {
