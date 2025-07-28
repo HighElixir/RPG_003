@@ -30,6 +30,6 @@ MonoBehaviour:
   _target:
     _isSelf: 0
     _faction: 2
-    _count: 1
+    _count: 5
     _isRandom: 0
     _canSelectSameTarget: 0

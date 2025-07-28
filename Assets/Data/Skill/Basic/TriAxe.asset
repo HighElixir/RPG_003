@@ -42,7 +42,7 @@ MonoBehaviour:
     criticalRate: 0.05
     criticalRateBonus: 0.3
     variance: 0.1
-  _consDatas:
+  _costDatas:
   - amount: 200
     isHP: 0
   _target:

@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: Heal
   m_EditorClassIdentifier: 
   _id: b_Heal
-  _name: 
+  _name: "<color=green>\u30D2\u30FC\u30EB</color>"
   _description: 
   _defaultIcon: {fileID: 0}
   _sfx: {fileID: 11400000, guid: 18daf2db6860425458ee20d95910c44d, type: 2}

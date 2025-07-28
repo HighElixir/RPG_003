@@ -15,7 +15,7 @@ MonoBehaviour:
   m_DefaultGroup: 4ecb60d74dcdc3149ac93c5ef4493ff5
   m_currentHash:
     serializedVersion: 2
-    Hash: 36f6973293f35825503fc7b1e9fd8874
+    Hash: f94b8df224529a2259d58f2cf0e6b2a0
   m_OptimizeCatalogSize: 0
   m_BuildRemoteCatalog: 0
   m_CatalogRequestsTimeout: 0
@@ -108,6 +108,7 @@ MonoBehaviour:
     - EffectData
     - SlotData
     - TargetData
+    - Sprite
   m_SchemaTemplates: []
   m_GroupTemplateObjects:
   - {fileID: 11400000, guid: 14863e83e00196a43876b3e132a56a22, type: 2}

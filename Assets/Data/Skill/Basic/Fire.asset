@@ -26,8 +26,8 @@ MonoBehaviour:
     criticalRate: 0
     criticalRateBonus: 0
     variance: 0
-  _consDatas:
-  - amount: 120
+  _costDatas:
+  - amount: 170
     isHP: 0
   _target:
     _isSelf: 0
@@ -35,3 +35,4 @@ MonoBehaviour:
     _count: 1
     _isRandom: 0
     _canSelectSameTarget: 0
+  output: 170:False

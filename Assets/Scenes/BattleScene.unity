@@ -1845,6 +1845,51 @@ MonoBehaviour:
   _inBattle: {fileID: 8300000, guid: 761503047d6a84e6a8801a25d1adf02c, type: 3}
   _win: {fileID: 8300000, guid: 5ac6fc4003415436bb278aafd51b6878, type: 3}
   _lose: {fileID: 8300000, guid: 03fc1782d3b8b41edb7206193da9ac38, type: 3}
+--- !u!1 &1142957497
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1142957499}
+  - component: {fileID: 1142957498}
+  m_Layer: 0
+  m_Name: UIOptions
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1142957498
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142957497}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 72274ac1253ac8540b37c08cdc52f716, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  showElement: 0
+--- !u!4 &1142957499
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1142957497}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 697.56415, y: 521.96106, z: -7.338752}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1161656314
 GameObject:
   m_ObjectHideFlags: 0
@@ -1883,7 +1928,6 @@ MonoBehaviour:
   _sounds: {fileID: 1076266903}
   _characterTransformHelper: {fileID: 1161656317}
   _loader: {fileID: 66107050}
-  _charactersContainer: {fileID: 79645847}
   _pool: {fileID: 947203368}
 --- !u!4 &1161656316
 Transform:
@@ -2188,7 +2232,6 @@ MonoBehaviour:
   _effectPlayer: {fileID: 8685210}
   _thrower: {fileID: 1224280124}
   _battleLog: {fileID: 2094866090}
-  _isPlaying: 0
 --- !u!1 &1224280122
 GameObject:
   m_ObjectHideFlags: 0
@@ -3584,6 +3627,7 @@ SceneRoots:
   - {fileID: 619394802}
   - {fileID: 274941298}
   - {fileID: 200243871}
+  - {fileID: 1142957499}
   - {fileID: 1161656316}
   - {fileID: 1409592594}
   - {fileID: 2299782314700199980}
