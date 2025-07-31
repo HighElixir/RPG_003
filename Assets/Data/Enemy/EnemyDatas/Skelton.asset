@@ -12,18 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7696493b0147203498e041af5612181f, type: 3}
   m_Name: Skelton
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
+  id: 0
   enemyName: "\u30B9\u30B1\u30EB\u30C8\u30F3"
   description: 
-  icon: {fileID: 21300000, guid: 587503b6015abc741ad5147fff8f4a06, type: 3}
+  iconPath: 
   statusData:
     _name: "\u30B9\u30B1\u30EB\u30C8\u30F3"
     _hp: 2000
@@ -39,24 +31,5 @@ MonoBehaviour:
     _takeDamageScale: 1
     _takeElementDamageScale: []
     _giveElementDamageScale: []
-  skill:
-    rid: 3120453836268109925
-  references:
-    version: 2
-    RefIds:
-    - rid: 3120453836268109925
-      type: {class: SkillWithWeightData, ns: RPG_003.Battle, asm: Assembly-CSharp}
-      data:
-        _skills:
-        - weight: 1
-          skillSet:
-            skill: {fileID: 11400000, guid: f90a35d989fa0e9488766c4e7eaf1a13, type: 2}
-            sound: {fileID: 0}
-            brain: 1
-            pow: 1
-        - weight: 1
-          skillSet:
-            skill: {fileID: 11400000, guid: 4852ac9fcc9fe7848a7158822047ecd3, type: 2}
-            sound: {fileID: 0}
-            brain: 1
-            pow: 0.504
+  skillBehaviour: SkillWithWeightData
+  icon: {fileID: 21300000, guid: 587503b6015abc741ad5147fff8f4a06, type: 3}

@@ -12,18 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7696493b0147203498e041af5612181f, type: 3}
   m_Name: Little Lizard
   m_EditorClassIdentifier: 
-  serializationData:
-    SerializedFormat: 2
-    SerializedBytes: 
-    ReferencedUnityObjects: []
-    SerializedBytesString: 
-    Prefab: {fileID: 0}
-    PrefabModificationsReferencedUnityObjects: []
-    PrefabModifications: []
-    SerializationNodes: []
+  id: 0
   enemyName: Little Lizard
   description: Cute
-  icon: {fileID: 21300000, guid: 109bacc3a598fc949b5f41dd31e7eba2, type: 3}
+  iconPath: Sprite/Dark_7
   statusData:
     _name: Little Lizard
     _hp: 1100
@@ -41,24 +33,5 @@ MonoBehaviour:
     - element: 2
       scale: 0.7
     _giveElementDamageScale: []
-  skill:
-    rid: 3120453836268109923
-  references:
-    version: 2
-    RefIds:
-    - rid: 3120453836268109923
-      type: {class: SkillWithWeightData, ns: RPG_003.Battle, asm: Assembly-CSharp}
-      data:
-        _skills:
-        - weight: 1
-          skillSet:
-            skill: {fileID: 11400000, guid: 5c51547abc7e2fa4abc7ad8418de60ba, type: 2}
-            sound: {fileID: 0}
-            brain: 0
-            pow: 0
-        - weight: 1
-          skillSet:
-            skill: {fileID: 11400000, guid: 6c2c55c9f2f04b24a9e79e65dbfd5c76, type: 2}
-            sound: {fileID: 0}
-            brain: 0
-            pow: 0
+  skillBehaviour: SkillWithWeightData
+  icon: {fileID: 21300000, guid: 109bacc3a598fc949b5f41dd31e7eba2, type: 3}
