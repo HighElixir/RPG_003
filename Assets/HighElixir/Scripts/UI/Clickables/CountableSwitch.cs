@@ -127,5 +127,6 @@ namespace HighElixir.UI
                 }
             });
         }
+        public static implicit operator int(CountableSwitch countable) => countable.CurrentAmount;
     }
 }

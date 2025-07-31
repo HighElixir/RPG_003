@@ -42,5 +42,7 @@ namespace HighElixir.UI
             }
             return this;
         }
+
+        public static implicit operator int(HedgeSum sum) => sum.SumAll;
     }
 }

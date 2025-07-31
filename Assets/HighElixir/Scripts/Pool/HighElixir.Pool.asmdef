@@ -1,10 +1,8 @@
 {
-    "name": "HighElixir.UI",
-    "rootNamespace": "HighElixir.UI",
+    "name": "HighElixir.Pool",
+    "rootNamespace": "",
     "references": [
-        "GUID:f857ed5e6d0195a48936edaa442d1bba",
-        "GUID:6055be8ebefd69e48b49212b09b47b2f",
-        "GUID:34a7a5aac579e6d4b93c644856716464"
+        "GUID:6055be8ebefd69e48b49212b09b47b2f"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

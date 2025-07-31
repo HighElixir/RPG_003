@@ -1,12 +1,12 @@
-using System;
+ï»¿using System;
 using UnityEngine;
 
 public class Easing
 {
     public enum Ease
     {
-        // ŠÉ‹} ã ª
-        // ˆêŸŠÖ”
+        // ç·©æ€¥ å¼± â†‘
+        // ä¸€æ¬¡é–¢æ•°
         Linear,
 
         // Sine
@@ -14,55 +14,55 @@ public class Easing
         OutSine,
         InOutSine,
 
-        // “ñŸŠÖ”
+        // äºŒæ¬¡é–¢æ•°
         InQuad,
         OutQuad,
         InOutQuad,
 
-        // OŸŠÖ”
+        // ä¸‰æ¬¡é–¢æ•°
         InCubic,
         OutCubic,
         InOutCubic,
 
-        // lŸŠÖ”
+        // å››æ¬¡é–¢æ•°
         InQuart,
         OutQuart,
         InOutQuart,
 
-        // ŒÜŸŠÖ”
+        // äº”æ¬¡é–¢æ•°
         InQuint,
         OutQuint,
         InOutQuint,
 
-        // w”ŠÖ”
+        // æŒ‡æ•°é–¢æ•°
         InExpo,
         OutExpo,
         InOutExpo,
 
-        // ‰~Œ`ŠÖ”
+        // å††å½¢é–¢æ•°
         InCirc,
         OutCirc,
         InOutCirc,
 
-        // 1“x‚Ì‚İU“®
+        // 1åº¦ã®ã¿æŒ¯å‹•
         InBack,
         OutBack,
         InOutBack,
 
-        // ’e«
+        // å¼¾æ€§
         InElastic,
         OutElastic,
         InOutElastic,
 
-        // ƒoƒEƒ“ƒh
+        // ãƒã‚¦ãƒ³ãƒ‰
         InBounce,
         OutBounce,
         InOutBounce
-        // ŠÉ‹} ‹­ «
+        // ç·©æ€¥ å¼· â†“
     }
 
     // Func<in T, out TResult>(T arg);
-    // ƒC[ƒWƒ“ƒOŠÖ”‚ğ•Ô‚·ŠÖ”
+    // ã‚¤ãƒ¼ã‚¸ãƒ³ã‚°é–¢æ•°ã‚’è¿”ã™é–¢æ•°
     public static Func<float, float> GetEasingMethod(Ease ease)
     {
         switch (ease)

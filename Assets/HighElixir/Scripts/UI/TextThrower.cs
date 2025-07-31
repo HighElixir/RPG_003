@@ -75,6 +75,11 @@ namespace HighElixir.UI
         }
 
         public TMP_Text Create(Vector2 pos, string text, Color color) => Create(pos, Quaternion.identity, text, color);
+        
+        public TMP_Text Get()
+        {
+            return _pool.Get();
+        }
         public void Release(TMP_Text text)
         {
             // Tween を止めて辞書から削除、プールに返却
@@ -93,7 +98,7 @@ namespace HighElixir.UI
         private void Awake()
         {
             if (_container == null) _container = transform.GetComponent<RectTransform>();
-            _pool = new Pool<TMP_Text>(_prefab, _poolSize, _container, true);
+            _pool = new Pool<TMP_Text>(_prefab, _poolSize, _container);
             _sequences = new Dictionary<TMP_Text, Sequence>();
         }
         private void OnDestroy()

@@ -14,7 +14,7 @@ namespace HighElixir.Pool
         private void Awake()
         {
             _container = GetComponent<RectTransform>();
-            _textPool = new Pool<TMP_Text>(_prefab, _size, _container, true);
+            _textPool = new Pool<TMP_Text>(_prefab, _size, _container);
         }
     }
 }
