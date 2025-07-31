@@ -1,12 +1,10 @@
 ﻿using Cysharp.Threading.Tasks;
-using Sirenix.OdinInspector.Editor.Drawers;
-using System.Linq;
-using System.Threading.Tasks;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace RPG_003.Core
+namespace RPG_003.SceneManage
 {
+
     public class SceneLoader : MonoBehaviour
     {
         [SerializeField] private LoadingUIController _uicontroller;
