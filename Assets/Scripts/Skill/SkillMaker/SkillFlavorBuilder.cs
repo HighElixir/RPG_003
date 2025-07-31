@@ -77,7 +77,7 @@ namespace RPG_003.Skills
                 enabled = false;
                 return;
             }
-            _buttonPool = new Pool<Button>(_prefab, 20, _container, true);
+            _buttonPool = new Pool<Button>(_prefab, 20, _container);
             _maker.Current.Subscribe(res => 
             {
                 if (res != SkillMaker.SkillType.None) _enable = true;

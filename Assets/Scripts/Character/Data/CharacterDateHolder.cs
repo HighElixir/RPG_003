@@ -1,7 +1,7 @@
 ﻿using HighElixir;
 using RPG_003.Battle;
+using RPG_003.DataManagements.Datas;
 using RPG_003.Skills;
-using RPG_003.Status;
 using System;
 using System.Collections.Generic;
 using UnityEngine;
@@ -25,7 +25,7 @@ namespace RPG_003.Character
         public Dictionary<Elements, int> ElementPoints => _elementPoints;
         public List<SkillHolder> Skills => _skills;
         public int usablePoints => _usablePoints;
-        public StatusData ConvertedData => _useCustomData ? _customData : this.CharacterConvart();
+        public StatusData ConvertedData => _useCustomData ? _customData : CharacterConvart();
         public int IsValid
         {
             get
@@ -92,8 +92,35 @@ namespace RPG_003.Character
         {
             var pd = new PlayerData(ConvertedData, Skills.ConvertList());
             if (Icon != null)
-                pd.SetIcon(Icon);
+                pd.icon = Icon;
             return pd;
+        }
+
+        public StatusData CharacterConvart()
+        {
+            var HP = CoreDatas.HP + StatusPoints[StatusAttribute.HP] * CoreDatas.HPPerPoint;
+            var MP = CoreDatas.MP + StatusPoints[StatusAttribute.MP] * CoreDatas.MPPerPoint;
+            var STR = CoreDatas.STR + StatusPoints[StatusAttribute.STR] * CoreDatas.STRPerPoint;
+            var INT = CoreDatas.INT + StatusPoints[StatusAttribute.INT] * CoreDatas.INTPerPoint;
+            var SPD = CoreDatas.SPD + StatusPoints[StatusAttribute.SPD] * CoreDatas.SPDPerPoint;
+            var LUK = CoreDatas.LUK + StatusPoints[StatusAttribute.LUK] * CoreDatas.LUKPerPoint;
+            var DEF = CoreDatas.DEF + StatusPoints[StatusAttribute.DEF] * CoreDatas.DEFPerPoint;
+            var MDEF = CoreDatas.MDEF + StatusPoints[StatusAttribute.MDEF] * CoreDatas.MDEFPerPoint;
+            var TDS = CoreDatas.TDS + StatusPoints[StatusAttribute.TakeDamageScale] * CoreDatas.TDSPerPoint;
+            var CRR = CoreDatas.CRR + StatusPoints[StatusAttribute.CriticalRate] * CoreDatas.CRTPerPoint.rate;
+            var CRD = CoreDatas.CRD + StatusPoints[StatusAttribute.CriticalRate] * CoreDatas.CRTPerPoint.bonus;
+            CRR += CoreDatas.CRTPerPoint.rate * (LUK - 100);
+            CRD += CoreDatas.CRTPerPoint.bonus * (LUK - 100);
+            List<StatusData.ElementDamageScale> Take = new();
+            List<StatusData.ElementDamageScale> Give = new();
+            foreach (var item in ElementPoints)
+            {
+                var kvp = CoreDatas.ElementPerPoint;
+                Take.Add(new(item.Key, CoreDatas.TES + kvp.take * item.Value));
+                Give.Add(new(item.Key, CoreDatas.GES + kvp.give * item.Value));
+            }
+            var res = new StatusData(Name, HP, MP, STR, INT, SPD, DEF, MDEF, LUK, CRR, CRD, TDS, Take, Give);
+            return res;
         }
 
 #if UNITY_EDITOR

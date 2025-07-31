@@ -59,7 +59,7 @@ namespace RPG_003.Battle
                     //Debug.Log($"[TurnManager] Character {c.Data.Name}'s new intervalCount is: {c.BehaviorIntervalCount.CurrentAmount}.");
                 }
             }
-            _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
+            GraphicalManager.instance.IndicatorUI.UpdateUI(_parent.GetCharacters());
 
             // 行動値が0のunitを全て行動待ちリストに追加
             var ready = all.Where(c => c.BehaviorIntervalCount.IsReady).OrderByDescending(c => c.BehaviorIntervalCount.Speed);
@@ -90,7 +90,7 @@ namespace RPG_003.Battle
         {
             _turnActors.Remove(character);
             character.BehaviorIntervalCount.Reset();
-            _parent.IndicatorUIBuilder.UpdateUI(_parent.GetCharacters());
+            GraphicalManager.instance.IndicatorUI.UpdateUI(_parent.GetCharacters());
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Battle;
+using RPG_003.DataManagements.Datas;
 using UnityEngine;
 
 namespace RPG_003.StatesEffect
@@ -13,19 +14,12 @@ namespace RPG_003.StatesEffect
         /// trueならば、Update()の後にRemoveEffect()が呼ばれる。
         /// </summary>
         bool ShouldRemove { get; }
-
-        /// <summary>
-        /// 効果に紐づくID
-        /// </summary>
-        int Id { get; }
-        string Name { get; }
-        string Description { get; }
-        string OnAddedMessage { get; }
-        Sprite Icon { get; }
-        bool IsPositive { get; }
+        EffectData EffectData { get; }
         UniTask Update(Unit parent);
         void OnAdd(Unit parent);
         void OnRemove(Unit parent);
+
+        UniTask Create(string data);
     }
 
     public interface IStackable : IStatesEffect

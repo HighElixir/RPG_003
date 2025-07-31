@@ -1,4 +1,5 @@
-﻿using RPG_003.Status;
+﻿using RPG_003.DataManagements.Datas;
+using RPG_003.DataManagements.Datas.Helper;
 using System.Text;
 
 namespace RPG_003.Character

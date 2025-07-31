@@ -1,30 +1,26 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Core;
+using RPG_003.SceneManage;
 using RPG_003.Helper;
-using RPG_003.Skills;
 using RPG_003.StatesEffect;
-using RPG_003.Status;
 using Sirenix.OdinInspector;
 using System;
 using System.Collections.Generic;
-using Unity.VisualScripting;
 using UnityEngine;
+using HighElixir;
 
 namespace RPG_003.Battle
 {
     [DefaultExecutionOrder(-1)]
-    public partial class BattleManager : MonoBehaviour
+    public partial class BattleManager : SingletonBehavior<BattleManager>
     {
         //=== Reference ===
-        [BoxGroup("Reference"), SerializeField] private Camera _camera;
         [BoxGroup("Reference"), SerializeField] private SkillSelector _skillButtonManager;
         [BoxGroup("Reference"), SerializeField] private Unit _unitPrefab;
         [BoxGroup("Reference"), SerializeField] private TargetSelector _targetSelector;
-        [BoxGroup("Reference"), SerializeField] private IndicatorUIBuilder _indicatorUI;
-        [BoxGroup("Reference"), SerializeField] private PlaySounds _sounds;
         [BoxGroup("Reference"), SerializeField] private CharacterTransformHelper _characterTransformHelper;
         [BoxGroup("Reference"), SerializeField] private SceneLoader _loader;
-        
+
         private Transform _charactersContainer;
         private PositionManager _posManager;
         private TurnManager _turnManager;
@@ -35,45 +31,74 @@ namespace RPG_003.Battle
         public TargetSelector TargetSelector => _targetSelector;
         public SkillSelector SkillSelector => _skillButtonManager;
         public bool IsBattleContinue => _isBattleContinue;
-        public IndicatorUIBuilder IndicatorUIBuilder => _indicatorUI;
         public CharacterTransformHelper TransformHelper => _characterTransformHelper;
 
         //=== Public Methods ===
-        public void StartBattle(List<PlayerData> players, SpawningTable table)
+        public async UniTask Setup(List<PlayerData> players, SpawningTable table)
         {
             Initialize();
+
             foreach (var item in _charactersContainer)
                 Destroy(item as GameObject);
 
-            var p = SummonPlayers(players);
-            StartBattle(p, table);
-        }
-        public void StartBattle(List<Unit> players, SpawningTable table)
-        {
-            _posManager.Clear();
-            _turnManager.Reset();
-
-            for (int i = 0; i < players.Count && i < 4; i++)
-                RegisterCharacter((CharacterPosition)i, players[i]);
-
+            // 敵データを先に準備
+            List<EnemyData> enemies = new();
             for (int i = 0; i < 5; i++)
-                SummonEnemy(table.GetSpawnData(0f).GetEnemyData());
+            {
+                var enemy = table.GetSpawnData(GetDepth()).GetEnemyData();
+                enemies.Add(enemy);
+            }
 
-            _sounds.Play(PlaySounds.PlaySound.BGM);
+            // プレイヤー・敵のロードを並列で開始！
+            var playerLoadTask = LoadPlayers(players);
+            var enemyLoadTask = LoadEnemies(enemies);
+
+            await UniTask.WhenAll(playerLoadTask, enemyLoadTask);
+
+            // ロードが終わったら召喚開始！
+            var summonedPlayers = await SummonPlayers(players);
+            var summonedEnemies = await SummonEnemies(enemies);
+
+            // プレイヤー登録
+            for (int i = 0; i < summonedPlayers.Count && i < 4; i++)
+                RegisterCharacter((CharacterPosition)i, summonedPlayers[i]);
+        }
+
+        public void StartBattle()
+        {
             _isBattleContinue = true;
-            _indicatorUI.UpdateUI(_posManager.GetCharacters());
+            GraphicalManager.instance.Sounds.Play(PlaySounds.PlaySound.BGM);
+            GraphicalManager.instance.IndicatorUI.UpdateUI(_posManager.GetCharacters());
             _ = _turnManager.ProcessTurn();
+        }
+        private async UniTask LoadPlayers(List<PlayerData> players)
+        {
+            UniTask[] tasks = new UniTask[players.Count];
+            for (int i = 0; i < players.Count; i++)
+            {
+                tasks[i] = players[i].LoadData();
+            }
+            await UniTask.WhenAll(tasks);
+        }
+        private async UniTask LoadEnemies(List<EnemyData> enemies)
+        {
+            UniTask[] tasks = new UniTask[enemies.Count];
+            for (int i = 0; i < enemies.Count; i++)
+            {
+                tasks[i] = enemies[i].LoadData();
+            }
+            await UniTask.WhenAll(tasks);
         }
         private async UniTask BattleExit(int to = -1)
         {
-            for(int i = 3; i >= 0; i--)
+            for (int i = 3; i >= 0; i--)
             {
                 GraphicalManager.instance.Text.Create(new Vector2(0, 0), i.ToString(), Color.white);
                 await UniTask.WaitForSeconds(1);
             }
             if (to == -1)
             {
-                BattleSceneManager.instance.BackScene();
+                BattleSceneExecuter.instance.BackScene();
             }
             else
             {
@@ -132,11 +157,6 @@ namespace RPG_003.Battle
             // 分割クラスの初期化
             _posManager = new PositionManager();
             _turnManager = new TurnManager(this);
-        }
-        //=== Unity Lifecycle ===
-        protected void Awake()
-        {
-            Initialize();
         }
     }
 }

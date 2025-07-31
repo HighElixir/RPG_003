@@ -1,4 +1,4 @@
-﻿using RPG_003.Status;
+﻿using RPG_003.DataManagements.Datas;
 using Sirenix.OdinInspector;
 using System.Text;
 using UnityEngine;

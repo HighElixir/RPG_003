@@ -55,7 +55,7 @@ namespace RPG_003.Skills
         public IObservable<SkillHolder> Temp => _temp;
         public void Init()
         {
-            _buttonPool = new(_prefab, 100, _container, true);
+            _buttonPool = new(_prefab, 100, _container);
             if (_unSubscriber != null)
                 _unSubscriber.Dispose();
             _director = GetComponent<SkillMaker>();

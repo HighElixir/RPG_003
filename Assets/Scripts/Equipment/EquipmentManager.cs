@@ -114,7 +114,7 @@ namespace RPG_003.Equipments
         }
         private void Awake()
         {
-            _pool = new Pool<Button>(_prefab, _poolSize, _container, true);
+            _pool = new Pool<Button>(_prefab, _poolSize, _container);
             _window.OnOn.AsObservable().Subscribe(_ => BuildButtons());
         }
     }

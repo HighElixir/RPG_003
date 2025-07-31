@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Character;
 using RPG_003.Skills;
-using RPG_003.Status;
+using RPG_003.DataManagements.Datas;
 using System;
 using UnityEngine;
 using UnityEngine.UI;

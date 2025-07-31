@@ -2,23 +2,29 @@
 using HighElixir;
 using HighElixir.UI;
 using RPG_003.Effect;
-using RPG_003.Status;
+using RPG_003.DataManagements.Datas;
+using RPG_003.DataManagements.Datas.Helper;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 namespace RPG_003.Battle
 {
     public class GraphicalManager : SingletonBehavior<GraphicalManager>
     {
-        [SerializeField] private Camera _camera;
-        [SerializeField] private SpriteRenderer _background;
-        [SerializeField] private EffectPlayer _effectPlayer;
-        [SerializeField] private TextThrower _thrower;
-        [SerializeField] private BattleLog _battleLog;
+        [BoxGroup("Reference"), SerializeField] private Camera _camera;
+        [BoxGroup("Reference"), SerializeField] private SpriteRenderer _background;
+        [BoxGroup("Reference"), SerializeField] private IndicatorUIBuilder _indicatorUI;
+        [BoxGroup("Reference"), SerializeField] private EffectPlayer _effectPlayer;
+        [BoxGroup("Reference"), SerializeField] private TextThrower _thrower;
+        [BoxGroup("Reference"), SerializeField] private BattleLog _battleLog;
+        [BoxGroup("Reference"), SerializeField] private PlaySounds _sounds;
 
         public TextThrower Text => _thrower;
         public BattleLog BattleLog => _battleLog;
+        public IndicatorUIBuilder IndicatorUI => _indicatorUI;
+        public PlaySounds Sounds => _sounds;
         // === BackGround ===
         public void SetBackgroundSprite(Sprite sprite)
         {
@@ -27,11 +33,6 @@ namespace RPG_003.Battle
         public void SetBackground(SpriteRenderer background) => _background = background;
 
         // === EffectPlayer ===
-        public async UniTask EffectPlay(SoundVFXData data, Vector2 vFXposition)
-        {
-            await _effectPlayer.Play(data, vFXposition);
-        }
-
         public async UniTask EffectPlay(SoundVFXData data, List<Vector2> vFXpositions, bool parallel = true)
         {
             if (vFXpositions == null || vFXpositions.Count == 0) return;
@@ -63,7 +64,20 @@ namespace RPG_003.Battle
             Color c = info.Elements == Elements.None ? Color.red : info.Elements.GetColorElement();
             var t = _thrower.Create(info.Target.gameObject, info.Damage.ToString(), c);
             if (info.IsCritical)
+            {
+                t.text = $"<color=yellow>会心！</color>\n{t.text}";
                 t.rectTransform.localScale = t.rectTransform.localScale * 1.5f;
+            }
+        }
+
+        // Pool
+        public void TakeName(Unit owner)
+        {
+            owner.GetComponent<UnitUI>().SetText(_thrower.Get());
+        }
+        public void ReleaceText(TMP_Text text)
+        {
+            _thrower.Release(text);
         }
     }
 }

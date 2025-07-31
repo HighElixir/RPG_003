@@ -1,5 +1,5 @@
 ﻿using HighElixir.UI;
-using RPG_003.Core;
+using RPG_003.SceneManage;
 using System.Text;
 using TMPro;
 using UnityEngine;

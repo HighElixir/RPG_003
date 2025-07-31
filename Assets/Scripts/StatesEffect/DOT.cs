@@ -1,9 +1,8 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Battle;
-using RPG_003.Skills;
+using RPG_003.DataManagements.Datas;
 using System;
 using System.Collections.Generic;
-using UnityEngine;
 
 namespace RPG_003.StatesEffect
 {
@@ -11,10 +10,8 @@ namespace RPG_003.StatesEffect
     public class DOT : TimeBaseEffect
     {
         // フォーマット
-        // 追加時の残りターン: ダメージデータのリスト(DamageDataにのっとる)
-        [SerializeField] private List<DamageData> _damageData = new();
-        [SerializeField] private string _onAddedMessage = string.Empty;
-        public override string OnAddedMessage => _onAddedMessage;
+        // _defaultDuration;"DamageData"
+        public List<DamageData> _damageData = new();
 
         public override async UniTask Update(Unit parent)
         {
@@ -25,6 +22,11 @@ namespace RPG_003.StatesEffect
                 parent.BattleManager.ApplyDamage(damage);
             }
             await base.Update(parent);
+        }
+
+        public override async UniTask Create(string data)
+        {
+            var values = data.Split(';');
         }
     }
 }

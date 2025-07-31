@@ -1,5 +1,4 @@
-﻿using RPG_003.Core;
-using RPG_003.Status;
+﻿using RPG_003.DataManagements.Datas;
 
 namespace RPG_003.Character
 {

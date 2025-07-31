@@ -1,7 +1,7 @@
 ﻿using Cysharp.Threading.Tasks;
 using RPG_003.Battle.Behaviour;
 using RPG_003.Battle.Factions;
-using RPG_003.Status;
+using RPG_003.DataManagements.Datas;
 using System;
 using System.Collections.Generic;
 using System.Threading;

@@ -1,5 +1,5 @@
-﻿using RPG_003.Skills;
-using RPG_003.Status;
+﻿using RPG_003.DataManagements.Datas;
+using RPG_003.DataManagements.Datas.Helper;
 using UnityEngine;
 
 namespace RPG_003.Battle

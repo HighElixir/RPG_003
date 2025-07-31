@@ -1,5 +1,4 @@
 ﻿using HighElixir.Pool;
-using RPG_003.Status;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Linq;
@@ -70,7 +69,7 @@ namespace RPG_003.Battle
         // Unity
         private void Awake()
         {
-            _pool = new(_prefab, 10, _container, true);
+            _pool = new(_prefab, 10, _container);
         }
     }
 }

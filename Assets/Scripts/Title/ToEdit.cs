@@ -1,4 +1,5 @@
-﻿using RPG_003.Core;
+﻿using RPG_003.SceneManage;
+using RPG_003.Core;
 using UnityEngine;
 
 namespace RPG_003.Title

@@ -1,7 +1,8 @@
 ﻿using HighElixir;
 using HighElixir.Pool;
 using RPG_003.Battle.Factions;
-using RPG_003.Status;
+using RPG_003.DataManagements.Datas;
+using RPG_003.DataManagements.Datas.Helper;
 using Sirenix.OdinInspector;
 using System.Collections.Generic;
 using System.Text;
@@ -59,7 +60,7 @@ namespace RPG_003.Battle
             }
             var n = temp1 / temp2.height;
             if (_reverse) n = 1 - n;
-            //_bar.value = n;
+            _bar.value = n;
         }
 
         public void ReleaceOld()
@@ -77,7 +78,7 @@ namespace RPG_003.Battle
         public static string TakeDamage(DamageInfo info)
         {
             string color = ColorUtility.ToHtmlStringRGBA(info.Elements.GetColorElement());
-            if (info.AmountAttribute.HasFlag(Skills.AmountAttribute.Consume))
+            if (info.AmountAttribute.HasFlag(AmountAttribute.Consume))
                 return $"{info.Target.Data.Name}は{info.Damage}のHPを消費した!";
             else
                 return $"{info.Target.Data.Name}は<color=#{color}>{info.Damage}</color>{(UIOptions.instance.showElement ? info.Elements.ToJapanese() : "")}ダメージを受けた！";
@@ -114,7 +115,7 @@ namespace RPG_003.Battle
         }
         private void Awake()
         {
-            _pool = new Pool<Transform>(_prefab, _max, _container, true);
+            _pool = new Pool<Transform>(_prefab, _max, _container);
         }
     }
 }
